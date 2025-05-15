@@ -2,6 +2,8 @@
 import { Header } from "@/modules/offers/components/header";
 import Image from "next/image";
 import {Footer} from "@/modules/offers/components/footer";
+import {image} from '@/shared/components/imag'
+
 export default function Offers() {
     return (
         <div className="bg-gray-100 min-h-screen">
@@ -10,7 +12,7 @@ export default function Offers() {
             <main className="container mx-auto p-4">
                 <div className="relative h-64 w-full mb-6 bg-gradient-to-r from-[#131921] to-[#232F3E] rounded overflow-hidden">
                     <Image
-                        src="public/window.svg"
+                        src={image.mate2}
                         alt="Ofertas especiales"
                         layout="fill"
                         objectFit="cover"
@@ -33,7 +35,7 @@ export default function Offers() {
                         <div className="group border border-gray-200 hover:border-[#FFD712] rounded p-3 transition">
                             <div className="relative h-48 w-full mb-3">
                                 <Image
-                                    src="public/window.svg"
+                                    src={image.mateKit}
                                     alt="Termo super bueno"
                                     layout="fill"
                                     objectFit="contain"

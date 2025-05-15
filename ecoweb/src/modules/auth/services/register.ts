@@ -1,17 +1,19 @@
-import { ResponsePost } from "@/shared/utils/typesGlobal";
-import { RegisterData } from "../typesAuth";
 
-export const registerClient = async (data: RegisterData): Promise<ResponsePost> =>{
-    const response = await fetch('aca va la url de la api',{
+import { RegisterData,ResponseRegister } from "../typesAuth";
+
+export const registerClient = async (data: RegisterData): Promise<ResponseRegister> =>{
+    const response = await fetch('http://localhost:8000/api/user/register',{
         method: 'POST',
-        headers: {'Content-type': 'application'},
+        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(data)
     });
 
     if(!response.ok){
         const errorData = await response.json()
+        console.error(errorData)
         throw new Error(errorData.message || 'Error al registrar el cliente')
     }
-    // const clientData = await response.json();
-    return {success:true, message:'Registro exitoso'};
+    const clientData = await response.json();
+    console.log(clientData)
+    return {success:true, token:clientData.token,user:clientData.user};
 }

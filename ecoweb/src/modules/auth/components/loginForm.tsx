@@ -1,6 +1,6 @@
 'use client'
 
-
+import Link from 'next/link';
 import { useForm } from "react-hook-form";
 import { useLogin } from "../hook/useLogin";
 import InputField from '@/shared/components/inputField'
@@ -39,7 +39,7 @@ const LoginForm = () => {
                     requiredMsg="La contraseña es obligatoria"
                     validationRules={{
                         pattern: {
-                            value: /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/,
+                            value: /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*.])[A-Za-z\d!@#$%^&*.]{8,}$/,
                             message:
                                 "Debe tener al menos 1 mayúscula, 1 número, 1 carácter especial y mínimo 8 caracteres",
                         },
@@ -50,6 +50,9 @@ const LoginForm = () => {
                     Iniciar sesion
                 </button>
             </form>
+            <div className="text-align leading-[1.5] mt-4">
+                <Link href="/auth/register" >¿No tienes cuenta? registrate aqui</Link>
+            </div>
         </div >
     )
 }

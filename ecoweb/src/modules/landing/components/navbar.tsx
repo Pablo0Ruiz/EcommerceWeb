@@ -23,10 +23,10 @@ const NavbarLanding = () => {
                 </ul>
 
                 <div className="hidden md:flex space-x-4">
-                    <Link href="/login" className="text-sm text-gray-600 hover:text-green-700">
+                    <Link href="/auth/login" className="text-sm text-gray-600 hover:text-green-700">
                         Inicia sesion
                     </Link>
-                    <Link href="/register" className="text-sm bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition">
+                    <Link href="/auth/register" className="text-sm bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition">
                         Registrarse
                     </Link>
                 </div>
@@ -44,8 +44,8 @@ const NavbarLanding = () => {
                     <Link href="#testimonios" onClick={() => setShow(false)}>Testimonios</Link>
                     <Link href="#contacto" onClick={() => setShow(false)}>Contacto</Link>
                     <div className="flex flex-col gap-2 pt-2 border-t">
-                        <Link href="/login" className="text-sm text-gray-600">Iniciar sesion</Link>
-                        <Link href="/register" className="text-sm bg-green-600 text-white px-3 py-1 rounded">
+                        <Link href="/auth/login" className="text-sm text-gray-600">Iniciar sesion</Link>
+                        <Link href="/auth/register" className="text-sm bg-green-600 text-white px-3 py-1 rounded">
                             Registrarse
                         </Link>
                     </div>

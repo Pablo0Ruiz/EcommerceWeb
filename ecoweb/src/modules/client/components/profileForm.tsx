@@ -1,20 +1,24 @@
 'use client'
 
-
 import { useForm } from "react-hook-form";
-import { useRegister } from "../hook/useRegister";
 import InputField from '@/shared/components/inputField'
-import { RegisterData } from "../typesAuth";
+import { useProfile } from '../hook/useProfile'
+import { RegisterData } from "@/modules/auth/typesAuth";
 
-const RegisterForm = () => {
+export const ProfileForm = () => {
     const { register, handleSubmit, reset, formState: { errors } } = useForm<RegisterData>();
-    const { onSubmit } = useRegister(reset);
-
+    const { onSubmit } = useProfile(reset)
     return (
         <div className="max-w-md mx-auto mt-10">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                <h2 className="text-2xl font-semibold">Registro</h2>
+                <h2 className="text-2xl font-semibold text-black">Mi cuenta</h2>
 
+                <div className="flex items-center justify-center">
+                    <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center text-black">
+                        <span className="text-3xl">👤</span>
+                    </div>
+                </div>
+                <div className="text-black">
                 <InputField
                     id="name"
                     label="Nombre"
@@ -22,8 +26,11 @@ const RegisterForm = () => {
                     type="text"
                     error={errors.name}
                     requiredMsg="El nombre es obligatorio"
+                    
                 />
+                </div>
 
+                <div className="text-black">
                 <InputField
                     id="surnames"
                     label="apellido"
@@ -32,7 +39,9 @@ const RegisterForm = () => {
                     error={errors.surnames}
                     requiredMsg="El apellido es obligatorio"
                 />
+                </div>
 
+                <div className="text-black">
                 <InputField
                     id="email"
                     label="Correo electronico"
@@ -47,23 +56,9 @@ const RegisterForm = () => {
                         },
                     }}
                 />
-
-                <InputField
-                    id="password"
-                    label="Contraseña"
-                    register={register}
-                    type="password"
-                    error={errors.password}
-                    requiredMsg="La contraseña es obligatoria"
-                    validationRules={{
-                        pattern: {
-                            value: /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/,
-                            message:
-                                "Debe tener al menos 1 mayúscula, 1 número, 1 carácter especial y mínimo 8 caracteres",
-                        },
-                    }}
-                />
-
+                </div>
+                
+                <div className="text-black">
                 <InputField
                     id="phoneNumber"
                     label="Teléfono"
@@ -78,14 +73,12 @@ const RegisterForm = () => {
                         },
                     }}
                 />
+                </div>
 
-                <button type="submit" className="w-full py-2 px-4 bg-blue-600 text-white rounded hover:bg-blue-700">
-                    Registrate
+                <button type="submit" className="w-full py-3 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold">
+                    Guardar cambios
                 </button>
             </form>
         </div >
     )
 }
-
-
-export default RegisterForm 

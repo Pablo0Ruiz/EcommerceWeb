@@ -16,7 +16,7 @@ export const useLogin = (reset: () => void) => {
 
             setCookie(response.token)
 
-            router.push('/nombre de la pagina')
+            router.push('/offers')
             reset()
         } catch (error) {
             console.error(error instanceof Error ? error.message : 'Login fallido');
