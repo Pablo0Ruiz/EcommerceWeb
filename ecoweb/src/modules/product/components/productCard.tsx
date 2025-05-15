@@ -1,3 +1,4 @@
+
 import { Props } from "../typesProduct";
 import Image from "next/image";
 

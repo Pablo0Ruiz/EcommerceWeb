@@ -13,6 +13,7 @@ const products: Product[] = [
         descripcion: "Campaña especial de hosting para tus proyectos web. Incluye despliegues ilimitados, certificado SSL gratuito y CDN global.",
         precio: 92,
         tipoEntrega: "domicilio",
+        descuento:0,
         stock: 2,
     },
     {
@@ -22,6 +23,7 @@ const products: Product[] = [
         descripcion: "Licencia original de Windows para tu computadora. Compatible con todas las versiones recientes.",
         precio: 44,
         tipoEntrega: "tienda",
+        descuento:0,
         stock: 4,
     },
 ];

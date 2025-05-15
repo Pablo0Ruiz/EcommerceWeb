@@ -5,6 +5,7 @@ export interface Product {
     nombre: string,
     descripcion: string,
     precio: number,
+    tipoEntrega: string,
     descuento: number
     stock: number,
 

@@ -1,5 +1,4 @@
-'use client'
-
+"use client"
 import ProductCards from "@/modules/product/components/productCard";
 import { Product } from "@/modules/product/typesProduct"
 import { useCart } from "@/modules/cart/hook/cartUse";
@@ -13,6 +12,7 @@ const mockProduct: Product = {
     descripcion: 'juego de mate',
     precio: 20,
     tipoEntrega: 'envio',
+    descuento:0.50,
     stock: 10,
 }
 
