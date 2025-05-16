@@ -62,7 +62,10 @@ export default function Market() {
             <h2 className="text-xl font-bold text-gray-900">
               Los termos más comprados
             </h2>
-            <Link href="/termos" className="text-[#232F3E] hover:text-[#FFD712] text-sm">
+            <Link
+              href="/termos"
+              className="text-[#232F3E] hover:text-[#FFD712] text-sm"
+            >
               Ver todos
             </Link>
           </div>
@@ -84,13 +87,23 @@ export default function Market() {
                 <h3 className="font-semibold text-gray-900 group-hover:text-[#131921]">
                   {product.name}
                 </h3>
-                <p className="text-gray-600 text-sm mb-1">{product.description}</p>
+                <p className="text-gray-600 text-sm mb-1">
+                  {product.description}
+                </p>
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-lg text-gray-900">
                     {product.price.toFixed(2)}€
                   </span>
-                  <span className={`text-xs px-2 py-1 rounded ${product.stock > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-700'}`}>
-                    {product.stock > 0 ? `${product.stock} en stock` : 'Agotado'}
+                  <span
+                    className={`text-xs px-2 py-1 rounded ${
+                      product.stock > 0
+                        ? "bg-green-100 text-green-800"
+                        : "bg-red-100 text-red-700"
+                    }`}
+                  >
+                    {product.stock > 0
+                      ? `${product.stock} en stock`
+                      : "Agotado"}
                   </span>
                 </div>
                 <button
@@ -145,8 +158,14 @@ export default function Market() {
                   <span className="font-bold text-lg text-gray-900">
                     {product.price.toFixed(2)}€
                   </span>
-                  <span className={`text-xs px-2 py-1 rounded ${product.stock > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-700'}`}>
-                    {product.stock > 0 ? 'En stock' : 'Agotado'}
+                  <span
+                    className={`text-xs px-2 py-1 rounded ${
+                      product.stock > 0
+                        ? "bg-green-100 text-green-800"
+                        : "bg-red-100 text-red-700"
+                    }`}
+                  >
+                    {product.stock > 0 ? "En stock" : "Agotado"}
                   </span>
                 </div>
                 <button
@@ -169,7 +188,10 @@ export default function Market() {
             <h2 className="text-xl font-bold text-gray-900">
               Las hierbas más populares
             </h2>
-            <Link href="/hierbas" className="text-[#232F3E] hover:text-[#FFD712] text-sm">
+            <Link
+              href="/hierbas"
+              className="text-[#232F3E] hover:text-[#FFD712] text-sm"
+            >
               Ver todos
             </Link>
           </div>
@@ -199,8 +221,14 @@ export default function Market() {
                     <span className="font-bold text-lg text-gray-900">
                       {product.price.toFixed(2)}€
                     </span>
-                    <span className={`text-xs px-2 py-1 rounded ${product.stock > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-700'}`}>
-                      {product.stock > 0 ? 'En stock' : 'Agotado'}
+                    <span
+                      className={`text-xs px-2 py-1 rounded ${
+                        product.stock > 0
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-700"
+                      }`}
+                    >
+                      {product.stock > 0 ? "En stock" : "Agotado"}
                     </span>
                   </div>
                   <button

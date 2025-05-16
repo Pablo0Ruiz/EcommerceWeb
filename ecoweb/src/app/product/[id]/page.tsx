@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { Header } from "@/modules/market/components/header";
 import { Footer } from "@/modules/market/components/footer";
 import { sampleProducts } from "@/shared/mockProduct/ProductList";
+import { PopUp } from "@/shared/components/popup"; // Importamos el componente PopUp
+import { Product } from "@/modules/product/typesProduct";
 
 export default function ProductDetail({
   params,
@@ -14,7 +16,10 @@ export default function ProductDetail({
   const router = useRouter();
   const actualParams = use(params);
   const product = sampleProducts.find((p) => p.id === actualParams.id);
-  
+
+  // Estados para el PopUp
+  const [showPopup, setShowPopup] = useState(false);
+
   const extendedImages = product ? [...product.images] : [];
   const [mainImage, setMainImage] = useState(extendedImages[0] || "");
 
@@ -25,6 +30,28 @@ export default function ProductDetail({
       </div>
     );
   }
+
+  // Función para manejar añadir al carrito
+  const handleAddToCart = () => {
+    setShowPopup(true);
+
+    // Guardar en localStorage
+    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+    const existingItem = cart.find((item: Product) => item.id === product.id);
+
+    if (existingItem) {
+      existingItem.quantity = (existingItem.quantity || 1) + 1;
+    } else {
+      cart.push({ ...product, quantity: 1 });
+    }
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+  };
+
+  // Función para continuar comprando
+  const handleContinueShopping = () => {
+    setShowPopup(false);
+  };
 
   const handleThumbnailClick = (img: string) => {
     setMainImage(img);
@@ -37,10 +64,10 @@ export default function ProductDetail({
 
   // Función para formatear la fecha
   const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString('es-ES', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
+    return new Date(date).toLocaleDateString("es-ES", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
     });
   };
 
@@ -50,6 +77,7 @@ export default function ProductDetail({
       <main className="flex-grow container mx-auto px-36 py-12">
         <button
           onClick={() => router.back()}
+          // se usa router.back()} por que de lo contrario habria que mantener control constante con el link 
           className="mb-8 text-blue-600 hover:underline text-2xl"
         >
           ← Volver atrás
@@ -70,10 +98,12 @@ export default function ProductDetail({
             </div>
             <div className="grid grid-cols-4 gap-2">
               {extendedImages.map((img, i) => (
-                <div 
-                  key={i} 
+                <div
+                  key={i}
                   className={`relative h-20 rounded-lg overflow-hidden cursor-pointer transition-all ${
-                    mainImage === img ? 'ring-2 ring-blue-500 scale-105' : 'hover:ring-1 hover:ring-gray-300'
+                    mainImage === img
+                      ? "ring-2 ring-blue-500 scale-105"
+                      : "hover:ring-1 hover:ring-gray-300"
                   }`}
                   onClick={() => handleThumbnailClick(img)}
                 >
@@ -100,7 +130,11 @@ export default function ProductDetail({
                   {[...Array(5)].map((_, i) => (
                     <svg
                       key={i}
-                      className={`w-6 h-6 ${i < Math.floor(averageScore) ? "text-yellow-400" : "text-gray-300"}`}
+                      className={`w-6 h-6 ${
+                        i < Math.floor(averageScore)
+                          ? "text-yellow-400"
+                          : "text-gray-300"
+                      }`}
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -108,7 +142,9 @@ export default function ProductDetail({
                     </svg>
                   ))}
                 </div>
-                <span className="text-xl text-gray-500">{totalReviews.toLocaleString()} opiniones</span>
+                <span className="text-xl text-gray-500">
+                  {totalReviews.toLocaleString()} opiniones
+                </span>
               </div>
 
               <div className="space-y-4 mb-6">
@@ -127,7 +163,10 @@ export default function ProductDetail({
                         {product.price.toFixed(2)}€
                       </span>
                       <span className="text-xl line-through text-gray-500">
-                        {(product.price * (1 + product.discount/100)).toFixed(2)}€
+                        {(product.price * (1 + product.discount / 100)).toFixed(
+                          2
+                        )}
+                        €
                       </span>
                       <span className="bg-red-100 text-red-800 text-sm px-2 py-0.5 rounded">
                         -{product.discount}%
@@ -140,12 +179,15 @@ export default function ProductDetail({
                     </span>
                   )}
                 </div>
-
                 <div className="flex items-center space-x-4">
                   <span className="text-lg">
-                    Stock: <span className="font-semibold">{product.stock}</span>
+                    Stock:{" "}
+                    <span className="font-semibold">{product.stock}</span>
                   </span>
-                  <button className="bg-[#0CAA2A] hover:bg-green-700 text-white py-2 px-6 rounded-xl text-xl font-bold transition">
+                  <button
+                    onClick={handleAddToCart}
+                    className="bg-[#0CAA2A] hover:bg-green-700 text-white py-2 px-6 rounded-xl text-xl font-bold transition"
+                  >
                     Añadir al carrito
                   </button>
                 </div>
@@ -167,11 +209,10 @@ export default function ProductDetail({
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center space-x-4">
                       <div className="w-12 h-12 rounded-full bg-purple-500 flex items-center justify-center text-white text-xl">
-                        {String.fromCharCode(65 + index)} {/* Letra A, B, C... */}
+                        {String.fromCharCode(65 + index)}{" "}
+                        {/* Letra A, B, C... */}
                       </div>
-                      <span className="text-xl">
-                        Usuario {index + 1}
-                      </span>
+                      <span className="text-xl">Usuario {index + 1}</span>
                     </div>
                     <span className="text-lg text-gray-500">
                       {formatDate(review.createdAt)}
@@ -181,7 +222,11 @@ export default function ProductDetail({
                     {[...Array(5)].map((_, i) => (
                       <svg
                         key={i}
-                        className={`w-6 h-6 mr-1 ${i < review.rating ? "text-yellow-400" : "text-gray-300"}`}
+                        className={`w-6 h-6 mr-1 ${
+                          i < review.rating
+                            ? "text-yellow-400"
+                            : "text-gray-300"
+                        }`}
                         fill="currentColor"
                         viewBox="0 0 20 20"
                       >
@@ -189,9 +234,7 @@ export default function ProductDetail({
                       </svg>
                     ))}
                   </div>
-                  <p className="text-lg">
-                    {review.comment}
-                  </p>
+                  <p className="text-lg">{review.comment}</p>
                 </div>
               ))}
             </div>
@@ -200,6 +243,22 @@ export default function ProductDetail({
       </main>
 
       <Footer />
+            <PopUp
+        isOpen={showPopup}
+        onClose={() => setShowPopup(false)}
+        title={`${product.name} añadido al carrito`}
+        message={`Precio: ${product.price.toFixed(2)}€${
+          product.discount ? ` (${product.discount}% de descuento)` : ""
+        }`}
+        primaryButtonText="Seguir comprando"
+        secondaryButtonText="Ir al carrito"
+        onPrimaryButtonClick={handleContinueShopping}
+        secondaryButtonHref="/cart"
+        primaryButtonColor="bg-[#FFD712] hover:bg-yellow-400"
+        secondaryButtonColor="bg-white border border-[#131921] hover:bg-gray-100"
+        showSuccessIcon={true}
+        animationDuration={300}
+      />
     </div>
   );
 }

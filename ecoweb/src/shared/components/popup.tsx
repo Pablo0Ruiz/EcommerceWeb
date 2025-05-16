@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Link from "next/link"; // AÃ±adido para el Link
+import Link from "next/link";
 
 interface PopUpProps {
   isOpen: boolean;
@@ -16,7 +16,7 @@ interface PopUpProps {
   secondaryButtonColor?: string;
   showSuccessIcon?: boolean;
   animationDuration?: number;
-  secondaryButtonHref?: string; // Nueva prop para el Link
+  secondaryButtonHref?: string;
 }
 
 export const PopUp: React.FC<PopUpProps> = ({
@@ -32,7 +32,7 @@ export const PopUp: React.FC<PopUpProps> = ({
   secondaryButtonColor = "bg-white border border-[#131921] hover:bg-gray-100",
   showSuccessIcon = true,
   animationDuration = 300,
-  secondaryButtonHref // Nueva prop
+  secondaryButtonHref
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isContentVisible, setIsContentVisible] = useState(false);
