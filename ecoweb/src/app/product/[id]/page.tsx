@@ -1,5 +1,5 @@
 "use client";
-import { use } from "react"; // 👈 IMPORTANTE
+import { use, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Header } from "@/modules/market/components/header";
@@ -12,8 +12,11 @@ export default function ProductDetail({
   params: Promise<{ id: string }>;
 }) {
   const router = useRouter();
-  const actualParams = use(params); // 👈 Aquí desempaquetas la promesa
+  const actualParams = use(params);
   const product = sampleProducts.find((p) => p.id === actualParams.id);
+  
+  const extendedImages = product ? [...product.images] : [];
+  const [mainImage, setMainImage] = useState(extendedImages[0] || "");
 
   if (!product) {
     return (
@@ -22,6 +25,25 @@ export default function ProductDetail({
       </div>
     );
   }
+
+  const handleThumbnailClick = (img: string) => {
+    setMainImage(img);
+  };
+
+  // Datos de reseñas
+  const reviews = product.reviews?.reviewTexts || [];
+  const totalReviews = product.reviews?.totalRatings || 0;
+  const averageScore = product.reviews?.scoring || 0;
+
+  // Función para formatear la fecha
+  const formatDate = (date: Date) => {
+    return new Date(date).toLocaleDateString('es-ES', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Header />
@@ -33,118 +55,148 @@ export default function ProductDetail({
           ← Volver atrás
         </button>
 
-        <div className="grid grid-cols-2 gap-16">
+        <div className="flex gap-8">
           {/* Columna izquierda - Imágenes */}
-          <div className="space-y-8">
-            <div className="w-full h-[630px] bg-gray-200 flex items-center justify-center relative">
+          <div className="w-2/5 space-y-4">
+            <div className="w-full h-[400px] bg-gray-200 flex items-center justify-center relative rounded-lg overflow-hidden">
               <Image
-                src={product.images[0]}
+                src={mainImage}
                 alt={product.name}
                 fill
-                className="object-cover rounded-lg"
-                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 40vw"
+                priority
               />
             </div>
-            <div className="grid grid-cols-4 gap-4">
-              {product.images.map((img, i) => (
-                <div key={i} className="relative h-32 rounded overflow-hidden">
+            <div className="grid grid-cols-4 gap-2">
+              {extendedImages.map((img, i) => (
+                <div 
+                  key={i} 
+                  className={`relative h-20 rounded-lg overflow-hidden cursor-pointer transition-all ${
+                    mainImage === img ? 'ring-2 ring-blue-500 scale-105' : 'hover:ring-1 hover:ring-gray-300'
+                  }`}
+                  onClick={() => handleThumbnailClick(img)}
+                >
                   <Image
                     src={img}
                     alt={`${product.name} thumbnail ${i + 1}`}
                     fill
                     className="object-cover"
-                    sizes="(max-width: 768px) 25vw, 10vw"
+                    sizes="(max-width: 768px) 25vw, 8vw"
                   />
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Columna derecha - Detalles */}
-          <div className="space-y-8">
-            <h1 className="text-6xl font-bold">{product.name}</h1>
+          {/* Columna derecha - Contenido */}
+          <div className="w-3/5 flex flex-col pl-8">
+            {/* Sección superior - Detalles del producto */}
+            <div className="flex-1">
+              <h1 className="text-4xl font-bold mb-4">{product.name}</h1>
 
-            <div className="flex items-center space-x-4">
-              <div className="flex">
-                {[...Array(5)].map((_, i) => (
-                  <div key={i} className="w-10 h-10 bg-yellow-400 mr-1"></div>
-                ))}
+              <div className="flex items-center space-x-4 mb-4">
+                <div className="flex">
+                  {[...Array(5)].map((_, i) => (
+                    <svg
+                      key={i}
+                      className={`w-6 h-6 ${i < Math.floor(averageScore) ? "text-yellow-400" : "text-gray-300"}`}
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
+                </div>
+                <span className="text-xl text-gray-500">{totalReviews.toLocaleString()} opiniones</span>
               </div>
-              <span className="text-2xl text-gray-500">360 opiniones</span>
-            </div>
 
-            <div className="flex items-center space-x-4">
-              <span className="text-4xl font-bold text-[#BF0019]">
-                {product.price}€
-              </span>
-              {product.discount > 0 && (
-                <span className="text-4xl line-through text-gray-500">
-                  {product.price * product.discount}€
-                </span>
-              )}
-            </div>
-
-            <div className="space-y-4">
-              <h2 className="text-3xl font-semibold">Descripción</h2>
-              <p className="text-2xl">{product.description}</p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-gray-100 p-4 rounded-lg">
-                <h3 className="text-2xl font-semibold">Stock disponible</h3>
-                <p className="text-xl">{product.stock} unidades</p>
+              <div className="space-y-4 mb-6">
+                <h2 className="text-2xl font-semibold">Descripción</h2>
+                <p className="text-xl text-gray-700">{product.description}</p>
               </div>
             </div>
 
-            <button className="w-full bg-[#0CAA2A] hover:bg-green-700 text-white py-4 px-6 rounded-xl text-4xl font-bold transition">
-              Añadir al carrito
-            </button>
-
-            <div className="mt-12">
-              <h2 className="text-4xl font-bold mb-8">Reseñas del producto</h2>
-              <div className="space-y-12">
-                {[1, 2].map((review) => (
-                  <div
-                    key={review}
-                    className="border border-gray-300 rounded-2xl p-6"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <div className="w-12 h-12 rounded-full bg-purple-500 flex items-center justify-center text-white text-xl">
-                          {review === 1 ? "T" : "P"}
-                        </div>
-                        <span className="text-3xl">
-                          {review === 1 ? "Tony" : "Paca"}
-                        </span>
-                      </div>
-                      <span className="text-xl text-gray-500">
-                        {review === 1 ? "Hace 2 semanas" : "El 24/5/2022"}
+            {/* Sección fija inferior - Precio y acción */}
+            <div className="bg-white border-t border-gray-200 pt-4 pb-6 mt-6">
+              <div className="flex justify-between items-center">
+                <div>
+                  {product.discount > 0 && (
+                    <div className="flex items-center space-x-2">
+                      <span className="text-3xl font-bold text-[#BF0019]">
+                        {product.price.toFixed(2)}€
+                      </span>
+                      <span className="text-xl line-through text-gray-500">
+                        {(product.price * (1 + product.discount/100)).toFixed(2)}€
+                      </span>
+                      <span className="bg-red-100 text-red-800 text-sm px-2 py-0.5 rounded">
+                        -{product.discount}%
                       </span>
                     </div>
-                    <div className="flex mt-4 mb-6">
-                      {[...Array(5)].map((_, i) => (
-                        <div
-                          key={i}
-                          className={`w-10 h-10 mr-2 ${
-                            i < 4
-                              ? "bg-yellow-400"
-                              : "border-2 border-yellow-400"
-                          }`}
-                        ></div>
-                      ))}
-                    </div>
-                    <p className="text-2xl">
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                      Nullam in dui mauris. Vivamus hendrerit arcu sed erat
-                      molestie vehicula. Sed auctor neque eu tellus rhoncus ut
-                      eleifend nibh porttitor.
-                    </p>
-                  </div>
-                ))}
+                  )}
+                  {product.discount <= 0 && (
+                    <span className="text-3xl font-bold text-[#BF0019]">
+                      {product.price.toFixed(2)}€
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex items-center space-x-4">
+                  <span className="text-lg">
+                    Stock: <span className="font-semibold">{product.stock}</span>
+                  </span>
+                  <button className="bg-[#0CAA2A] hover:bg-green-700 text-white py-2 px-6 rounded-xl text-xl font-bold transition">
+                    Añadir al carrito
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
+
+        {/* Reseñas */}
+        {reviews.length > 0 && (
+          <div className="mt-12 pt-6 border-t border-gray-200">
+            <h2 className="text-3xl font-bold mb-6">Reseñas del producto</h2>
+            <div className="space-y-6">
+              {reviews.map((review, index) => (
+                <div
+                  key={index}
+                  className="border border-gray-300 rounded-xl p-6"
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 rounded-full bg-purple-500 flex items-center justify-center text-white text-xl">
+                        {String.fromCharCode(65 + index)} {/* Letra A, B, C... */}
+                      </div>
+                      <span className="text-xl">
+                        Usuario {index + 1}
+                      </span>
+                    </div>
+                    <span className="text-lg text-gray-500">
+                      {formatDate(review.createdAt)}
+                    </span>
+                  </div>
+                  <div className="flex mb-4">
+                    {[...Array(5)].map((_, i) => (
+                      <svg
+                        key={i}
+                        className={`w-6 h-6 mr-1 ${i < review.rating ? "text-yellow-400" : "text-gray-300"}`}
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                    ))}
+                  </div>
+                  <p className="text-lg">
+                    {review.comment}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </main>
 
       <Footer />
