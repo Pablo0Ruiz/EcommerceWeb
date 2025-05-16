@@ -36,7 +36,7 @@
 //                 valor: String
 //             }
 //         ],
-//         images: [String],
+//         images: [String], // // Array de URLs de imágenes?? 
 //         totalReview: {
 //             type: Number
 //         },
@@ -184,3 +184,7 @@
 
 // UserScheme.plugin(mongooseDelete, { overrideMethods: 'all' });
 // module.exports = mongoose.model('user', UserScheme);
+
+//añadir a usuarios, carrito, añadir tambien historial de pedidos ( si no , cuando hagamos la llamada, como los recibimos o como los mostramos ? )
+// , reseñas no se pueden acceder ni modificar desde usuario?
+//deliveryMethod:  deberia estar en order o en product? cada product puede tener un deliveryMethod diferente

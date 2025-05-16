@@ -12,6 +12,7 @@
     "classnames": "^2.5.1",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.508.0",
+    "mongoose": "^8.14.3",
     "next": "15.3.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

@@ -29,8 +29,13 @@ export const sampleProducts: Product[] = [
     name: "Mate premium",
     description: "Mate de calabaza con virola de alpaca",
     price: 89.99,
+    discount: 0,
+    stock: 0,
     category: "Mates",
+    sold: 0,
+    attributes: [],
     images: [image.mate2],
+    totalReview: 50000,
     reviews: {
       scoring: 4.8,
       totalRatings: 50000,

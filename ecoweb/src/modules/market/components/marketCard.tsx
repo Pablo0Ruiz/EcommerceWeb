@@ -1,4 +1,4 @@
-import { PropsOffer } from "@/modules/offers/typesHome";
+import { PropsOffer } from "@/modules/market/typesHome";
 import Image from "next/image";
 import Link from "next/link";
 

@@ -13,7 +13,7 @@ const CartList = () => {
     return (
         <div className="bg-white border rounded-lg shadow-md p-6">
             <CheckoutSteps currentStep={1} />
-            <h2 className="text-2xl font-bold text-green-700 mb-4">Carrito</h2>
+            <h2 className="text-2xl font-bold text-green-700 mb-4">Resumen de compra</h2>
 
             <ul className="divide-y divide-gray-200 mb-4">
                 {productos.map(producto => (
