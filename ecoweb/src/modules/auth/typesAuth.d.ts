@@ -19,15 +19,20 @@ export type Client = {
     token: string
 }
 
+// Actualiza tu tipo ResponseLogin
 export type ResponseLogin = {
-    success: boolean,
-    token: string
+    success: boolean;
+    token: string;
     user: {
-        id: string
-        name?: string
-        email: string
-        role: string
-    }
+        _id: string;  // Cambiado de 'id' a '_id'
+        name: string;
+        surnames: string;
+        email: string;
+        phoneNumber: string;
+        role: string;
+        address: Address[];
+        urlToAvatar?: string;
+    };
 }
 export interface ResponseRegister {
     success: boolean,
@@ -51,3 +56,23 @@ export interface ResponseRegister {
     //dependiendo de la respuesta de la api se cambia el string por client
 }
 
+export interface User {
+  _id: string;
+  name: string;
+  surnames: string;
+  email: string;
+  phoneNumber: string;
+  address: Address[];
+  urlToAvatar?: string;
+}
+
+export interface Address {
+  nombre: string;  // Mantener para coincidir con el backend
+  street: string;
+  number: string;
+  postal: string;
+  city: string;
+  province: string;
+  isDefault?: boolean; 
+  // Eliminar phoneNumber e isDefault o moverlos a donde corresponda
+}

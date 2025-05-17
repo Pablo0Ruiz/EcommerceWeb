@@ -186,6 +186,7 @@
 // module.exports = mongoose.model('user', UserScheme);
 
 //añadir a usuarios, carrito, añadir tambien historial de pedidos ( si no , cuando hagamos la llamada, como los recibimos o como los mostramos ? )
-// , reseñas no se pueden acceder ni modificar desde usuario?
+// , reseñas no se pueden acceder ni modificar desde usuario?, user tiene que tener un adress isDefault
 //deliveryMethod:  deberia estar en order o en product? cada product puede tener un deliveryMethod diferente
 //reviewtext, añadir campo username para mostrarlo como en el figma
+//Tambien hace falta en el figma pantalla para añadir direcciones

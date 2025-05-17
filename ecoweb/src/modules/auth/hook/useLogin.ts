@@ -1,26 +1,33 @@
 import { useRouter } from "next/navigation";
-import { setCookie } from "@/shared/utils/cookies";
+import { setUserCookie,setCookie } from "@/shared/utils/cookies";
+import { mockUser } from "@/shared/utils/mockUser";
 import { LoginData, ResponseLogin } from "../typesAuth";
-import {loginClient} from '@/modules/auth/services/login'
 
 export const useLogin = (reset: () => void) => {
     const router = useRouter();
 
     const onSubmit = async (data: LoginData) => {
+        console.log(data)
         try {
-            const response: ResponseLogin = await loginClient(data)
+            // Mock response - siempre éxito
+            const response: ResponseLogin = {
+                success: true,
+                user: mockUser,
+                token: 'mock-token'
+            };
 
-            if (!response.success) {
-                throw new Error("Error al iniciar sesion")
-            }
+            // Guarda el usuario en cookies
+            setUserCookie(mockUser);
+            
+            // Opcional: guarda también el token si lo necesitas
+            setCookie(response.token);
 
-            setCookie(response.token)
-
-            router.push('/market')
-            reset()
+            router.push('/market');
+            reset();
         } catch (error) {
-            console.error(error instanceof Error ? error.message : 'Login fallido');
+            console.error('Error inesperado:', error);
         }
     };
-    return {onSubmit};
-}
+    
+    return { onSubmit };
+};

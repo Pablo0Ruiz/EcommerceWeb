@@ -12,21 +12,24 @@ export default function Market() {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
-  const handleAddToCart = (product: Product) => {
-    setSelectedProduct(product);
-    setShowPopup(true);
+const handleAddToCart = (product: Product) => {
+  setSelectedProduct(product);
+  setShowPopup(true);
 
-    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-    const existingItem = cart.find((item: Product) => item.id === product.id);
+  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+  const existingItem = cart.find((item: Product) => item.id === product.id);
 
-    if (existingItem) {
-      existingItem.quantity = (existingItem.quantity || 1) + 1;
-    } else {
-      cart.push({ ...product, quantity: 1 });
-    }
+  if (existingItem) {
+    existingItem.quantity = (existingItem.quantity || 1) + 1;
+  } else {
+    cart.push({ ...product, quantity: 1 });
+  }
 
-    localStorage.setItem("cart", JSON.stringify(cart));
-  };
+  localStorage.setItem("cart", JSON.stringify(cart));
+  
+  // Disparar evento personalizado para notificar a otros componentes
+  window.dispatchEvent(new CustomEvent("cartUpdated"));
+};
 
   const handleContinueShopping = () => {
     setShowPopup(false);

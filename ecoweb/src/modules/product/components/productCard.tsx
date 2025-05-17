@@ -1,7 +1,8 @@
 import Image from "next/image";
 import { ProductCardProps } from "../productProps";
 import { useCartStore } from "@/modules/cart/hook/cart";
-import { CartItem } from "@/modules/cart/typesCart"; // Asegúrate de exportar CartItem desde tu store
+import { CartItem } from "@/modules/cart/typesCart";
+
 
 const ProductCards: React.FC<ProductCardProps> = ({
   producto,
@@ -10,8 +11,6 @@ const ProductCards: React.FC<ProductCardProps> = ({
   disminuirItem,
 }) => {
   const { shippingOptions, setProductShipping } = useCartStore();
-
-  // Asegúrate de que producto es tratado como CartItem
   const cartItem = producto as CartItem;
 
   const currentShipping = shippingOptions.find(
@@ -21,10 +20,10 @@ const ProductCards: React.FC<ProductCardProps> = ({
   const precioOriginal =
     producto.discount > 0
       ? (producto.price / (1 - producto.discount / 100)).toFixed(2)
-      : producto.price;
+      : producto.price.toFixed(2);
 
   return (
-    <div className="flex flex-col sm:flex-row gap-4 p-4 border-b border-gray-200 last:border-b-0 bg-white rounded-lg shadow-sm">
+    <div className="relative flex flex-col sm:flex-row gap-4 p-4 border-b border-gray-200 last:border-b-0 bg-white rounded-lg shadow-sm">
       {/* Imagen del producto */}
       <div className="w-full sm:w-24 h-24 relative">
         <Image
@@ -117,10 +116,8 @@ const ProductCards: React.FC<ProductCardProps> = ({
       <div className="flex flex-col sm:flex-row items-center gap-2 self-center sm:self-start">
         <div className="flex items-center border border-gray-300 rounded-lg">
           <button
-            onClick={() =>
-              disminuirItem(producto.id || (producto._id as string))
-            }
-            className="px-3 py-1 text-gray-600 hover:bg-gray-100"
+            onClick={() => disminuirItem(producto.id || (producto._id as string))}
+            className="px-3 py-1 text-gray-600 hover:bg-gray-100 disabled:opacity-50"
             disabled={!producto.quantity || producto.quantity <= 0}
           >
             -
@@ -130,19 +127,27 @@ const ProductCards: React.FC<ProductCardProps> = ({
           </span>
           <button
             onClick={() => add(producto)}
-            className="px-3 py-1 text-gray-600 hover:bg-gray-100"
-            disabled={producto.stock <= 0}
+            className="px-3 py-1 text-gray-600 hover:bg-gray-100 disabled:opacity-50"
+            disabled={producto.quantity >= producto.stock} // Deshabilitar si alcanzó el stock máximo
           >
             +
           </button>
         </div>
-        <button
-          onClick={() => remove(producto.id || (producto._id as string))}
-          className="text-red-600 hover:text-red-800 text-sm"
-        >
-          Eliminar
-        </button>
       </div>
+
+      {/* Botón Eliminar - Posicionado abajo a la derecha */}
+      <button
+        onClick={() => remove(producto.id || (producto._id as string))}
+        className="absolute bottom-4 right-4 text-red-600 hover:text-red-800 text-sm"
+      >
+        <Image
+        src="/trash.png"
+        alt=""
+        width={20}
+        height={20}
+        className="hover:opacity-80"
+        />
+      </button>
     </div>
   );
 };
