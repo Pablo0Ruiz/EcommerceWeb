@@ -4,8 +4,8 @@ import { Header } from "@/modules/market/components/header";
 import Image from "next/image";
 import { Footer } from "@/modules/market/components/footer";
 import { PopUp } from "@/shared/components/popup";
-import { Product } from "@/shared/mockProduct/product";
-import { sampleProducts } from "@/shared/mockProduct/ProductList";
+import { Product } from "@/modules/product/typesProduct";
+import { sampleProducts } from "@/modules/product/mockProduct/ProductList";
 import Link from "next/link";
 
 export default function Market() {
@@ -111,9 +111,14 @@ export default function Market() {
                     e.preventDefault();
                     handleAddToCart(product);
                   }}
-                  className="mt-2 w-full bg-[#FFD712] hover:bg-yellow-400 text-[#131921] py-1 rounded text-sm font-medium transition"
+                  className={`mt-2 w-full py-1 rounded text-sm font-medium transition ${
+                    product.stock > 0
+                      ? "bg-[#FFD712] hover:bg-yellow-400 text-[#131921]"
+                      : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  }`}
+                  disabled={product.stock <= 0}
                 >
-                  Añadir al carrito
+                  {product.stock > 0 ? "Añadir al carrito" : "Sin stock"}
                 </button>
               </Link>
             ))}
@@ -173,9 +178,14 @@ export default function Market() {
                     e.preventDefault();
                     handleAddToCart(product);
                   }}
-                  className="mt-2 w-full bg-[#FFD712] hover:bg-yellow-400 text-[#131921] py-1 rounded text-sm font-medium transition"
+                  className={`mt-2 w-full py-1 rounded text-sm font-medium transition ${
+                    product.stock > 0
+                      ? "bg-[#FFD712] hover:bg-yellow-400 text-[#131921]"
+                      : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  }`}
+                  disabled={product.stock <= 0}
                 >
-                  Añadir al carrito
+                  {product.stock > 0 ? "Añadir al carrito" : "Sin stock"}
                 </button>
               </Link>
             ))}
@@ -236,9 +246,14 @@ export default function Market() {
                       e.preventDefault();
                       handleAddToCart(product);
                     }}
-                    className="mt-2 w-full bg-[#FFD712] hover:bg-yellow-400 text-[#131921] py-1 rounded text-sm font-medium transition"
+                    className={`mt-2 w-full py-1 rounded text-sm font-medium transition ${
+                      product.stock > 0
+                        ? "bg-[#FFD712] hover:bg-yellow-400 text-[#131921]"
+                        : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    }`}
+                    disabled={product.stock <= 0}
                   >
-                    Añadir al carrito
+                    {product.stock > 0 ? "Añadir al carrito" : "Sin stock"}
                   </button>
                 </Link>
               ))

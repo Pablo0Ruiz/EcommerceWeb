@@ -1,5 +1,5 @@
 // shared/mockProduct/ProductList.ts
-import { Product } from "@/shared/mockProduct/product";
+import { Product } from "../typesProduct";
 import { image } from "@/shared/components/imag";
 
 export const sampleProducts: Product[] = [
@@ -51,7 +51,7 @@ export const sampleProducts: Product[] = [
     description: "Mate de calabaza con virola de alpaca",
     price: 89.99,
     discount: 0,
-    stock: 0,
+    stock: 1,
     category: "Mates",
     sold: 0,
     attributes: [],

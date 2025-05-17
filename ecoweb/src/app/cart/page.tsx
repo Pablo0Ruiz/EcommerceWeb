@@ -1,27 +1,28 @@
 "use client"
+import { useEffect } from "react";
 import ProductCards from "@/modules/product/components/productCard";
-import { Product } from "@/modules/product/typesProduct"
-import { useCart } from "@/modules/cart/hook/cartUse";
+import { useCartStore } from "@/modules/cart/hook/cart";
 import CartList from "@/modules/cart/components/viewCart";
 import HeaderWizardSteps from "@/modules/cart/components/headerWizard";
 
-const mockProduct: Product = {
-    id: crypto.randomUUID(),
-    imagenUrl: '/mateKit.webp',
-    nombre: 'mate',
-    descripcion: 'juego de mate',
-    precio: 20,
-    tipoEntrega: 'envio',
-    descuento:0.50,
-    stock: 10,
-}
+const CartPage = () => {
+    const { cart, loadCart, addToCart, removeFromCart, decreaseQuantity } = useCartStore();
 
+    // Cargar productos al montar el componente
+    useEffect(() => {
+        loadCart();
+        
+        // Escuchar cambios en el localStorage
+        const handleStorageChange = () => {
+            loadCart();
+        };
 
-
-const ProductPage = () => {
-    const add = useCart((state) => state.add);
-    const eliminar = useCart((state) => state.remove);
-    const restar = useCart((state) => state.disminuirItem);
+        window.addEventListener('storage', handleStorageChange);
+        
+        return () => {
+            window.removeEventListener('storage', handleStorageChange);
+        };
+    }, [loadCart]);
 
     return (
         <main className="min-h-screen w-full bg-gray-50">
@@ -30,19 +31,32 @@ const ProductPage = () => {
 
                 <h1 className="text-3xl font-bold mb-6 text-green-700">Detalles del producto</h1>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <ProductCards
-                        producto={mockProduct}
-                        add={add}
-                        remove={eliminar}
-                        disminuirItem={restar}
-                    />
+                <div className="flex flex-col md:flex-row gap-6">
+                    <div className="w-full md:w-2/3 space-y-4">
+                        {cart.length > 0 ? (
+                            cart.map((product) => (
+                                <ProductCards
+                                    key={product.id}
+                                    producto={product}
+                                    add={addToCart}
+                                    remove={removeFromCart}
+                                    disminuirItem={decreaseQuantity}
+                                />
+                            ))
+                        ) : (
+                            <p className="text-gray-500 p-4 bg-white rounded-lg">
+                                No hay productos en el carrito
+                            </p>
+                        )}
+                    </div>
 
-                    <CartList />
+                    <div className="w-full md:w-1/3">
+                        <CartList />
+                    </div>
                 </div>
             </div>
         </main>
     )
 }
 
-export default ProductPage
+export default CartPage;

@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Header } from "@/modules/market/components/header";
 import { Footer } from "@/modules/market/components/footer";
-import { sampleProducts } from "@/shared/mockProduct/ProductList";
+import { sampleProducts } from "@/modules/product/mockProduct/ProductList";
 import { PopUp } from "@/shared/components/popup"; // Importamos el componente PopUp
 import { Product } from "@/modules/product/typesProduct";
 
@@ -31,22 +31,31 @@ export default function ProductDetail({
     );
   }
 
-  // Función para manejar añadir al carrito
-  const handleAddToCart = () => {
-    setShowPopup(true);
+const handleAddToCart = () => {
+  // Verificar stock antes de añadir
+  if (product.stock <= 0) return;
 
-    // Guardar en localStorage
-    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-    const existingItem = cart.find((item: Product) => item.id === product.id);
+  setShowPopup(true);
 
-    if (existingItem) {
-      existingItem.quantity = (existingItem.quantity || 1) + 1;
+  // Guardar en localStorage
+  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+  const existingItem = cart.find((item: Product) => item.id === product.id);
+
+  if (existingItem) {
+    // Verificar que no supere el stock disponible
+    if (existingItem.quantity < product.stock) {
+      existingItem.quantity += 1;
     } else {
-      cart.push({ ...product, quantity: 1 });
+      // Opcional: Mostrar mensaje de stock máximo alcanzado
+      alert("Has alcanzado el stock disponible para este producto");
+      return;
     }
+  } else {
+    cart.push({ ...product, quantity: 1 });
+  }
 
-    localStorage.setItem("cart", JSON.stringify(cart));
-  };
+  localStorage.setItem("cart", JSON.stringify(cart));
+};
 
   // Función para continuar comprando
   const handleContinueShopping = () => {
@@ -77,7 +86,7 @@ export default function ProductDetail({
       <main className="flex-grow container mx-auto px-36 py-12">
         <button
           onClick={() => router.back()}
-          // se usa router.back()} por que de lo contrario habria que mantener control constante con el link 
+          // se usa router.back()} por que de lo contrario habria que mantener control constante con el link
           className="mb-8 text-blue-600 hover:underline text-2xl"
         >
           ← Volver atrás
@@ -186,9 +195,14 @@ export default function ProductDetail({
                   </span>
                   <button
                     onClick={handleAddToCart}
-                    className="bg-[#0CAA2A] hover:bg-green-700 text-white py-2 px-6 rounded-xl text-xl font-bold transition"
+                    disabled={product.stock <= 0}
+                    className={`py-2 px-6 rounded-xl text-xl font-bold transition ${
+                      product.stock > 0
+                        ? "bg-[#0CAA2A] hover:bg-green-700 text-white"
+                        : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    }`}
                   >
-                    Añadir al carrito
+                    {product.stock > 0 ? "Añadir al carrito" : "Sin stock"}
                   </button>
                 </div>
               </div>
@@ -243,7 +257,7 @@ export default function ProductDetail({
       </main>
 
       <Footer />
-            <PopUp
+      <PopUp
         isOpen={showPopup}
         onClose={() => setShowPopup(false)}
         title={`${product.name} añadido al carrito`}

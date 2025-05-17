@@ -9,15 +9,15 @@ const OfferCard: React.FC<PropsOffer> = ({ producto, add, remove, disminuirItem 
             <Link href={`/${producto.id}`}>
                 <div className="cursor-pointer">
                     <Image
-                        src={producto.imagenUrl}
-                        alt={producto.nombre}
+                        src={producto.images[0]}
+                        alt={producto.name}
                         width={300}
                         height={200}
                     />
                 </div>
-                <h2 className="text-xl font-semibold">{producto.nombre}</h2>
-                <p className="text-gray-700">{producto.descripcion}</p>
-                <p className="text-gray-700">{producto.precio}</p>
+                <h2 className="text-xl font-semibold">{producto.name}</h2>
+                <p className="text-gray-700">{producto.description}</p>
+                <p className="text-gray-700">{producto.price}</p>
             </Link>
             {add && remove && disminuirItem && (
                 <div className="flex gap-2 mt-4 flex-wrap">

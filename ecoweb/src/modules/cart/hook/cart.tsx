@@ -1,28 +1,25 @@
 // store/cartStore.ts
 import { create } from "zustand";
-import { Product } from "@/shared/mockProduct/product";
+import { Product } from "@/modules/product/typesProduct";
+import { ShippingMethod } from "@/modules/envios/typesEnvio";
+import { ShippingOption } from "@/modules/envios/typesEnvio";
+import { CartItem } from "../typesCart";
 
-interface CartItem extends Product {
-  quantity: number;
-}
 
 interface CartStore {
   cart: CartItem[];
+  shippingMethod: ShippingMethod;
+  shippingOptions: ShippingOption[];
+  setShippingMethod: (method: ShippingMethod) => void;
+  setProductShipping: (productId: string, method: ShippingMethod) => void;
+  calculateProductTotal: (productId: string) => number;
+  calculateTotal: () => number;
   addToCart: (product: Product) => void;
-  removeFromCart: (productId: string) => void; // Changed to string
-  decreaseQuantity: (productId: string) => void; // Changed to string
+  removeFromCart: (productId: string) => void;
+  decreaseQuantity: (productId: string) => void;
   clearCart: () => void;
+  loadCart: () => void;
 }
-const getCartFromStorage = (): CartItem[] => {
-  if (typeof window !== "undefined") {
-    try {
-      return JSON.parse(localStorage.getItem("cart") || "[]");
-    } catch {
-      return [];
-    }
-  }
-  return [];
-};
 
 const saveCartToStorage = (cart: CartItem[]) => {
   if (typeof window !== "undefined") {
@@ -31,7 +28,44 @@ const saveCartToStorage = (cart: CartItem[]) => {
 };
 
 export const useCartStore = create<CartStore>((set, get) => ({
-  cart: getCartFromStorage(),
+  cart: [],
+  shippingMethod: "standard",
+  shippingOptions: [
+    {
+      method: "standard",
+      label: "Estándar: Entrega en 7 días",
+      price: 0,
+      deliveryTime: "7 días",
+    },
+    {
+      method: "urgent",
+      label: "Urgente: Entrega de 2 a 4 días",
+      price: 4,
+      deliveryTime: "2-4 días",
+    },
+    {
+      method: "express",
+      label: "Express: Entrega mañana",
+      price: 6,
+      deliveryTime: "24 horas",
+    },
+  ],
+
+  setProductShipping: (productId, method) => {
+    set((state) => ({
+      cart: state.cart.map((item) =>
+        item.id === productId ? { ...item, selectedShipping: method } : item
+      ),
+    }));
+  },
+  loadCart: () => {
+    if (typeof window !== "undefined") {
+      const savedCart = localStorage.getItem("cart");
+      if (savedCart) {
+        set({ cart: JSON.parse(savedCart) });
+      }
+    }
+  },
 
   addToCart: (product) => {
     const { cart } = get();
@@ -44,7 +78,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
         )
       : [...cart, { ...product, quantity: 1 }];
 
-    saveCartToStorage(updatedCart);
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
     set({ cart: updatedCart });
   },
 
@@ -70,5 +104,27 @@ export const useCartStore = create<CartStore>((set, get) => ({
   clearCart: () => {
     saveCartToStorage([]);
     set({ cart: [] });
+  },
+  setShippingMethod: (method) => {
+    set({ shippingMethod: method });
+  },
+  calculateProductTotal: (productId) => {
+    const { cart, shippingOptions } = get();
+    const product = cart.find((item) => item.id === productId);
+    if (!product) return 0;
+
+    const shippingPrice = product.selectedShipping
+      ? shippingOptions.find((o) => o.method === product.selectedShipping)
+          ?.price || 0
+      : 0;
+
+    return product.price * product.quantity + shippingPrice;
+  },
+
+  calculateTotal: () => {
+    const { cart } = get();
+    return cart.reduce((total, item) => {
+      return total + get().calculateProductTotal(item.id);
+    }, 0);
   },
 }));
