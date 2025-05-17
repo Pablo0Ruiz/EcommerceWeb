@@ -16,7 +16,7 @@ export interface ProductReviews {
   totalRatings: number;
   reviewTexts: ProductReview[];
 }
-
+//que coño pasa
 export interface Product {
   id: string; // Para el frontend
   _id?: mongoose.Types.ObjectId | string; // Más preciso para MongoDB
