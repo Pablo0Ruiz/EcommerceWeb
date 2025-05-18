@@ -14,8 +14,8 @@ const HeaderWizardSteps = ({ currentStep }: { currentStep: number }) => {
         <div className="bg-green-600 py-4 px-2 md:px-6 text-white">
             <div className="flex justify-between items-center max-w-5xl mx-auto">
                 {steps.map((step, index) => {
-                    const isActive = currentStep === index + 1;
-                    const isCompleted = currentStep > index + 1;
+                    const isActive = currentStep === index + 0;
+                    const isCompleted = currentStep > index + 0;
 
                     return (
                         <div key={index} className="flex-1 flex flex-col items-center text-center relative">
