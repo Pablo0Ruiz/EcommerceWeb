@@ -1,13 +1,15 @@
+// modules/market/components/header.tsx
 "use client";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { SearchBar } from "@/modules/search/components/searchBar";
 import { CartCounter } from "./cartCounter";
 import { useCartStore } from "@/modules/cart/hook/cart";
+import { CATEGORIES } from "@/shared/components/categories";
 
 export const Header = () => {
-  // Cargar el carrito al montar el componente
   const { loadCart } = useCartStore();
+  const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
 
   useEffect(() => {
     loadCart();
@@ -22,22 +24,61 @@ export const Header = () => {
           </div>
         </Link>
 
-        <button className="hidden md:flex items-center px-3 py-1 border border-transparent hover:border-white rounded">
-          <svg
-            className="w-5 h-5 mr-1"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+        {/* Botón de categorías */}
+        <div className="relative">
+          <button
+            onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
+            className="hidden md:flex items-center px-3 py-1 border border-transparent hover:border-white rounded"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 6h16M4 12h16M4 18h16"
-            />
-          </svg>
-          <span className="text-sm font-medium">Categorías</span>
-        </button>
+            <svg
+              className="w-5 h-5 mr-1"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+            <span className="text-sm font-medium">Categorías</span>
+          </button>
+
+          {isCategoriesOpen && (
+            <div 
+              className="fixed inset-0 z-40"
+              onClick={() => setIsCategoriesOpen(false)}
+            >
+              <div 
+                className="absolute left-0 top-0 h-full w-64 bg-white shadow-lg z-50"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="p-4 border-b border-gray-200">
+                  <h3 className="text-lg font-semibold text-gray-900">Categorías</h3>
+                </div>
+                <ul className="divide-y divide-gray-200">
+                  {CATEGORIES.map((category) => (
+                    <li key={category.key}>
+                      <Link
+                        href={{
+                          pathname: "/market",
+                          query: { category: category.value }
+                        }}
+                        className="flex items-center px-4 py-3 hover:bg-gray-50"
+                        onClick={() => setIsCategoriesOpen(false)}
+                      >
+                        <span className="mr-3 text-xl">{category.icon}</span>
+                        <span className="text-gray-800">{category.name}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          )}
+        </div>
 
         <div className="flex-grow mx-4 max-w-3xl">
           <SearchBar />
@@ -72,7 +113,7 @@ export const Header = () => {
                 d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
               />
             </svg>
-            <CartCounter /> {/* Reemplaza el número fijo por el componente */}
+            <CartCounter />
           </div>
           <span className="hidden lg:inline ml-1 font-bold">Carrito</span>
         </Link>

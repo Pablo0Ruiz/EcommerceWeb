@@ -1,5 +1,6 @@
+// modules/market/components/market.tsx
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "@/modules/market/components/header";
 import Image from "next/image";
 import { Footer } from "@/modules/market/components/footer";
@@ -7,10 +8,20 @@ import { PopUp } from "@/shared/components/popup";
 import { Product } from "@/modules/product/typesProduct";
 import { sampleProducts } from "@/modules/product/mockProduct/ProductList";
 import Link from "next/link";
+import { CATEGORIES } from "@/shared/components/categories";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function Market() {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+
+  useEffect(() => {
+    const category = searchParams.get('category');
+    setSelectedCategory(category);
+  }, [searchParams]);
 
   const handleAddToCart = (product: Product) => {
     setSelectedProduct(product);
@@ -32,9 +43,21 @@ export default function Market() {
     setShowPopup(false);
   };
 
-  const termos = sampleProducts.filter((p) => p.category === "Termos");
-  const mates = sampleProducts.filter((p) => p.category === "Mates");
-  const hierbas = sampleProducts.filter((p) => p.category === "Hierbas");
+  const clearFilter = () => {
+    setSelectedCategory(null);
+    router.push('/market');
+  };
+
+  // Filtrar productos
+  const filteredProducts = selectedCategory
+    ? sampleProducts.filter((p) => p.category === selectedCategory)
+    : sampleProducts;
+
+  // Agrupar productos por categoría
+  const productsByCategory = CATEGORIES.map(category => ({
+    ...category,
+    products: filteredProducts.filter(p => p.category === category.value)
+  }));
 
   return (
     <div className="bg-gray-100 min-h-screen">
@@ -56,214 +79,89 @@ export default function Market() {
           </div>
         </div>
 
-        {/* Sección de termos */}
-        <section className="mb-8 bg-white p-4 rounded shadow">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900">
-              Los termos más comprados
-            </h2>
-            <Link
-              href="/termos"
-              className="text-[#232F3E] hover:text-[#FFD712] text-sm"
+        {/* Filtro activo */}
+        {selectedCategory && (
+          <div className="mb-4 flex justify-between items-center bg-white p-3 rounded shadow">
+            <span className="text-gray-700">
+              Mostrando: <strong>{CATEGORIES.find(c => c.value === selectedCategory)?.name}</strong>
+            </span>
+            <button
+              onClick={clearFilter}
+              className="text-[#131921] hover:text-[#FFD712] text-sm font-medium"
             >
-              Ver todos
-            </Link>
+              Mostrar todos los productos
+            </button>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {termos.map((product) => (
-              <Link
-                href={`/product/${product.id}`}
-                key={product.id}
-                className="group border border-gray-200 hover:border-[#FFD712] rounded p-3 transition cursor-pointer"
-              >
-                <div className="relative h-48 w-full mb-3">
-                  <Image
-                    src={product.images[0]}
-                    alt={product.name}
-                    fill
-                    className="object-contain"
-                  />
-                </div>
-                <h3 className="font-semibold text-gray-900 group-hover:text-[#131921]">
-                  {product.name}
-                </h3>
-                <p className="text-gray-600 text-sm mb-1">
-                  {product.description}
-                </p>
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-lg text-gray-900">
-                    {product.price.toFixed(2)}€
-                  </span>
-                  <span
-                    className={`text-xs px-2 py-1 rounded ${
-                      product.stock > 0
-                        ? "bg-green-100 text-green-800"
-                        : "bg-red-100 text-red-700"
-                    }`}
-                  >
-                    {product.stock > 0
-                      ? `${product.stock} en stock`
-                      : "Agotado"}
-                  </span>
-                </div>
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleAddToCart(product);
-                  }}
-                  className={`mt-2 w-full py-1 rounded text-sm font-medium transition ${
-                    product.stock > 0
-                      ? "bg-[#FFD712] hover:bg-yellow-400 text-[#131921]"
-                      : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  }`}
-                  disabled={product.stock <= 0}
-                >
-                  {product.stock > 0 ? "Añadir al carrito" : "Sin stock"}
-                </button>
-              </Link>
-            ))}
-          </div>
-        </section>
+        )}
 
-        {/* Sección de mates */}
-        <section className="mb-8 bg-white p-4 rounded shadow">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900">
-              Los mejores mates del momento
-            </h2>
-            <Link
-              href="/mates"
-              className="text-[#232F3E] hover:text-[#FFD712] text-sm"
-            >
-              Ver todos
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {mates.map((product) => (
-              <Link
-                href={`/product/${product.id}`}
-                key={product.id}
-                className="group border border-gray-200 hover:border-[#FFD712] rounded p-3 transition cursor-pointer"
-              >
-                <div className="relative h-48 w-full mb-3">
-                  <Image
-                    src={product.images[0]}
-                    alt={product.name}
-                    fill
-                    className="object-contain"
-                  />
-                </div>
-                <h3 className="font-semibold text-gray-900 group-hover:text-[#131921]">
-                  {product.name}
-                </h3>
-                <p className="text-gray-600 text-sm mb-1">
-                  {product.description}
-                </p>
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-lg text-gray-900">
-                    {product.price.toFixed(2)}€
-                  </span>
-                  <span
-                    className={`text-xs px-2 py-1 rounded ${
-                      product.stock > 0
-                        ? "bg-green-100 text-green-800"
-                        : "bg-red-100 text-red-700"
-                    }`}
-                  >
-                    {product.stock > 0 ? "En stock" : "Agotado"}
-                  </span>
-                </div>
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleAddToCart(product);
-                  }}
-                  className={`mt-2 w-full py-1 rounded text-sm font-medium transition ${
-                    product.stock > 0
-                      ? "bg-[#FFD712] hover:bg-yellow-400 text-[#131921]"
-                      : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  }`}
-                  disabled={product.stock <= 0}
-                >
-                  {product.stock > 0 ? "Añadir al carrito" : "Sin stock"}
-                </button>
-              </Link>
-            ))}
-          </div>
-        </section>
-
-        {/* Sección de hierbas */}
-        <section className="bg-white p-4 rounded shadow">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900">
-              Las hierbas más populares
-            </h2>
-            <Link
-              href="/hierbas"
-              className="text-[#232F3E] hover:text-[#FFD712] text-sm"
-            >
-              Ver todos
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {hierbas.length > 0 ? (
-              hierbas.map((product) => (
+        {/* Secciones de productos */}
+        {productsByCategory.map(({ name, value, products }) => (
+          products.length > 0 && (
+            <section key={value} className="mb-8 bg-white p-4 rounded shadow">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-bold text-gray-900">{name}</h2>
                 <Link
-                  href={`/product/${product.id}`}
-                  key={product.id}
-                  className="group border border-gray-200 hover:border-[#FFD712] rounded p-3 transition cursor-pointer"
+                  href={`/${value.toLowerCase()}`}
+                  className="text-[#232F3E] hover:text-[#FFD712] text-sm"
                 >
-                  <div className="relative h-48 w-full mb-3">
-                    <Image
-                      src={product.images[0]}
-                      alt={product.name}
-                      fill
-                      className="object-contain"
-                    />
-                  </div>
-                  <h3 className="font-semibold text-gray-900 group-hover:text-[#131921]">
-                    {product.name}
-                  </h3>
-                  <p className="text-gray-600 text-sm mb-1">
-                    {product.description}
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-lg text-gray-900">
-                      {product.price.toFixed(2)}€
-                    </span>
-                    <span
-                      className={`text-xs px-2 py-1 rounded ${
-                        product.stock > 0
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-700"
-                      }`}
-                    >
-                      {product.stock > 0 ? "En stock" : "Agotado"}
-                    </span>
-                  </div>
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleAddToCart(product);
-                    }}
-                    className={`mt-2 w-full py-1 rounded text-sm font-medium transition ${
-                      product.stock > 0
-                        ? "bg-[#FFD712] hover:bg-yellow-400 text-[#131921]"
-                        : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                    }`}
-                    disabled={product.stock <= 0}
-                  >
-                    {product.stock > 0 ? "Añadir al carrito" : "Sin stock"}
-                  </button>
+                  Ver todos
                 </Link>
-              ))
-            ) : (
-              <p className="col-span-full text-center text-gray-500">
-                Próximamente más productos
-              </p>
-            )}
-          </div>
-        </section>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {products.map((product) => (
+                  <Link
+                    href={`/product/${product.id}`}
+                    key={product.id}
+                    className="group border border-gray-200 hover:border-[#FFD712] rounded p-3 transition cursor-pointer"
+                  >
+                    <div className="relative h-48 w-full mb-3">
+                      <Image
+                        src={product.images[0]}
+                        alt={product.name}
+                        fill
+                        className="object-contain"
+                      />
+                    </div>
+                    <h3 className="font-semibold text-gray-900 group-hover:text-[#131921]">
+                      {product.name}
+                    </h3>
+                    <p className="text-gray-600 text-sm mb-1">
+                      {product.description}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-lg text-gray-900">
+                        {product.price.toFixed(2)}€
+                      </span>
+                      <span
+                        className={`text-xs px-2 py-1 rounded ${
+                          product.stock > 0
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-700"
+                        }`}
+                      >
+                        {product.stock > 0 ? "En stock" : "Agotado"}
+                      </span>
+                    </div>
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleAddToCart(product);
+                      }}
+                      className={`mt-2 w-full py-1 rounded text-sm font-medium transition ${
+                        product.stock > 0
+                          ? "bg-[#FFD712] hover:bg-yellow-400 text-[#131921]"
+                          : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      }`}
+                      disabled={product.stock <= 0}
+                    >
+                      {product.stock > 0 ? "Añadir al carrito" : "Sin stock"}
+                    </button>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )
+        ))}
       </main>
       <Footer />
 
@@ -271,7 +169,7 @@ export default function Market() {
         isOpen={showPopup}
         onClose={() => setShowPopup(false)}
         title={`${selectedProduct?.name} añadido al carrito`}
-        message={`Precio: ${selectedProduct?.price}€${
+        message={`Precio: ${selectedProduct?.price.toFixed(2)}€${
           selectedProduct?.discount
             ? ` (${selectedProduct.discount}% de descuento)`
             : ""
