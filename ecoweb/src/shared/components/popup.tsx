@@ -32,7 +32,7 @@ export const PopUp: React.FC<PopUpProps> = ({
   secondaryButtonColor = "bg-white border border-[#131921] hover:bg-gray-100",
   showSuccessIcon = true,
   animationDuration = 300,
-  secondaryButtonHref
+  secondaryButtonHref,
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isContentVisible, setIsContentVisible] = useState(false);
@@ -51,8 +51,9 @@ export const PopUp: React.FC<PopUpProps> = ({
 
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 transition-opacity"
+      className="fixed inset-0 flex items-center justify-center z-50 p-4 transition-opacity"
       style={{
+        backgroundColor: "rgba(0, 0, 0, 0.50)",
         opacity: isContentVisible ? 1 : 0,
         transition: `opacity ${animationDuration}ms ease-in-out`,
       }}
@@ -88,7 +89,7 @@ export const PopUp: React.FC<PopUpProps> = ({
           <h3 className="text-lg font-bold text-gray-900 mb-2">{title}</h3>
           <p className="text-gray-700">{message}</p>
         </div>
-        
+
         <div className="flex flex-col space-y-3 mt-6">
           <button
             onClick={onPrimaryButtonClick}
@@ -96,7 +97,7 @@ export const PopUp: React.FC<PopUpProps> = ({
           >
             {primaryButtonText}
           </button>
-          
+
           {secondaryButtonHref ? (
             <Link
               href={secondaryButtonHref}

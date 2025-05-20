@@ -867,3 +867,7 @@
 //     { "nombre": "rocha", "valor": "milipili" }
 // ]
 // }
+
+
+
+//en usuario, falta endpoint para añadir direccion, la direccion no se añade tampoco al momento de registrar un usuario
