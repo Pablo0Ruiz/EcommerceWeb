@@ -171,7 +171,7 @@ export default function PaymentPage() {
 
         <div className="flex justify-between mt-10 max-w-6xl mx-auto px-4">
           <button
-            onClick={() => router.push("/cart/delivery-address")}
+            onClick={() => router.push("/cart/delivery")}
             className="bg-[#909090] hover:bg-gray-600 text-white font-bold py-3 px-10 rounded-[14px] text-[36px]"
           >
             Volver

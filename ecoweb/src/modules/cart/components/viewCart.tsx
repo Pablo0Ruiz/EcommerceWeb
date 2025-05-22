@@ -1,9 +1,25 @@
 "use client";
-import Link from "next/link";
+import { useState } from "react";
 import { useCartStore } from "../hook/cart";
+import { PopUp } from "@/shared/components/popup";
+import { useRouter } from "next/navigation";
 
-const CartList = () => {
-  const { cart, calculateTotal, shippingOptions } = useCartStore();
+interface CartListProps {
+  showCheckoutButton?: boolean;
+  showNextButton?: boolean;
+  nextStepPath?: string;
+  nextButtonLabel?: string;
+}
+
+const CartList = ({
+  showCheckoutButton = false,
+  showNextButton = false,
+  nextStepPath = "",
+  nextButtonLabel = "Siguiente paso",
+}: CartListProps) => {
+  const { cart, calculateTotal, shippingOptions, clearCart } = useCartStore();
+  const [showPopup, setShowPopup] = useState(false);
+  const router = useRouter();
 
   const total = calculateTotal();
   const subTotal = cart.reduce(
@@ -12,7 +28,6 @@ const CartList = () => {
   );
   const shippingTotal = total - subTotal;
 
-  // Calcular resumen de métodos de envío
   const shippingSummary = cart.reduce((acc, item) => {
     const shippingMethod =
       shippingOptions.find((o) => o.method === item.selectedShipping) ||
@@ -21,6 +36,15 @@ const CartList = () => {
     acc[key] = (acc[key] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
+
+  const handleCheckout = () => {
+    setShowPopup(true);
+  };
+
+  const handleNavigation = (path: string) => {
+    clearCart();
+    router.push(path);
+  };
 
   return (
     <div className="bg-white border rounded-lg shadow-md p-6 sticky top-4">
@@ -31,8 +55,7 @@ const CartList = () => {
       <div className="text-sm text-gray-600 space-y-3">
         <div className="flex justify-between">
           <span>
-            Subtotal ({cart.reduce((sum, item) => sum + item.quantity, 0)}{" "}
-            artículos)
+            Subtotal ({cart.reduce((sum, item) => sum + item.quantity, 0)} artículos)
           </span>
           <span>€{subTotal.toFixed(2)}</span>
         </div>
@@ -60,11 +83,38 @@ const CartList = () => {
         </div>
       </div>
 
-      <Link href="/cart/delivery" className="block w-full">
-        <button className="mt-6 w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg transition">
-          Realizar pedido
+      {showCheckoutButton && (
+        <>
+          <button
+            onClick={handleCheckout}
+            className="mt-6 w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg transition"
+          >
+            Realizar pedido
+          </button>
+
+          <PopUp
+            isOpen={showPopup}
+            onClose={() => setShowPopup(false)}
+            title="Gracias por comprar en MateZone"
+            message="Su pedido ha sido registrado con éxito, puede consultar el estado en Mis Pedidos"
+            primaryButtonText="Seguir comprando"
+            secondaryButtonText="Ir a Mis Pedidos"
+            onPrimaryButtonClick={() => handleNavigation("/market")}
+            onSecondaryButtonClick={() => handleNavigation("/orders")}
+            showSuccessIcon={true}
+            secondaryButtonHref="/orders"
+          />
+        </>
+      )}
+
+      {showNextButton && nextStepPath && (
+        <button
+          onClick={() => router.push(nextStepPath)}
+          className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg transition"
+        >
+          {nextButtonLabel}
         </button>
-      </Link>
+      )}
     </div>
   );
 };
