@@ -84,7 +84,7 @@ export const Header = () => {
           <SearchBar />
         </div>
 
-        <Link href={"/user/profile"}>
+        <Link href={"/user"}>
           <div className="hidden md:flex flex-col px-3 py-1 border border-transparent hover:border-white rounded">
             <span className="text-xs">Hola, Usuario</span>
           </div>
