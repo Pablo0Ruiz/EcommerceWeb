@@ -1,9 +1,9 @@
-// app/user/addresses/page.tsx
 'use client'
 import { AddressCard } from "@/modules/client/components/addressCard";
 import { useState } from "react";
 import { Address } from "@/modules/client/components/typesClient";
 import { EditAddressModal } from "@/modules/client/components/editAddressModal";
+import Link from "next/link";
 
 const initialAddresses: Address[] = [
   {
@@ -65,12 +65,27 @@ export default function AddressPage() {
   return (
     <div className="min-h-screen bg-white">
       <div className="container mx-auto px-4 py-8">
+        {/* Flecha de retroceso */}
+        <div className="mb-6">
+          <Link href="/user" className="flex items-center text-gray-600 hover:text-gray-900">
+            <svg 
+              className="w-5 h-5 mr-2" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Volver
+          </Link>
+        </div>
+
         <h1 className="text-2xl font-bold mb-8 text-center text-gray-900">Direcciones de entrega</h1>
         
         <div className="flex flex-wrap justify-center gap-6">
-          {/* Tarjeta para añadir nueva dirección */}
+          {/* Tarjeta para añadir nueva dirección - ahora con mismo tamaño */}
           <div 
-            className="border-dashed border-2 border-gray-400 rounded-lg p-6 w-72 h-64 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors"
+            className="border-dashed border-2 border-gray-400 rounded-lg p-6 w-72 h-[336px] flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors"
             onClick={() => {
               setEditingAddress(null);
               setIsModalOpen(true);

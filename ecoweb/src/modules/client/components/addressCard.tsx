@@ -1,4 +1,3 @@
-// modules/client/components/adressCard.tsx
 'use client'
 import { Address } from "@/modules/client/components/typesClient";
 
@@ -16,7 +15,7 @@ export const AddressCard: React.FC<Props> = ({
   onSetDefault,
 }) => {
   return (
-    <div className="border border-gray-200 rounded-lg p-6 w-72 relative shadow-sm hover:shadow-md transition-shadow bg-white">
+    <div className="border border-gray-200 rounded-lg p-6 w-72 h-[336px] relative shadow-sm hover:shadow-md transition-shadow bg-white flex flex-col">
       {address.isDefault && (
         <div className="absolute top-0 left-0 w-full bg-green-600 text-white text-center py-2 rounded-t-lg text-sm font-medium">
           Predeterminado
@@ -35,7 +34,7 @@ export const AddressCard: React.FC<Props> = ({
         </div>
       </div>
 
-      <div className="mt-4 pt-4 border-t border-gray-200 flex flex-wrap gap-3">
+      <div className="mt-auto pt-4 border-t border-gray-200 flex flex-wrap gap-3">
         {!address.isDefault && (
           <button
             onClick={onSetDefault}
