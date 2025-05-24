@@ -1,5 +1,5 @@
 import Cookies from 'js-cookie';
-
+import { User } from '@/modules/auth/typesAuth';
 const COOKIE_NAME = 'token';
 
 interface CookiesAtribute {
@@ -15,6 +15,20 @@ export const setCookie = (value: string, options: CookiesAtribute = {}) => {
         sameSite: options.sameSite ?? 'Strict',
     });
 }
+
+
+export const setUserCookie = (user: User) => {
+    Cookies.set('user', JSON.stringify(user), {
+        expires: 1, // 1 día
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'Strict'
+    });
+};
+
+export const getUserCookie = (): User | null => {
+    const user = Cookies.get('user');
+    return user ? JSON.parse(user) : null;
+};
 
 export const getCookie = () => {
     return Cookies.get(COOKIE_NAME);

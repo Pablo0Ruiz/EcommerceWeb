@@ -1,16 +1,3 @@
-// export type ResponseGet ={
-//     status: number,
-//     producto:string[]
-// }
-
-// export const GetProduct = async (): Promise<ResponseGet>=>{
-//     const response = await fetch('aca va la api')
-//     if(!response.ok){
-        
-//         throw new Error('no se pudo obtener los producto') 
-//     }
-//     return await response.json()
-// }
 // shared/mockProduct/ProductList.ts
 import { Product } from "../typesProduct";
 import { image } from "@/shared/components/imag";
@@ -64,7 +51,7 @@ export const sampleProducts: Product[] = [
     description: "Mate de calabaza con virola de alpaca",
     price: 89.99,
     discount: 0,
-    stock: 0,
+    stock: 1,
     category: "Mates",
     sold: 0,
     attributes: [],

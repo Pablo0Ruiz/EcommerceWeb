@@ -12,7 +12,7 @@ const NavbarLanding = () => {
         <header className="bg-white shadow-md sticky top-0 z-50">
             <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
                 <Link href='/' className="text-2xl font-bold text-green-700">
-                    El gauchito
+                    Matezone
                 </Link>
                 <ul className="hidden md:flex space-x-6 text-gray-700 font-medium">
                     <li><Link href='#inicio'>Inicio</Link></li>

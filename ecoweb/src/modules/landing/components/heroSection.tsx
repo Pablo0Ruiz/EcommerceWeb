@@ -13,7 +13,7 @@ const Hero = () => {
                     <p className="text-gray-700 mb-6 text-lg">
                         Descubrí los mejores mates, bombillas y kits materos artesanales. Envío a todo el país.
                     </p>
-                    <Link href="#productos">
+                    <Link href="/market">
                         <button className="bg-green-600 text-white px-6 py-3 rounded-full text-lg hover:bg-green-700 transition">
                             ¡Comprar ahora!
                         </button>

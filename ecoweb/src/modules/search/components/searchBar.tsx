@@ -34,7 +34,7 @@ export const SearchBar = () => {
             <ul>
                 {resultado.map((producto) => (
                     <li key={producto.id} className="border p-2 mb-2 rounded">
-                        <strong>{producto.nombre}</strong> - ${producto.precio}
+                        <strong>{producto.name}</strong> - ${producto.price.toFixed(2)}
                     </li>
                 ))}
             </ul>

@@ -16,7 +16,7 @@ export const useRegister=(reset: ()=> void)=>{
                 throw new Error('Error al registrarte')
             }
             setCookie(response.token)
-            router.push('/offers')
+            router.push('/market')
             reset()
         }catch(error){
             console.error(error instanceof Error ? error.message : ' registro de cliente fallido');
