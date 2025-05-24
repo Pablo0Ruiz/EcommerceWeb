@@ -44,7 +44,7 @@ export const EditAddressModal: React.FC<EditAddressModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black bg-opacity-100 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
         <h2 className="text-xl font-bold mb-4 text-gray-900">
           {address ? 'Editar dirección' : 'Añadir nueva dirección'}
@@ -127,7 +127,7 @@ export const EditAddressModal: React.FC<EditAddressModalProps> = ({
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 rounded-md text-sm font-medium text-white hover:bg-blue-700"
+              className="px-4 py-2 bg-[#2E8B57] rounded-md text-sm font-medium text-white hover:bg-[#3f7456]"
             >
               Guardar cambios
             </button>

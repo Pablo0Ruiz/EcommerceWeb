@@ -90,7 +90,7 @@ const handleAddToCart = (product: Product) => {
             </span>
             <button
               onClick={clearFilter}
-              className="text-[#131921] hover:text-[#FFD712] text-sm font-medium"
+              className="text-[#131921] hover:text-[#0CAA2A] text-sm font-medium"
             >
               Mostrar todos los productos
             </button>
@@ -105,7 +105,7 @@ const handleAddToCart = (product: Product) => {
                 <h2 className="text-xl font-bold text-gray-900">{name}</h2>
                 <Link
                   href={`/${value.toLowerCase()}`}
-                  className="text-[#232F3E] hover:text-[#FFD712] text-sm"
+                  className="text-[#232F3E] hover:text-[#0CAA2A] text-sm"
                 >
                   Ver todos
                 </Link>
@@ -115,7 +115,7 @@ const handleAddToCart = (product: Product) => {
                   <Link
                     href={`/product/${product.id}`}
                     key={product.id}
-                    className="group border border-gray-200 hover:border-[#FFD712] rounded p-3 transition cursor-pointer"
+                    className="group border border-gray-200 hover:border-[#0CAA2A] rounded p-3 transition cursor-pointer"
                   >
                     <div className="relative h-48 w-full mb-3">
                       <Image
@@ -152,7 +152,7 @@ const handleAddToCart = (product: Product) => {
                       }}
                       className={`mt-2 w-full py-1 rounded text-sm font-medium transition ${
                         product.stock > 0
-                          ? "bg-[#FFD712] hover:bg-yellow-400 text-[#131921]"
+                          ? "bg-[#0CAA2A] hover:bg-[#357a42] text-white"
                           : "bg-gray-300 text-gray-500 cursor-not-allowed"
                       }`}
                       disabled={product.stock <= 0}

@@ -7,7 +7,7 @@ export default function ProfilePage() {
       <Header />
 
       <main className="container mx-auto p-4 max-w-6xl">
-        <h2 className="text-2xl font-bold mb-6">Mi cuenta</h2>
+        <h2 className="text-2xl font-bold mb-6 text-black">Mi cuenta</h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {/* Mis pedidos */}
@@ -17,7 +17,7 @@ export default function ProfilePage() {
                 📦
               </div>
               <div className="flex flex-col justify-center">
-                <h3 className="text-md font-bold mb-1">Mis pedidos</h3>
+                <h3 className="text-md font-bold mb-1 text-black">Mis pedidos</h3>
                 <p className="text-gray-600 text-sm">
                   Revisa, cancela o modifica tus pedidos
                 </p>
@@ -32,7 +32,7 @@ export default function ProfilePage() {
                 👤
               </div>
               <div className="flex flex-col justify-center">
-                <h3 className="text-md font-bold mb-1">Mi perfil</h3>
+                <h3 className="text-md font-bold mb-1 text-black">Mi perfil</h3>
                 <p className="text-gray-600 text-sm">
                   Edita tus datos personales o la contraseña
                 </p>
@@ -47,7 +47,7 @@ export default function ProfilePage() {
                 🗺️
               </div>
               <div className="flex flex-col justify-center">
-                <h3 className="text-md font-bold mb-1">Direcciones</h3>
+                <h3 className="text-md font-bold mb-1 text-black">Direcciones</h3>
                 <p className="text-gray-600 text-sm">
                   Modifica, añade o elimina tus direcciones de entrega
                 </p>

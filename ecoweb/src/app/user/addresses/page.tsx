@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Address } from "@/modules/client/components/typesClient";
 import { EditAddressModal } from "@/modules/client/components/editAddressModal";
 import Link from "next/link";
+import { Header } from '@/modules/market/components/header'
 
 const initialAddresses: Address[] = [
   {
@@ -64,10 +65,16 @@ export default function AddressPage() {
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Header */}
+      <Header />
+      
       <div className="container mx-auto px-4 py-8">
         {/* Flecha de retroceso */}
         <div className="mb-6">
-          <Link href="/user" className="flex items-center text-gray-600 hover:text-gray-900">
+          <Link 
+            href="/user" 
+            className="flex items-center text-[#2E8B57] hover:text-[#3DA56A] transition-colors duration-200"
+          >
             <svg 
               className="w-5 h-5 mr-2" 
               fill="none" 
@@ -83,7 +90,7 @@ export default function AddressPage() {
         <h1 className="text-2xl font-bold mb-8 text-center text-gray-900">Direcciones de entrega</h1>
         
         <div className="flex flex-wrap justify-center gap-6">
-          {/* Tarjeta para añadir nueva dirección - ahora con mismo tamaño */}
+          {/* Tarjeta para añadir nueva dirección */}
           <div 
             className="border-dashed border-2 border-gray-400 rounded-lg p-6 w-72 h-[336px] flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors"
             onClick={() => {

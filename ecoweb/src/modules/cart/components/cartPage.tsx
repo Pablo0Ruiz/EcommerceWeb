@@ -44,7 +44,7 @@ const CartPage = () => {
             <CartList
               showNextButton={true}
               nextStepPath="/cart/delivery"
-              nextButtonLabel="Ir al envío"
+              nextButtonLabel="Siguiente"
             />
           </div>
         </div>

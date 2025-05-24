@@ -110,7 +110,7 @@ const CartList = ({
       {showNextButton && nextStepPath && (
         <button
           onClick={() => router.push(nextStepPath)}
-          className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg transition"
+          className="mt-4 w-full bg-[#0CAA2A] hover:bg-[#217731] text-white py-3 rounded-lg transition"
         >
           {nextButtonLabel}
         </button>
