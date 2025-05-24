@@ -189,4 +189,4 @@
 // , reseñas no se pueden acceder ni modificar desde usuario?, user tiene que tener un adress isDefault
 //deliveryMethod:  deberia estar en order o en product? cada product puede tener un deliveryMethod diferente
 //reviewtext, añadir campo username para mostrarlo como en el figma
-//Tambien hace falta en el figma pantalla para añadir direcciones
+//Tambien hace falta en el figma pantalla para añadir / modificar direcciones
