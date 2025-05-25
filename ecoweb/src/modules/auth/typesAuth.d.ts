@@ -56,6 +56,25 @@ export interface ResponseRegister {
     //dependiendo de la respuesta de la api se cambia el string por client
 }
 
+
+
+interface AuthResponse {
+  token: string;
+  user: {
+    _id: string;
+    name: string;
+    email: string;
+    role: string;
+  };
+}
+
+interface ApiResponse {
+  success: boolean;
+  data?: T;
+  error?: string;
+}
+
+
 export interface User {
   _id: string;
   name: string;
