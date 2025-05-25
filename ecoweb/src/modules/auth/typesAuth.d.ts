@@ -12,12 +12,6 @@ export type LoginData = {
     password: string
 }
 
-export type Client = {
-    id: string,
-    nombre: string,
-    email: string,
-    token: string
-}
 
 // Actualiza tu tipo ResponseLogin
 export type ResponseLogin = {
@@ -38,22 +32,11 @@ export interface ResponseRegister {
     success: boolean,
     token: string
     user: {
+      _id: string;  // Cambiado de 'id' a '_id',
         name?: string,
         surnames?: string,
         email?: string
     }
-    // id?: string
-    // status?: number
-    // role?: string
-    // attempt?: string
-    // phoneNumber?: string
-    // deleted?: boolean
-    // address?: string,
-    // createdAt?: string
-    // updatedAt?: string
-    // __v?: number
-
-    //dependiendo de la respuesta de la api se cambia el string por client
 }
 
 
@@ -68,10 +51,14 @@ interface AuthResponse {
   };
 }
 
-interface ApiResponse {
+export interface ApiResponse<T = T> {
   success: boolean;
   data?: T;
-  error?: string;
+  error?: {
+    message: string;
+    code?: number;
+    details?: T;
+  } | string;
 }
 
 
@@ -94,4 +81,16 @@ export interface Address {
   province: string;
   isDefault?: boolean; 
   // Eliminar phoneNumber e isDefault o moverlos a donde corresponda
+}
+
+
+// Tipos para la respuesta de login
+interface LoginResponse {
+  token: string;
+  user: {
+    _id: string;
+    name: string;
+    email: string;
+    role: string;
+  };
 }
