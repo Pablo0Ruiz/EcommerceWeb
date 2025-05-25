@@ -1,4 +1,3 @@
-// modules/market/components/market.tsx
 "use client";
 import { useState, useEffect } from "react";
 import { Header } from "@/modules/market/components/header";
@@ -11,6 +10,9 @@ import Link from "next/link";
 import { CATEGORIES } from "@/shared/components/categories";
 import { useRouter, useSearchParams } from "next/navigation";
 
+// ✅ Importa tu hook de carrito
+import { useCartStore } from "@/modules/cart/hook/cart";
+
 export default function Market() {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -18,29 +20,20 @@ export default function Market() {
   const searchParams = useSearchParams();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
+  // ✅ Extrae solo el método que necesitas
+  const addToCart = useCartStore((state) => state.addToCart);
+
   useEffect(() => {
-    const category = searchParams.get('category');
+    const category = searchParams.get("category");
     setSelectedCategory(category);
   }, [searchParams]);
 
-const handleAddToCart = (product: Product) => {
-  setSelectedProduct(product);
-  setShowPopup(true);
-
-  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-  const existingItem = cart.find((item: Product) => item.id === product.id);
-
-  if (existingItem) {
-    existingItem.quantity = (existingItem.quantity || 1) + 1;
-  } else {
-    cart.push({ ...product, quantity: 1 });
-  }
-
-  localStorage.setItem("cart", JSON.stringify(cart));
-  
-  // Disparar evento personalizado para notificar a otros componentes
-  window.dispatchEvent(new CustomEvent("cartUpdated"));
-};
+  const handleAddToCart = (product: Product) => {
+    setSelectedProduct(product);
+    setShowPopup(true);
+    addToCart(product);
+    window.dispatchEvent(new CustomEvent("cartUpdated"));
+  };
 
   const handleContinueShopping = () => {
     setShowPopup(false);
@@ -48,7 +41,7 @@ const handleAddToCart = (product: Product) => {
 
   const clearFilter = () => {
     setSelectedCategory(null);
-    router.push('/market');
+    router.push("/market");
   };
 
   // Filtrar productos
@@ -57,9 +50,9 @@ const handleAddToCart = (product: Product) => {
     : sampleProducts;
 
   // Agrupar productos por categoría
-  const productsByCategory = CATEGORIES.map(category => ({
+  const productsByCategory = CATEGORIES.map((category) => ({
     ...category,
-    products: filteredProducts.filter(p => p.category === category.value)
+    products: filteredProducts.filter((p) => p.category === category.value),
   }));
 
   return (
@@ -86,7 +79,10 @@ const handleAddToCart = (product: Product) => {
         {selectedCategory && (
           <div className="mb-4 flex justify-between items-center bg-white p-3 rounded shadow">
             <span className="text-gray-700">
-              Mostrando: <strong>{CATEGORIES.find(c => c.value === selectedCategory)?.name}</strong>
+              Mostrando:{" "}
+              <strong>
+                {CATEGORIES.find((c) => c.value === selectedCategory)?.name}
+              </strong>
             </span>
             <button
               onClick={clearFilter}
@@ -98,73 +94,74 @@ const handleAddToCart = (product: Product) => {
         )}
 
         {/* Secciones de productos */}
-        {productsByCategory.map(({ name, value, products }) => (
-          products.length > 0 && (
-            <section key={value} className="mb-8 bg-white p-4 rounded shadow">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-gray-900">{name}</h2>
-                <Link
-                  href={`/${value.toLowerCase()}`}
-                  className="text-[#232F3E] hover:text-[#FFD712] text-sm"
-                >
-                  Ver todos
-                </Link>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {products.map((product) => (
+        {productsByCategory.map(
+          ({ name, value, products }) =>
+            products.length > 0 && (
+              <section key={value} className="mb-8 bg-white p-4 rounded shadow">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-xl font-bold text-gray-900">{name}</h2>
                   <Link
-                    href={`/product/${product.id}`}
-                    key={product.id}
-                    className="group border border-gray-200 hover:border-[#FFD712] rounded p-3 transition cursor-pointer"
+                    href={`/${value.toLowerCase()}`}
+                    className="text-[#232F3E] hover:text-[#FFD712] text-sm"
                   >
-                    <div className="relative h-48 w-full mb-3">
-                      <Image
-                        src={product.images[0]}
-                        alt={product.name}
-                        fill
-                        className="object-contain"
-                      />
-                    </div>
-                    <h3 className="font-semibold text-gray-900 group-hover:text-[#131921]">
-                      {product.name}
-                    </h3>
-                    <p className="text-gray-600 text-sm mb-1">
-                      {product.description}
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold text-lg text-gray-900">
-                        {product.price.toFixed(2)}€
-                      </span>
-                      <span
-                        className={`text-xs px-2 py-1 rounded ${
-                          product.stock > 0
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-700"
-                        }`}
-                      >
-                        {product.stock > 0 ? "En stock" : "Agotado"}
-                      </span>
-                    </div>
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handleAddToCart(product);
-                      }}
-                      className={`mt-2 w-full py-1 rounded text-sm font-medium transition ${
-                        product.stock > 0
-                          ? "bg-[#FFD712] hover:bg-yellow-400 text-[#131921]"
-                          : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                      }`}
-                      disabled={product.stock <= 0}
-                    >
-                      {product.stock > 0 ? "Añadir al carrito" : "Sin stock"}
-                    </button>
+                    Ver todos
                   </Link>
-                ))}
-              </div>
-            </section>
-          )
-        ))}
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {products.map((product) => (
+                    <Link
+                      href={`/product/${product.id}`}
+                      key={product.id}
+                      className="group border border-gray-200 hover:border-[#FFD712] rounded p-3 transition cursor-pointer"
+                    >
+                      <div className="relative h-48 w-full mb-3">
+                        <Image
+                          src={product.images[0]}
+                          alt={product.name}
+                          fill
+                          className="object-contain"
+                        />
+                      </div>
+                      <h3 className="font-semibold text-gray-900 group-hover:text-[#131921]">
+                        {product.name}
+                      </h3>
+                      <p className="text-gray-600 text-sm mb-1">
+                        {product.description}
+                      </p>
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-lg text-gray-900">
+                          {product.price.toFixed(2)}€
+                        </span>
+                        <span
+                          className={`text-xs px-2 py-1 rounded ${
+                            product.stock > 0
+                              ? "bg-green-100 text-green-800"
+                              : "bg-red-100 text-red-700"
+                          }`}
+                        >
+                          {product.stock > 0 ? "En stock" : "Agotado"}
+                        </span>
+                      </div>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleAddToCart(product);
+                        }}
+                        className={`mt-2 w-full py-1 rounded text-sm font-medium transition ${
+                          product.stock > 0
+                            ? "bg-[#FFD712] hover:bg-yellow-400 text-[#131921]"
+                            : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                        }`}
+                        disabled={product.stock <= 0}
+                      >
+                        {product.stock > 0 ? "Añadir al carrito" : "Sin stock"}
+                      </button>
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            )
+        )}
       </main>
       <Footer />
 

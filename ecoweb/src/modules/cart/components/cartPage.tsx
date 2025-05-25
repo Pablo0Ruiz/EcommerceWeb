@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import ProductCards from "@/modules/product/components/productCard";
 import { useCartStore } from "@/modules/cart/hook/cart";
 import CartList from "@/modules/cart/components/viewCart";
-import HeaderWizardSteps from "@/modules/cart/components/headerWizard";
+import HeaderWizardSteps from "@/modules/cart/utils/headerWizard";
 
 const CartPage = () => {
   const { cart, loadCart, addToCart, removeFromCart, decreaseQuantity } = useCartStore();

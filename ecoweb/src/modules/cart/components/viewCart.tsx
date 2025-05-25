@@ -1,49 +1,49 @@
 "use client";
 import { useState } from "react";
-import { useCartStore } from "../hook/cart";
-import { PopUp } from "@/shared/components/popup";
 import { useRouter } from "next/navigation";
+import { PopUp } from "@/shared/components/popup";
+import type { CartListProps } from "../typesCart";
+import { useCartStore } from "@/modules/cart/hook/cart";
 
-interface CartListProps {
-  showCheckoutButton?: boolean;
-  showNextButton?: boolean;
-  nextStepPath?: string;
-  nextButtonLabel?: string;
-}
-
-const CartList = ({
+export default function CartList({
   showCheckoutButton = false,
   showNextButton = false,
   nextStepPath = "",
   nextButtonLabel = "Siguiente paso",
-}: CartListProps) => {
-  const { cart, calculateTotal, shippingOptions, clearCart } = useCartStore();
+}: CartListProps) {
+  const cart = useCartStore((s) => s.cart);
+  const calculateTotal = useCartStore((s) => s.calculateTotal);
+  const clearCart = useCartStore((s) => s.clearCart);
+
   const [showPopup, setShowPopup] = useState(false);
   const router = useRouter();
 
   const total = calculateTotal();
+
+  // ✅ Calcular subtotal (solo suma de precios * cantidad)
   const subTotal = cart.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
-  const shippingTotal = total - subTotal;
 
-  const shippingSummary = cart.reduce((acc, item) => {
-    const shippingMethod =
-      shippingOptions.find((o) => o.method === item.selectedShipping) ||
-      shippingOptions[0];
-    const key = `${shippingMethod.label} (+${shippingMethod.price}€)`;
-    acc[key] = (acc[key] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+  // ✅ Calcular resumen de envíos
+  const shippingSummary: Record<string, number> = {};
+  cart.forEach((item) => {
+    const method = item.selectedShipping || "Desconocido";
+    shippingSummary[method] = (shippingSummary[method] || 0) + 1;
+  });
 
-  const handleCheckout = () => {
-    setShowPopup(true);
-  };
+  // ✅ Total de envíos (puedes cambiar este cálculo según reglas reales)
+  const shippingTotal = Object.keys(shippingSummary).length * 3; // Ej: 3€ por método único
 
   const handleNavigation = (path: string) => {
     clearCart();
     router.push(path);
+  };
+
+  const handleCheckout = () => {
+    // Aquí podrías enviar los datos al servidor si fuese necesario
+    setShowPopup(true);
   };
 
   return (
@@ -55,7 +55,8 @@ const CartList = ({
       <div className="text-sm text-gray-600 space-y-3">
         <div className="flex justify-between">
           <span>
-            Subtotal ({cart.reduce((sum, item) => sum + item.quantity, 0)} artículos)
+            Subtotal ({cart.reduce((sum, item) => sum + item.quantity, 0)}{" "}
+            artículos)
           </span>
           <span>€{subTotal.toFixed(2)}</span>
         </div>
@@ -109,14 +110,18 @@ const CartList = ({
 
       {showNextButton && nextStepPath && (
         <button
-          onClick={() => router.push(nextStepPath)}
-          className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg transition"
+          onClick={() => cart.length > 0 && router.push(nextStepPath)}
+          className={`mt-4 w-full py-3 rounded-lg transition ${
+            cart.length === 0
+              ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+              : "bg-blue-600 hover:bg-blue-700 text-white"
+          }`}
         >
-          {nextButtonLabel}
+          {cart.length === 0
+            ? "Agregue productos para continuar"
+            : nextButtonLabel}
         </button>
       )}
     </div>
   );
-};
-
-export default CartList;
+}

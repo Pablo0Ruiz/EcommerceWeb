@@ -1,25 +1,8 @@
-// store/cartStore.ts
+// hook/cart.ts
 import { create } from "zustand";
-import { Product } from "@/modules/product/typesProduct";
-import { ShippingMethod } from "@/modules/envios/typesEnvio";
-import { ShippingOption } from "@/modules/envios/typesEnvio";
 import { CartItem } from "../typesCart";
+import { CartStore } from "../typesCart";
 
-
-interface CartStore {
-  cart: CartItem[];
-  shippingMethod: ShippingMethod;
-  shippingOptions: ShippingOption[];
-  setShippingMethod: (method: ShippingMethod) => void;
-  setProductShipping: (productId: string, method: ShippingMethod) => void;
-  calculateProductTotal: (productId: string) => number;
-  calculateTotal: () => number;
-  addToCart: (product: Product) => void;
-  removeFromCart: (productId: string) => void;
-  decreaseQuantity: (productId: string) => void;
-  clearCart: () => void;
-  loadCart: () => void;
-}
 
 const saveCartToStorage = (cart: CartItem[]) => {
   if (typeof window !== "undefined") {
