@@ -1,91 +1,58 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import HeaderWizardSteps from "@/modules/cart/components/headerWizard";
+import HeaderWizardSteps from "@/modules/cart/utils/headerWizard";
+import { useCartStore } from "@/modules/cart/hook/cart";
+import { getUserCookie } from "@/shared/utils/cookies";
+import {CardData,FormErrors,formatCardInput,validatePaymentForm} from "@/modules/cart/utils/paymentForm";
+import {createNewOrder,saveOrderToLocalStorage} from "@/modules/cart/utils/orderUtils";
+import { User } from "@/modules/auth/typesAuth";
 
 export default function PaymentPage() {
   const router = useRouter();
-  const [cardData, setCardData] = useState({
+  const { cart, loadCart } = useCartStore();
+  const [user, setUser] = useState<User | null>(null);
+  const [cardData, setCardData] = useState<CardData>({
     cardNumber: "",
     expiryDate: "",
     cvv: "",
-    cardholderName: ""
+    cardholderName: "",
   });
-  const [errors, setErrors] = useState({
+  const [errors, setErrors] = useState<FormErrors>({
     cardNumber: "",
     expiryDate: "",
     cvv: "",
-    cardholderName: ""
+    cardholderName: "",
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    
-    // Formateo de campos según el tipo
-    let formattedValue = value;
-    if (name === "cardNumber") {
-      formattedValue = value.replace(/\s/g, "").replace(/(\d{4})/g, "$1 ").trim();
-      if (formattedValue.length > 19) return;
-    } else if (name === "expiryDate") {
-      formattedValue = value.replace(/\D/g, "").replace(/(\d{2})(\d)/, "$1/$2");
-      if (formattedValue.length > 5) return;
-    } else if (name === "cvv") {
-      formattedValue = value.replace(/\D/g, "");
-      if (formattedValue.length > 4) return;
-    }
-    
-    setCardData(prev => ({
-      ...prev,
-      [name]: formattedValue
-    }));
-  };
-
-  const validateForm = () => {
-    let valid = true;
-    const newErrors = {
-      cardNumber: "",
-      expiryDate: "",
-      cvv: "",
-      cardholderName: ""
-    };
-
-    // Validación número de tarjeta (16 dígitos)
-    if (!cardData.cardNumber || cardData.cardNumber.replace(/\s/g, "").length !== 16) {
-      newErrors.cardNumber = "Número de tarjeta inválido";
-      valid = false;
-    }
-
-    // Validación fecha de expiración (MM/YY)
-    if (!cardData.expiryDate || !/^\d{2}\/\d{2}$/.test(cardData.expiryDate)) {
-      newErrors.expiryDate = "Fecha inválida";
-      valid = false;
-    }
-
-    // Validación CVV (3 o 4 dígitos)
-    if (!cardData.cvv || !/^\d{3,4}$/.test(cardData.cvv)) {
-      newErrors.cvv = "CVV inválido";
-      valid = false;
-    }
-
-    // Validación nombre del titular
-    if (!cardData.cardholderName || cardData.cardholderName.trim().length < 3) {
-      newErrors.cardholderName = "Nombre inválido";
-      valid = false;
-    }
-
-    setErrors(newErrors);
-    return valid;
+    const formattedValue = formatCardInput(name, value);
+    setCardData((prev) => ({ ...prev, [name]: formattedValue }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm()) {
-      // Simular procesamiento del pago
-      setTimeout(() => {
-        router.push("/cart/completed");
-      }, 1000);
-    }
+
+    const validation = validatePaymentForm(cardData);
+    setErrors(validation.errors);
+
+    if (!validation.isValid) return;
+
+    // Simula proceso de pago...
+    setTimeout(() => {
+      const order = createNewOrder(user, cart);
+      if (order) {
+        saveOrderToLocalStorage(order);
+        router.replace("/cart/completed");
+      }
+    }, 1000);
   };
+
+  useEffect(() => {
+    loadCart();
+    setUser(getUserCookie());
+  }, [loadCart]);
 
   return (
     <div className="min-h-screen bg-white">
@@ -103,7 +70,10 @@ export default function PaymentPage() {
 
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
-              <label htmlFor="cardNumber" className="block text-gray-700 font-medium mb-2">
+              <label
+                htmlFor="cardNumber"
+                className="block text-gray-700 font-medium mb-2"
+              >
                 Número de tarjeta
               </label>
               <input
@@ -115,12 +85,17 @@ export default function PaymentPage() {
                 placeholder="1234 5678 9012 3456"
                 className="w-full p-3 border border-gray-300 rounded-[10px] text-lg text-black"
               />
-              {errors.cardNumber && <p className="text-red-500 mt-1">{errors.cardNumber}</p>}
+              {errors.cardNumber && (
+                <p className="text-red-500 mt-1">{errors.cardNumber}</p>
+              )}
             </div>
 
             <div className="grid grid-cols-2 gap-4 mb-4">
               <div>
-                <label htmlFor="expiryDate" className="block text-gray-700 font-medium mb-2">
+                <label
+                  htmlFor="expiryDate"
+                  className="block text-gray-700 font-medium mb-2"
+                >
                   Fecha de expiración (MM/AA)
                 </label>
                 <input
@@ -132,10 +107,15 @@ export default function PaymentPage() {
                   placeholder="MM/AA"
                   className="w-full p-3 border border-gray-300 rounded-[10px] text-lg text-black"
                 />
-                {errors.expiryDate && <p className="text-red-500 mt-1">{errors.expiryDate}</p>}
+                {errors.expiryDate && (
+                  <p className="text-red-500 mt-1">{errors.expiryDate}</p>
+                )}
               </div>
               <div>
-                <label htmlFor="cvv" className="block text-gray-700 font-medium mb-2">
+                <label
+                  htmlFor="cvv"
+                  className="block text-gray-700 font-medium mb-2"
+                >
                   CVV
                 </label>
                 <input
@@ -147,12 +127,17 @@ export default function PaymentPage() {
                   placeholder="123"
                   className="w-full p-3 border border-gray-300 rounded-[10px] text-lg text-black"
                 />
-                {errors.cvv && <p className="text-red-500 mt-1">{errors.cvv}</p>}
+                {errors.cvv && (
+                  <p className="text-red-500 mt-1">{errors.cvv}</p>
+                )}
               </div>
             </div>
 
             <div className="mb-6">
-              <label htmlFor="cardholderName" className="block text-gray-700 font-medium mb-2">
+              <label
+                htmlFor="cardholderName"
+                className="block text-gray-700 font-medium mb-2"
+              >
                 Nombre del titular
               </label>
               <input
@@ -164,7 +149,9 @@ export default function PaymentPage() {
                 placeholder="Como aparece en la tarjeta"
                 className="w-full p-3 border border-gray-300 rounded-[10px] text-lg text-black"
               />
-              {errors.cardholderName && <p className="text-red-500 mt-1">{errors.cardholderName}</p>}
+              {errors.cardholderName && (
+                <p className="text-red-500 mt-1">{errors.cardholderName}</p>
+              )}
             </div>
           </form>
         </div>
