@@ -114,7 +114,7 @@ export default function CartList({
           className={`mt-4 w-full py-3 rounded-lg transition ${
             cart.length === 0
               ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-              : "bg-blue-600 hover:bg-blue-700 text-white"
+              : "bg-[#0CAA2A] hover:bg-green-700 text-white"
           }`}
         >
           {cart.length === 0

@@ -110,22 +110,25 @@ export const Header = () => {
             </div>
           </Link>
 
-          <div className="hidden md:flex items-center px-4 py-2 bg-[#3DA56A] hover:bg-[#2E8B57] rounded-lg transition-colors duration-200 cursor-pointer">
-            <svg 
-              className="w-5 h-5 mr-2" 
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-            >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth="2" 
-                d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
-              />
-            </svg>
-            <span className="text-sm font-medium">Devoluciones y Pedidos</span>
-          </div>
+          <Link href={"/user/orders"}>
+            <div className="hidden md:flex items-center px-4 py-2 bg-[#3DA56A] hover:bg-[#2E8B57] rounded-lg transition-colors duration-200 cursor-pointer">
+              <svg 
+                className="w-5 h-5 mr-2" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path 
+                  strokeLinecap="round"
+                  strokeLinejoin="round" 
+                  strokeWidth="2" 
+                  d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+                />
+              </svg>
+              <span className="text-sm font-medium">Mis Pedidos</span>
+            </div>
+          </Link>
+
 
           {/* Cart */}
           <Link

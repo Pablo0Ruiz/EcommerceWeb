@@ -10,42 +10,39 @@ import { getUserCookie } from "@/shared/utils/cookies";
 import type { User } from "@/modules/auth/typesAuth";
 
 const OrderConfirmationPage = () => {
-  const { cart, loadCart, clearCart } = useCartStore();
+  const { cart, loadCart } = useCartStore();
   const [showPopup, setShowPopup] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
 
   useEffect(() => {
-    loadCart();
     const currentUser = getUserCookie();
-    setUser(currentUser);
+    if (!currentUser) {
+      router.push("/login"); // Redirigir si no está autenticado
+    } else {
+      setUser(currentUser);
+    }
+
+    loadCart();
 
     const handleStorageChange = () => loadCart();
     window.addEventListener("storage", handleStorageChange);
     return () => window.removeEventListener("storage", handleStorageChange);
-  }, [loadCart]);
+  }, [loadCart, router]);
 
   const handleNavigation = (path: string) => {
-    if (path !== "/cart/comoleted") {
-      clearCart();
-    }
     router.push(path);
   };
 
-  if (!user) {
-    return (
-      <main className="min-h-screen w-full bg-white">
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          <p>Por favor inicia sesión para confirmar tu pedido</p>
-        </div>
-      </main>
-    );
-  }
+  if (!user) return null;
 
   return (
     <main className="min-h-screen w-full bg-white">
+      {/* ✅ Header a pantalla completa */}
+      <HeaderWizardSteps currentStep={5} />
+
+      {/* Contenido principal */}
       <div className="max-w-7xl mx-auto px-4 py-6">
-        <HeaderWizardSteps currentStep={4} />
         <h1 className="text-3xl font-bold mb-6 text-green-700">
           ¡Pedido confirmado!
         </h1>
@@ -91,6 +88,7 @@ const OrderConfirmationPage = () => {
             <CartList showCheckoutButton={false} />
 
             <button
+              type="button"
               onClick={() => setShowPopup(true)}
               className="mt-6 w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg transition"
             >
@@ -105,7 +103,7 @@ const OrderConfirmationPage = () => {
               primaryButtonText="Seguir comprando"
               secondaryButtonText="Ir a Mis Pedidos"
               onPrimaryButtonClick={() => handleNavigation("/market")}
-              onSecondaryButtonClick={() => handleNavigation("/orders")}
+              onSecondaryButtonClick={() => handleNavigation("/user/orders")}
               showSuccessIcon={true}
               secondaryButtonHref="/user/orders"
             />

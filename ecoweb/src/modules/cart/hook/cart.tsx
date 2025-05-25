@@ -1,8 +1,6 @@
-// hook/cart.ts
 import { create } from "zustand";
 import { CartItem } from "../typesCart";
 import { CartStore } from "../typesCart";
-
 
 const saveCartToStorage = (cart: CartItem[]) => {
   if (typeof window !== "undefined") {

@@ -29,7 +29,7 @@ const OfferCard: React.FC<PropsOffer> = ({ producto, add, remove, disminuirItem 
                     </button>
                     <button
                         onClick={() => disminuirItem(producto.id)}
-                        className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-sm"
+                        className="bg-[#0CAA2A] hover:bg-green-700 text-white px-3 py-1 rounded text-sm"
                     >
                         -
                     </button>

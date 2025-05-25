@@ -17,8 +17,9 @@ const CartPage = () => {
 
   return (
     <main className="min-h-screen w-full bg-gray-50">
+      <HeaderWizardSteps currentStep={2} />
+
       <div className="max-w-7xl mx-auto px-4 py-6">
-        <HeaderWizardSteps currentStep={1} />
         <h1 className="text-3xl font-bold mb-6 text-green-700">Detalles del carrito</h1>
 
         <div className="flex flex-col md:flex-row gap-6">

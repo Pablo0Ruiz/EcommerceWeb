@@ -3,7 +3,6 @@ import { ProductCardProps } from "../productProps";
 import { useCartStore } from "@/modules/cart/hook/cart";
 import { CartItem } from "@/modules/cart/typesCart";
 
-
 const ProductCards: React.FC<ProductCardProps> = ({
   producto,
   add,

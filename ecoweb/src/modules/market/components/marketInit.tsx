@@ -102,7 +102,7 @@ export default function Market() {
                   <h2 className="text-xl font-bold text-gray-900">{name}</h2>
                   <Link
                     href={`/${value.toLowerCase()}`}
-                    className="text-[#232F3E] hover:text-[#FFD712] text-sm"
+                    className="text-[#232F3E] hover:text-[#0CAA2A] text-sm"
                   >
                     Ver todos
                   </Link>
@@ -112,7 +112,7 @@ export default function Market() {
                     <Link
                       href={`/product/${product.id}`}
                       key={product.id}
-                      className="group border border-gray-200 hover:border-[#FFD712] rounded p-3 transition cursor-pointer"
+                      className="group border border-gray-200 hover:border-[#0CAA2A] rounded p-3 transition cursor-pointer"
                     >
                       <div className="relative h-48 w-full mb-3">
                         <Image
@@ -149,7 +149,7 @@ export default function Market() {
                         }}
                         className={`mt-2 w-full py-1 rounded text-sm font-medium transition ${
                           product.stock > 0
-                            ? "bg-[#FFD712] hover:bg-yellow-400 text-[#131921]"
+                            ? "bg-[#0CAA2A] hover:bg-green-700 text-white"
                             : "bg-gray-300 text-gray-500 cursor-not-allowed"
                         }`}
                         disabled={product.stock <= 0}
@@ -178,7 +178,7 @@ export default function Market() {
         secondaryButtonText="Ir al carrito"
         onPrimaryButtonClick={handleContinueShopping}
         secondaryButtonHref="/cart"
-        primaryButtonColor="bg-[#FFD712] hover:bg-yellow-400"
+        primaryButtonColor="bg-[#0CAA2A] hover:bg-green-700 text-white"
         secondaryButtonColor="bg-white border border-[#131921] hover:bg-gray-100"
         showSuccessIcon={true}
         animationDuration={300}

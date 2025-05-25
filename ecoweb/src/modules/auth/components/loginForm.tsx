@@ -1,5 +1,4 @@
 'use client'
-
 import Image from 'next/image'
 import Link from 'next/link';
 import { useForm } from "react-hook-form";
@@ -14,11 +13,8 @@ const LoginForm = () => {
   const { register, handleSubmit, reset, formState: { errors } } = useForm<LoginData>();
   const { onSubmit } = useLogin(reset);
 
-  // Factor de escala para reducir todo proporcionalmente
-  const scaleFactor = 0.9;
-
   return (
-    <div className="relative w-full h-screen overflow-hidden">
+    <div className="relative w-full min-h-screen overflow-hidden flex flex-col items-center justify-center">
       {/* Fondo de imagen */}
       <div className="fixed inset-0 -z-10">
         <Image
@@ -27,31 +23,29 @@ const LoginForm = () => {
           fill
           className="object-cover"
           quality={100}
+          priority
         />
       </div>
       
       {/* Capa semitransparente */}
       <div className="fixed inset-0 bg-[#D9D9D9] opacity-60" />
 
-      {/* Contenedor principal escalado */}
-      <div 
-        className="relative h-full w-full flex items-center justify-center"
-        style={{ transform: `scale(${scaleFactor})`, transformOrigin: 'center' }}
-      >
-        {/* Contenido del formulario */}
-        <div className="relative w-[1920px] h-[1080px]">
-          {/* Logo Matezone */}
-          <div className="absolute w-[268px] h-[379px] left-[839px] top-[-6px]">
-            <Image 
-              src={logo} 
-              alt="Logo Matezone" 
-              fill 
-              className="object-contain" 
-            />
-          </div>
+      {/* Logo */}
+      <div className="absolute top-0 w-[150px] h-[212px]">
+        <Image 
+          src={logo} 
+          alt="Logo Matezone" 
+          fill 
+          className="object-contain" 
+          priority
+        />
+      </div>
 
-          {/* Imagen decorativa izquierda */}
-          <div className="absolute w-[585px] h-[332px] left-[319px] top-[441px] border-4 border-black">
+      {/* Contenedor principal centrado */}
+      <div className="relative w-full max-w-[1200px] flex flex-col lg:flex-row items-center justify-between p-4 mt-[130px] lg:mt-0">
+        {/* Sección izquierda (imagen) */}
+        <div className="hidden lg:flex w-[45%] items-center justify-end">
+          <div className="relative w-full max-w-[400px] aspect-[585/332] border-4 border-black">
             <Image 
               src={image34} 
               alt="imagen decorativa" 
@@ -59,23 +53,23 @@ const LoginForm = () => {
               className="object-cover" 
             />
           </div>
+        </div>
 
+        {/* Línea divisoria vertical centrada */}
+        <div className="hidden lg:block absolute left-1/2 h-[50vh] bg-black w-[2px] transform -translate-x-1/2" />
+
+        {/* Sección derecha (formulario) */}
+        <div className="w-[45%] flex flex-col items-center">
           {/* Título "Log in" */}
-          <h2 className="absolute w-[346px] h-[111.67px] left-[972.69px] top-[373px] font-roboto font-bold text-[80px] leading-[40px] flex items-center justify-center text-black transform rotate-[0.36deg]">
+          <h2 className="font-roboto font-bold text-[60px] leading-[60px] mb-6 text-black text-center">
             Log in
           </h2>
 
-          {/* Barra negra decorativa */}
-          <div className="absolute w-[613px] h-[2px] left-[673px] top-[650px] bg-black border-2 border-black transform rotate-[90.09deg]" />
-
           {/* Formulario */}
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="absolute left-[1022px] top-[488px] w-[362px] flex flex-col gap-8"
-          >
+          <form onSubmit={handleSubmit(onSubmit)} className="w-full flex flex-col gap-6">
             {/* Email */}
-            <div className="flex flex-col gap-2 w-full">
-              <label className="w-full h-[22px] font-inter font-normal text-[16px] leading-[140%] text-[#1E1E1E]">
+            <div className="flex flex-col gap-2">
+              <label className="font-inter font-medium text-[16px] text-[#1E1E1E]">
                 Correo electrónico
               </label>
               <input
@@ -86,7 +80,7 @@ const LoginForm = () => {
                     message: "El correo no es válido"
                   }
                 })}
-                className="w-full h-[40px] px-4 py-3 bg-white border border-[#D9D9D9] rounded-lg font-inter font-normal text-[16px] leading-[100%] text-[#B3B3B3]"
+                className="w-full px-4 py-2 bg-white border border-[#D9D9D9] rounded-lg font-inter text-[16px] text-[#1E1E1E]"
                 placeholder="Email"
               />
               {errors.email && (
@@ -95,8 +89,8 @@ const LoginForm = () => {
             </div>
 
             {/* Contraseña */}
-            <div className="flex flex-col gap-2 w-full">
-              <label className="w-full h-[22px] font-inter font-normal text-[16px] leading-[140%] text-[#1E1E1E]">
+            <div className="flex flex-col gap-2">
+              <label className="font-inter font-medium text-[16px] text-[#1E1E1E]">
                 Contraseña
               </label>
               <input
@@ -108,7 +102,7 @@ const LoginForm = () => {
                   }
                 })}
                 type="password"
-                className="w-full h-[40px] px-4 py-3 bg-white border border-[#D9D9D9] rounded-lg font-inter font-normal text-[16px] leading-[100%] text-[#B3B3B3]"
+                className="w-full px-4 py-2 bg-white border border-[#D9D9D9] rounded-lg font-inter text-[16px] text-[#1E1E1E]"
                 placeholder="Contraseña"
               />
               {errors.password && (
@@ -117,23 +111,20 @@ const LoginForm = () => {
             </div>
 
             {/* Botón de Login */}
-            <div className="relative w-[361.42px] h-[68px]">
-              <button
-                type="submit"
-                className="absolute w-full h-full bg-[#0CAA2A] rounded-[15px] flex items-center justify-center"
-                style={{ transform: 'matrix(1, 0.01, -0.01, 1, 0, 0)' }}
-              >
-                <span className="font-tilt-warp font-normal text-[40px] leading-[140%] text-center text-white">
-                  Log in
-                </span>
-              </button>
-            </div>
+            <button
+              type="submit"
+              className="w-full py-3 bg-[#0CAA2A] rounded-[15px] flex items-center justify-center transform hover:scale-105 transition-transform"
+            >
+              <span className="font-tilt-warp text-[32px] text-white">
+                Log in
+              </span>
+            </button>
           </form>
 
           {/* Link de registro */}
           <Link
             href="/auth/register"
-            className="absolute w-[263px] h-[22px] left-[1074px] top-[809px] font-inter font-normal text-[16px] leading-[140%] underline text-[#8aff8a] "
+            className="mt-6 font-inter text-[16px] text-[#8aff8a] hover:text-[#0CAA2A] hover:underline"
           >
             ¿No tienes cuenta? Regístrate aquí
           </Link>
