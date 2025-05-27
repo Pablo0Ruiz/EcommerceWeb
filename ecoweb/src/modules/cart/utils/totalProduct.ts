@@ -1,4 +1,3 @@
-// utils/totalProduct.ts
 import { Product } from "@/modules/product/typesProduct";
 
 export const totalPrecioCarrito = (productos: (Product & { quantity?: number })[]) => {

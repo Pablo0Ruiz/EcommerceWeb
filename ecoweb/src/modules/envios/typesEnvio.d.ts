@@ -1,4 +1,3 @@
-// typesEnvio.ts
 export type ShippingMethod = 'standard' | 'express' | 'urgent';
 
 export interface ShippingOption {

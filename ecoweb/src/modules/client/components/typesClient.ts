@@ -1,4 +1,4 @@
-// modules/client/typesClient.ts
+
 export interface Address {
   id: string;
   name: string;
