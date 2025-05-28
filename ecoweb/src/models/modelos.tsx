@@ -185,8 +185,5 @@
 // UserScheme.plugin(mongooseDelete, { overrideMethods: 'all' });
 // module.exports = mongoose.model('user', UserScheme);
 
-//añadir a usuarios, carrito, añadir tambien historial de pedidos ( si no , cuando hagamos la llamada, como los recibimos o como los mostramos ? )
-// , reseñas no se pueden acceder ni modificar desde usuario?, user tiene que tener un adress isDefault
-//deliveryMethod:  deberia estar en order o en product? cada product puede tener un deliveryMethod diferente
-//reviewtext, añadir campo username para mostrarlo como en el figma
-//Tambien hace falta en el figma pantalla para añadir / modificar direcciones
+//loginctrl devolver surname tras inicio de sesion o que directamente no devuelva nada solo ID y se hace peticion cada que se
+//necesiten datos ( como por ej a la hora de cambiar en el perfil y asi se tienen mas actualizados )

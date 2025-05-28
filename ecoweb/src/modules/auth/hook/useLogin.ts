@@ -14,6 +14,7 @@ export const useLogin = (reset: () => void) => {
       // Guardar usuario y token en cookies
       setUserCookie(response.user);
       setCookie(response.token);
+      console.log(document.cookie)
 
       router.push("/market");
       reset();
