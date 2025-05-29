@@ -4,19 +4,19 @@ import pp from '../../../../public/pp.png'
 import preparacion from '../../../../public/preparacion.webp'
 const products = [
     {
-        id: 1,
+        id: "1",
         name: 'Kit Matero Clásico',
         description: 'Incluye mate de madera, bombilla de acero y yerbera.',
         image: mate2,
     },
     {
-        id: 2,
+        id: "2",
         name: 'Kit Matero Premium',
         description: 'Mate de calabaza, bombilla de alpaca y bolsa matera.',
         image: pp,
     },
     {
-        id: 3,
+        id: "3",
         name: 'Set de Viaje',
         description: 'Perfecto para llevar a todas partes. Incluye termo.',
         image: preparacion,

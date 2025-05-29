@@ -9,6 +9,7 @@ import { sampleProducts } from "@/modules/product/mockProduct/ProductList";
 import Link from "next/link";
 import { CATEGORIES } from "@/shared/components/categories";
 import { useRouter, useSearchParams } from "next/navigation";
+import bgMarket from "@/../public/matezone_market.jpeg";
 
 // ✅ Importa tu hook de carrito
 import { useCartStore } from "@/modules/cart/hook/cart";
@@ -20,7 +21,6 @@ export default function Market() {
   const searchParams = useSearchParams();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-  // ✅ Extrae solo el método que necesitas
   const addToCart = useCartStore((state) => state.addToCart);
 
   useEffect(() => {
@@ -44,36 +44,30 @@ export default function Market() {
     router.push("/market");
   };
 
-  // Filtrar productos
   const filteredProducts = selectedCategory
     ? sampleProducts.filter((p) => p.category === selectedCategory)
     : sampleProducts;
 
-  // Agrupar productos por categoría
   const productsByCategory = CATEGORIES.map((category) => ({
     ...category,
     products: filteredProducts.filter((p) => p.category === category.value),
   }));
 
   return (
-    <div className="bg-gray-100 min-h-screen">
+    <div className="relative bg-gray-100/30 min-h-screen overflow-hidden">
+      <div className="fixed inset-0 -z-10">
+        <Image
+          src={bgMarket}
+          alt="Background"
+          fill
+          className="object-cover"
+          quality={100}
+          priority
+        />
+      </div>
+
       <Header />
       <main className="container mx-auto p-4">
-        {/* Banner principal */}
-        <div className="relative h-64 w-full mb-6 bg-gradient-to-r from-[#131921] to-[#232F3E] rounded overflow-hidden">
-          <Image
-            src={sampleProducts[1].images[0]}
-            alt="Ofertas especiales"
-            fill
-            className="opacity-50 object-cover"
-            priority
-          />
-          <div className="absolute inset-0 flex items-center justify-center text-center p-4">
-            <h1 className="text-3xl md:text-4xl font-bold text-white">
-              Todo para tu mate con envío rápido
-            </h1>
-          </div>
-        </div>
 
         {/* Filtro activo */}
         {selectedCategory && (
@@ -94,15 +88,17 @@ export default function Market() {
         )}
 
         {/* Secciones de productos */}
+
         {productsByCategory.map(
           ({ name, value, products }) =>
             products.length > 0 && (
-              <section key={value} className="mb-8 bg-white p-4 rounded shadow">
+              <section key={value} className="mb-8 bg-white/0 p-4 rounded">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-xl font-bold text-gray-900">{name}</h2>
                   <Link
                     href={`/${value.toLowerCase()}`}
-                    className="text-[#232F3E] hover:text-[#0CAA2A] text-sm"
+                    className="text-[#000000] hover:text-[#0CAA2A] text-sm"
+
                   >
                     Ver todos
                   </Link>
@@ -112,7 +108,7 @@ export default function Market() {
                     <Link
                       href={`/product/${product.id}`}
                       key={product.id}
-                      className="group border border-gray-200 hover:border-[#0CAA2A] rounded p-3 transition cursor-pointer"
+                      className="group border bg-white border-gray-200 hover:border-[#0CAA2A] rounded-xl p-3 transition cursor-pointer"
                     >
                       <div className="relative h-48 w-full mb-3">
                         <Image
@@ -154,6 +150,7 @@ export default function Market() {
                         }`}
                         disabled={product.stock <= 0}
                       >
+
                         {product.stock > 0 ? "Añadir al carrito" : "Sin stock"}
                       </button>
                     </Link>
@@ -162,6 +159,7 @@ export default function Market() {
               </section>
             )
         )}
+
       </main>
       <Footer />
 

@@ -24,9 +24,9 @@ export const SearchBar = () => {
                     {...register("busqueda")}
                     type="text"
                     placeholder="Buscar productos..."
-                    className="border px-2 py-1 rounded w-full"
+                    className="border px-2 py-1 rounded flex-1 bg-white text-black"
                 />
-                <button type="submit" className="bg-blue-600 text-white px-4 py-1 rounded">
+                <button type="submit" className="bg-blue-600 text-white px-4 py-1 rounded-xl">
                     Buscar
                 </button>
             </form>

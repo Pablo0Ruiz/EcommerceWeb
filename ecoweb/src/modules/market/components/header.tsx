@@ -1,10 +1,12 @@
 "use client";
 import Link from "next/link";
+import Image from 'next/image'
 import { useEffect, useState } from "react";
 import { SearchBar } from "@/modules/search/components/searchBar";
 import { CartCounter } from "./cartCounter";
 import { useCartStore } from "@/modules/cart/hook/cart";
 import { CATEGORIES } from "@/shared/components/categories";
+import logo from '@/../public/logo.png';
 
 export const Header = () => {
   const { loadCart } = useCartStore();
@@ -19,7 +21,18 @@ export const Header = () => {
       {/* Main Navigation */}
       <div className="flex items-center justify-between p-3 px-6">
         {/* Logo */}
-        <Link href="/" className="flex items-center group">
+
+        <Link href="/" className="relative flex items-center group pl-26">
+          <div className="absolute -left-3 w-32 h-32">
+            <Image
+              src={logo}
+              alt="Logo Matezone"
+              fill
+              className="object-contain"
+              priority
+            />
+          </div>
+
           <div className="text-3xl font-bold text-white group-hover:scale-105 transition-transform duration-200">
             <span className="text-[#C1F7D5]">Mate</span>
             <span className="text-white">Zone</span>
@@ -54,7 +67,9 @@ export const Header = () => {
               onClick={() => setIsCategoriesOpen(false)}
             >
               <div 
-                className="absolute left-0 top-0 h-full w-64 bg-white shadow-xl z-50 transform transition-transform duration-200"
+
+                className="absolute left-0 top-0 h-full w-64 bg-[#2E8B57] shadow-xl z-50 transform transition-transform duration-200"
+
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="p-4 border-b border-gray-200 bg-[#2E8B57]">
@@ -72,7 +87,9 @@ export const Header = () => {
                         onClick={() => setIsCategoriesOpen(false)}
                       >
                         <span className="mr-3 text-xl text-[#2E8B57]">{category.icon}</span>
-                        <span className="text-gray-800 font-medium">{category.name}</span>
+
+                        <span className="text-white font-medium">{category.name}</span>
+
                       </Link>
                     </li>
                   ))}
@@ -88,6 +105,7 @@ export const Header = () => {
             <SearchBar />
           </div>
         </div>
+
 
         {/* User Section */}
         <div className="flex items-center space-x-4">

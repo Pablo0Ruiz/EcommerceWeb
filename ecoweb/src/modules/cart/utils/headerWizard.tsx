@@ -1,4 +1,3 @@
-// components/HeaderWizardSteps.tsx
 import classNames from "classnames";
 
 const steps = [

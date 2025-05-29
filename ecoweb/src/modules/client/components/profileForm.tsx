@@ -1,5 +1,6 @@
-"use client";
-import { useState, useEffect } from "react";
+
+'use client'
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import InputField from "@/shared/components/inputField";
 import { useProfile } from "../hook/useProfile";

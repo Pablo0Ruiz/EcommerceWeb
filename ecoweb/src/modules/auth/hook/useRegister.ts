@@ -1,28 +1,33 @@
-import { useRouter } from "next/navigation"
+import { useRouter } from "next/navigation";
 import { RegisterData, ResponseRegister } from "../typesAuth";
 import { registerClient } from "../services/register";
-import { setCookie } from "@/shared/utils/cookies";
+import { setUserCookie } from "@/shared/utils/cookies";
 
-
-export const useRegister=(reset: ()=> void)=>{
+export const useRegister = (reset: () => void) => {
     const router = useRouter();
 
-    const onSubmit = async (data: RegisterData)=> {
-        console.log(data)
-        try{
-            const response: ResponseRegister = await registerClient(data)
-            if(!response.success){
-                console.error(response)
-                throw new Error('Error al registrarte')
+    const onSubmit = async (data: RegisterData) => {
+        try {
+            const response: ResponseRegister = await registerClient(data);
+            if (!response.success) {
+                console.error(response);
+                throw new Error('Error al registrarte');
             }
-            setCookie(response.token)
-            router.push('/market')
-            reset()
-        }catch(error){
-            console.error(error instanceof Error ? error.message : ' registro de cliente fallido');
-            
-        }
-    }
+            setUserCookie(response.user);
 
-    return {onSubmit}
-}
+
+            await fetch('/api/auth/set-token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token: response.token }),
+            });
+
+            router.push('/market');
+            reset();
+        } catch (error) {
+            console.error(error instanceof Error ? error.message : 'Registro de cliente fallido');
+        }
+    };
+
+    return { onSubmit };
+};

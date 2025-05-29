@@ -1,30 +1,29 @@
 import { useRouter } from "next/navigation";
-import { setUserCookie, setCookie } from "@/shared/utils/cookies";
+import { setUserCookie } from "@/shared/utils/cookies";
+import { loginClient } from "@/modules/auth/services/login";
 import { LoginData } from "../typesAuth";
-import { loginClient } from "../services/login";
-import { ResponseLogin } from "../typesAuth";
 
 export const useLogin = (reset: () => void) => {
   const router = useRouter();
 
-  const onSubmit = async (data: LoginData) => {
-    try {
-      const response: ResponseLogin = await loginClient(data);
+    const onSubmit = async (data: LoginData) => {
+        try {
+            const response = await loginClient(data);
 
-      // Guardar usuario y token en cookies
-      setUserCookie(response.user);
-      setCookie(response.token);
-      console.log(document.cookie)
+            setUserCookie(response.user);
 
-      router.push("/market");
-      reset();
-    } catch (error) {
-      console.error(
-        "Error inesperado:",
-        error instanceof Error ? error.message : "Fallo en el login"
-      );
-    }
-  };
+            await fetch('/api/auth/set-token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token: response.token }),
+            });
 
-  return { onSubmit };
+            router.push('/market');
+            reset();
+        } catch (error) {
+            console.error('Error inesperado:', error);
+        }
+    };
+
+    return { onSubmit };
 };
