@@ -1,26 +1,22 @@
 import { useRouter } from "next/navigation";
-import { setUserCookie,setCookie } from "@/shared/utils/cookies";
-import { mockUser } from "@/shared/utils/mockUser";
-import { LoginData, ResponseLogin } from "../typesAuth";
+import { setUserCookie } from "@/shared/utils/cookies";
+import { loginClient } from "@/modules/auth/services/login";
+import { LoginData } from "../typesAuth";
 
 export const useLogin = (reset: () => void) => {
     const router = useRouter();
 
     const onSubmit = async (data: LoginData) => {
-        console.log(data)
         try {
-            // Mock response - siempre éxito
-            const response: ResponseLogin = {
-                success: true,
-                user: mockUser,
-                token: 'mock-token'
-            };
+            const response = await loginClient(data);
 
-            // Guarda el usuario en cookies
-            setUserCookie(mockUser);
-            
-            // Opcional: guarda también el token si lo necesitas
-            setCookie(response.token);
+            setUserCookie(response.user);
+
+            await fetch('/api/auth/set-token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token: response.token }),
+            });
 
             router.push('/market');
             reset();
@@ -28,6 +24,6 @@ export const useLogin = (reset: () => void) => {
             console.error('Error inesperado:', error);
         }
     };
-    
+
     return { onSubmit };
 };

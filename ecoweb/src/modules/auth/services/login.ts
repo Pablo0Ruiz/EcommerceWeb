@@ -13,5 +13,6 @@ export const loginClient = async (data: LoginData): Promise<ResponseLogin> =>{
         throw new Error(errorData.message || 'Error al iniciar sesion');
     }
     const dataLogin: ResponseLogin = await response.json()
+    console.log(dataLogin)
     return {success: true, token: dataLogin.token,user: dataLogin.user}
 }
