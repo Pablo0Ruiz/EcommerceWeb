@@ -5,10 +5,15 @@ import { Order } from "@/modules/orders/typesOrder";
 import { User } from "@/modules/auth/typesAuth";
 import { getUserCookie } from "@/shared/utils/cookies";
 import { Header } from "@/modules/market/components/header";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { Product } from "@/modules/product/typesProduct";
 
 const MisPedidosPage: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [user, setUser] = useState<User | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
+  const router = useRouter();
 
   const loadUser = useCallback(() => {
     const cookieUser = getUserCookie();
@@ -24,67 +29,181 @@ const MisPedidosPage: React.FC = () => {
     }
   }, []);
 
+  const loadProducts = useCallback(() => {
+    const data = localStorage.getItem("products");
+    if (data) {
+      setProducts(JSON.parse(data));
+    } else {
+      setProducts([]);
+    }
+  }, []);
+
   useEffect(() => {
     loadUser();
     loadOrders();
-  }, [loadUser, loadOrders]);
+    loadProducts();
+  }, [loadUser, loadOrders, loadProducts]);
+
+  const canReview = (order: Order) => {
+    return order.state === "received"; // Solo permitir reseñas si el pedido ha sido recibido
+  };
+
+  const hasReviewed = (productId: string) => {
+    if (!user) return false;
+    const product = products.find(p => String(p.id) === String(productId));
+    return product?.reviews?.reviewTexts?.some(
+      (r) => String(r.user) === String(user._id)
+    );
+  };
 
   return (
-    <div className="relative min-h-screen">
+    <div className="relative min-h-screen bg-gray-50 text-gray-800">
       <Header />
 
-      <main className="pt-[94px] px-8">
-        <h1 className="text-3xl font-bold mb-6">Mis Pedidos</h1>
+      <main className="pt-[94px] px-4 sm:px-6 md:px-16 lg:px-32 pb-12">
+        <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center text-green-700">
+          Mis Pedidos
+        </h1>
 
-        {!user && <p>Debes iniciar sesión para ver tus pedidos.</p>}
+        {!user && (
+          <div className="text-center text-lg text-gray-600">
+            Debes iniciar sesión para ver tus pedidos.
+          </div>
+        )}
 
-        {user && orders.length === 0 && <p>No tienes pedidos registrados.</p>}
+        {user && orders.length === 0 && (
+          <div className="text-center text-lg text-gray-600">
+            No tienes pedidos registrados.
+          </div>
+        )}
 
         {user && orders.length > 0 && (
-          <div className="space-y-6">
+          <div className="space-y-8">
             {orders.map((order) => (
-              <div key={order._id} className="bg-white shadow rounded-lg p-6">
-                <h2 className="text-2xl font-semibold mb-4">
-                  Pedido #{order._id}
-                </h2>
-                <p>
-                  <strong>Fecha:</strong>{" "}
-                  {new Date(order.date).toLocaleString()}
-                </p>
-                <p>
-                  <strong>Total:</strong> ${order.total.toFixed(2)}
-                </p>
-                <p>
-                  <strong>Estado:</strong> {order.state}
-                </p>
-                <p>
-                  <strong>Envío:</strong> {order.deliveryMethod}
-                </p>
+              <div
+                key={order._id}
+                className="bg-white shadow-md rounded-2xl p-4 sm:p-6 border border-gray-200 transition hover:shadow-lg"
+              >
+                <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-4">
+                  <div>
+                    <h2 className="text-xl md:text-2xl font-semibold text-green-800">
+                      Pedido #{order._id}
+                    </h2>
+                    <p className="text-sm text-gray-500">
+                      {new Date(order.date).toLocaleDateString("es-ES", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </p>
+                  </div>
+                  <div className="mt-2 md:mt-0">
+                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                      order.state === "received"
+                        ? "bg-green-100 text-green-800"
+                        : order.state === "cancelled"
+                        ? "bg-red-100 text-red-800"
+                        : "bg-yellow-100 text-yellow-800"
+                    }`}>
+                      {order.state === "pending" && "Pendiente"}
+                      {order.state === "in-process" && "En proceso"}
+                      {order.state === "sent" && "Enviado"}
+                      {order.state === "received" && "Recibido"}
+                      {order.state === "cancelled" && "Cancelado"}
+                    </span>
+                  </div>
+                </div>
 
-                <div className="mt-4">
-                  <h3 className="font-medium text-lg">Artículos</h3>
-                  <ul className="space-y-2">
-                    {order.items.map((it, idx) => (
-                      <li key={idx} className="flex justify-between">
-                        <span>Producto ID: {it.product}</span>
-                        <span>
-                          {it.quantity} × ${it.unit_price.toFixed(2)}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm md:text-base mb-4">
+                  <p>
+                    <strong>Total:</strong> {order.total.toFixed(2)}€
+                  </p>
+                  <p>
+                    <strong>Método de envío:</strong>{" "}
+                    {order.deliveryMethod === "standard" && "Estándar"}
+                    {order.deliveryMethod === "express" && "Express"}
+                    {order.deliveryMethod === "urgent" && "Urgente"}
+                  </p>
                 </div>
 
                 <div className="mt-4">
-                  <h3 className="font-medium text-lg">Dirección de envío</h3>
-                  <p>
-                    {order.shippingAddress.street},{" "}
-                    {order.shippingAddress.number}
-                  </p>
-                  <p>
-                    {order.shippingAddress.city} ({order.shippingAddress.postal}
-                    ), {order.shippingAddress.province}
-                  </p>
+                  <h3 className="font-semibold text-lg mb-3 text-gray-700">
+                    Artículos
+                  </h3>
+                  <ul className="space-y-4 border-t border-gray-200 pt-4">
+                    {order.items.map((item, idx) => {
+                      const product = products.find(p => String(p.id) === String(item.product));
+
+                      const reviewed = hasReviewed(item.product);
+                      const showReviewButton = canReview(order) && product && !reviewed;
+
+                      return (
+                        <li
+                          key={idx}
+                          className="flex flex-col sm:flex-row justify-between gap-4 text-sm text-gray-600 pb-4 border-b border-gray-100 last:border-0"
+                        >
+                          <div className="flex items-start gap-4">
+                            {product && (
+                              <div className="w-16 h-16 relative flex-shrink-0">
+                                <Image
+                                  src={product.images[0] || "/placeholder-product.png"}
+                                  alt={product.name}
+                                  fill
+                                  className="object-cover rounded"
+                                />
+                              </div>
+                            )}
+                            <div>
+                              <h4 className="font-medium text-gray-900">
+                                {product?.name || `Producto ID: ${item.product}`}
+                              </h4>
+                              <p>Cantidad: {item.quantity}</p>
+                              <p>Precio unitario: {item.unit_price.toFixed(2)}€</p>
+                            </div>
+                          </div>
+                          <div className="flex flex-col items-end">
+                            <p className="font-medium">
+                              Subtotal: {(item.quantity * item.unit_price).toFixed(2)}€
+                            </p>
+                            {showReviewButton && (
+                              <button
+                                onClick={() => router.push(`/review/${item.product}`)}
+                                className="mt-2 bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 transition"
+                              >
+                                Escribir reseña
+                              </button>
+                            )}
+                            {canReview(order) && product && reviewed && (
+                              <span className="mt-2 text-green-600 text-sm">
+                                Reseña enviada
+                              </span>
+                            )}
+                          </div>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+
+                <div className="mt-6">
+                  <h3 className="font-semibold text-lg mb-2 text-gray-700">
+                    Dirección de envío
+                  </h3>
+                  <div className="text-sm text-gray-600 space-y-1">
+                    <p>
+                      <strong>Nombre:</strong> {order.shippingAddress.nombre}
+                    </p>
+                    <p>
+                      <strong>Dirección:</strong> {order.shippingAddress.street},{" "}
+                      {order.shippingAddress.number}
+                    </p>
+                    <p>
+                      {order.shippingAddress.city} ({order.shippingAddress.postal}
+                      ), {order.shippingAddress.province}
+                    </p>
+                  </div>
                 </div>
               </div>
             ))}

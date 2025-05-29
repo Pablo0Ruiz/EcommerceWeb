@@ -1,5 +1,3 @@
-// types/order.d.ts
-
 import { ShippingAddress } from "../cart/typesOrder";
 
 export interface Order {

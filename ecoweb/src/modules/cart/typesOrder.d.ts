@@ -6,6 +6,7 @@ export interface OrderItem {
 }
 
 export interface ShippingAddress {
+  nombre: string;
   street: string;
   number: string;
   postal: string;

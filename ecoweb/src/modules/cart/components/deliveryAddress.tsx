@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import HeaderWizardSteps from "@/modules/cart/components/headerWizard";
+import HeaderWizardSteps from "@/modules/cart/utils/headerWizard";
 import { getUserCookie } from "@/shared/utils/cookies";
 import { Address } from "@/modules/auth/typesAuth";
 import Link from "next/link";

@@ -268,7 +268,7 @@ const handleAddToCart = () => {
         secondaryButtonText="Ir al carrito"
         onPrimaryButtonClick={handleContinueShopping}
         secondaryButtonHref="/cart"
-        primaryButtonColor="bg-[#FFD712] hover:bg-yellow-400"
+        primaryButtonColor="bg-[#0CAA2A] hover:bg-green-700"
         secondaryButtonColor="bg-white border border-[#131921] hover:bg-gray-100"
         showSuccessIcon={true}
         animationDuration={300}

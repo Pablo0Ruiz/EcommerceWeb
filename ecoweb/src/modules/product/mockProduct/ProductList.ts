@@ -1,4 +1,4 @@
-// shared/mockProduct/ProductList.ts
+
 import { Product } from "../typesProduct";
 import { image } from "@/shared/components/imag";
 

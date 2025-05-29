@@ -27,7 +27,7 @@ export const CartCounter = () => {
   }, [cart]); // Dependencia del carrito del store
 
   return (
-    <span className="absolute top-0 right-0 bg-[#FFD712] text-[#131921] text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+    <span className="absolute top-0 right-0 bg-[#fff820] text-[#131921] text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
       {itemCount}
     </span>
   );
