@@ -88,6 +88,7 @@ export default function Market() {
         )}
 
         {/* Secciones de productos */}
+
         {productsByCategory.map(
           ({ name, value, products }) =>
             products.length > 0 && (
@@ -97,6 +98,7 @@ export default function Market() {
                   <Link
                     href={`/${value.toLowerCase()}`}
                     className="text-[#000000] hover:text-[#0CAA2A] text-sm"
+
                   >
                     Ver todos
                   </Link>
@@ -148,6 +150,7 @@ export default function Market() {
                         }`}
                         disabled={product.stock <= 0}
                       >
+
                         {product.stock > 0 ? "Añadir al carrito" : "Sin stock"}
                       </button>
                     </Link>
@@ -156,6 +159,7 @@ export default function Market() {
               </section>
             )
         )}
+
       </main>
       <Footer />
 

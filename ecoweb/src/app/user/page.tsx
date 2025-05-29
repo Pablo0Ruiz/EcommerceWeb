@@ -8,6 +8,7 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-gray-90">
       <Header />
 
+
       {/* Fondo con imagen */}
       <div className="fixed inset-0 -z-10">
         <Image
@@ -19,6 +20,7 @@ export default function ProfilePage() {
           priority
         />
       </div>
+
 
       {/* Contenido principal */}
       <main className="pl-20 pr-4 py-4 max-w-6xl">

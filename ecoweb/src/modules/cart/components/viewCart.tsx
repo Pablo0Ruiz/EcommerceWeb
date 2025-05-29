@@ -110,12 +110,14 @@ export default function CartList({
 
       {showNextButton && nextStepPath && (
         <button
+
           onClick={() => cart.length > 0 && router.push(nextStepPath)}
           className={`mt-4 w-full py-3 rounded-lg transition ${
             cart.length === 0
               ? "bg-gray-200 text-gray-500 cursor-not-allowed"
               : "bg-[#0CAA2A] hover:bg-green-700 text-white"
           }`}
+
         >
           {cart.length === 0
             ? "Agregue productos para continuar"
