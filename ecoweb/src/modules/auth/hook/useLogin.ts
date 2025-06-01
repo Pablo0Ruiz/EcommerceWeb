@@ -19,6 +19,7 @@ export const useLogin = (reset: () => void) => {
             });
 
             router.push('/market');
+            console.log("deberia redirigir a /market");
             reset();
         } catch (error) {
             console.error('Error inesperado:', error);

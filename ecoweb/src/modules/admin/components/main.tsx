@@ -1,15 +1,16 @@
 import React from "react";
 
 interface MainProps {
-    children: React.ReactNode;
+  children: React.ReactNode;
+  className?: string; // Añade esta prop opcional
 }
 
-const Main: React.FC<MainProps> = ({ children }) => {
-    return (
-        <main className="flex-1 p-6 bg-gray-50 min-h-screen">
-            {children}
-        </main>
-    );
+const Main: React.FC<MainProps> = ({ children, className = "" }) => {
+  return (
+    <main className={`flex-1 p-6 ${className}`}> {/* Elimina bg-gray-50 y min-h-screen */}
+      {children}
+    </main>
+  );
 };
 
 export default Main;

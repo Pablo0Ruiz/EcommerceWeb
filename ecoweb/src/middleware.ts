@@ -26,14 +26,14 @@ export async function middleware(request: NextRequest) {
 
         console.log('🎫 Usuario con rol:', role)
 
-        // 🔒 Protección específica por ruta
-        if (pathname.startsWith('/admin') && role !== 'admin') {
-            return NextResponse.redirect(new URL('/auth/login', request.url))
-        }
+        // // 🔒 Protección específica por ruta
+        // if (pathname.startsWith('/admin') && role !== 'admin') {
+        //     return NextResponse.redirect(new URL('/auth/login', request.url))
+        // }
 
-        if (pathname.startsWith('/market') && !['admin', 'user', 'seller'].includes(role)) {
-            return NextResponse.redirect(new URL('/auth/login', request.url))
-        }
+        // if (pathname.startsWith('/market') && !['admin', 'user', 'seller'].includes(role)) {
+        //     return NextResponse.redirect(new URL('/auth/login', request.url))
+        // }
 
         return NextResponse.next()
     } catch (err) {
