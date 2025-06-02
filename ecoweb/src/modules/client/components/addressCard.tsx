@@ -1,8 +1,13 @@
+<<<<<<< HEAD
 "use client";
 import { Address } from "@/modules/auth/typesAuth";
 import { useState, useEffect } from "react";
 import { useProfile } from "@/modules/client/hook/useProfile";
 import { EditAddressModal } from "@/modules/client/components/editAddressModal"; //falta meter todo lo de direcciones aqui
+=======
+'use client'
+import { Address } from "@/modules/auth/typesAuth";
+>>>>>>> 48f5ea6 (Refactor address and order management components; integrate new hooks for profile and order fetching, enhance error handling, and update address structure)
 
 interface AddressManagerProps {
   children: (props: {
@@ -25,6 +30,7 @@ export const AddressManager: React.FC<AddressManagerProps> = ({
   children,
   enableEdit = true,
 }) => {
+<<<<<<< HEAD
   const { fetchProfile, updateProfile } = useProfile();
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [loading, setLoading] = useState(true);
@@ -32,6 +38,26 @@ export const AddressManager: React.FC<AddressManagerProps> = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
+=======
+  return (
+    <div className="border border-gray-200 rounded-lg p-6 w-72 h-[336px] relative shadow-sm hover:shadow-md transition-shadow bg-white flex flex-col">
+      {address.isDefault && (
+        <div className="absolute top-0 left-0 w-full bg-green-600 text-white text-center py-2 rounded-t-lg text-sm font-medium">
+          Predeterminado
+        </div>
+      )}
+      
+      <div className={address.isDefault ? "mt-8" : ""}>
+        <h3 className="font-bold text-lg mb-2 text-gray-900">{address.nombre}</h3>
+        <div className="space-y-1 text-gray-900">
+          <p>{address.street}</p>
+          <p>{address.number}</p>
+          <p>{address.postal}</p>
+          <p>{address.city}</p>
+          <p>{address.province}</p>
+        </div>
+      </div>
+>>>>>>> 48f5ea6 (Refactor address and order management components; integrate new hooks for profile and order fetching, enhance error handling, and update address structure)
 
   const loadAddresses = async () => {
     setLoading(true);

@@ -1,6 +1,10 @@
 import { Order } from "../typesOrder";
 
+<<<<<<< HEAD
 export const getOrders = async (userId: string): Promise<Order[]> => { //aqui va la llamada
+=======
+export const getOrders = async (userId: string): Promise<Order[]> => {
+>>>>>>> 48f5ea6 (Refactor address and order management components; integrate new hooks for profile and order fetching, enhance error handling, and update address structure)
   try {
     const response = await fetch(`/api/orders?userId=${userId}`, {
       method: 'GET',

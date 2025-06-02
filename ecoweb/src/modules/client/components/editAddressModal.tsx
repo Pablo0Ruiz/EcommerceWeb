@@ -1,7 +1,14 @@
+<<<<<<< HEAD
 "use client";
 import { useEffect } from "react";
 import { Address } from "@/modules/auth/typesAuth";
 import { useForm } from "react-hook-form";
+=======
+'use client'
+import { useEffect } from 'react';
+import { Address } from '@/modules/auth/typesAuth';
+import { useForm } from 'react-hook-form';
+>>>>>>> 48f5ea6 (Refactor address and order management components; integrate new hooks for profile and order fetching, enhance error handling, and update address structure)
 
 interface EditAddressModalProps {
   isOpen: boolean;
@@ -32,6 +39,7 @@ export const EditAddressModal: React.FC<EditAddressModalProps> = ({
         postal: address.postal,
         city: address.city,
         province: address.province,
+<<<<<<< HEAD
         isDefault: address.isDefault || false,
       });
     } else {
@@ -43,6 +51,19 @@ export const EditAddressModal: React.FC<EditAddressModalProps> = ({
         city: "",
         province: "",
         isDefault: false,
+=======
+        isDefault: address.isDefault || false
+      });
+    } else {
+      reset({
+        nombre: '',
+        street: '',
+        number: '',
+        postal: '',
+        city: '',
+        province: '',
+        isDefault: false
+>>>>>>> 48f5ea6 (Refactor address and order management components; integrate new hooks for profile and order fetching, enhance error handling, and update address structure)
       });
     }
   }, [address, reset]);
@@ -82,6 +103,7 @@ export const EditAddressModal: React.FC<EditAddressModalProps> = ({
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
+<<<<<<< HEAD
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Nombre de la dirección*
             </label>
@@ -101,6 +123,19 @@ export const EditAddressModal: React.FC<EditAddressModalProps> = ({
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Calle*
             </label>
+=======
+            <label className="block text-sm font-medium text-gray-700 mb-1">Nombre de la dirección*</label>
+            <input
+              {...register('nombre', { required: 'Este campo es obligatorio' })}
+              className="w-full px-3 py-2 border rounded text-gray-900"
+              placeholder="Ej: Casa, Trabajo..."
+            />
+            {errors.nombre && <p className="text-red-500 text-sm mt-1">{errors.nombre.message}</p>}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Calle*</label>
+>>>>>>> 48f5ea6 (Refactor address and order management components; integrate new hooks for profile and order fetching, enhance error handling, and update address structure)
             <input
               {...register("street", { required: "Este campo es obligatorio" })}
               className="w-full px-3 py-2 border rounded text-gray-900"
@@ -114,6 +149,7 @@ export const EditAddressModal: React.FC<EditAddressModalProps> = ({
           </div>
 
           <div>
+<<<<<<< HEAD
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Número*
             </label>
@@ -127,13 +163,26 @@ export const EditAddressModal: React.FC<EditAddressModalProps> = ({
                 {errors.number.message}
               </p>
             )}
+=======
+            <label className="block text-sm font-medium text-gray-700 mb-1">Número*</label>
+            <input
+              {...register('number', { required: 'Este campo es obligatorio' })}
+              className="w-full px-3 py-2 border rounded text-gray-900"
+              placeholder="Ej: 12"
+            />
+            {errors.number && <p className="text-red-500 text-sm mt-1">{errors.number.message}</p>}
+>>>>>>> 48f5ea6 (Refactor address and order management components; integrate new hooks for profile and order fetching, enhance error handling, and update address structure)
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
+<<<<<<< HEAD
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Ciudad*
               </label>
+=======
+              <label className="block text-sm font-medium text-gray-700 mb-1">Ciudad*</label>
+>>>>>>> 48f5ea6 (Refactor address and order management components; integrate new hooks for profile and order fetching, enhance error handling, and update address structure)
               <input
                 {...register("city", { required: "Este campo es obligatorio" })}
                 className="w-full px-3 py-2 border rounded text-gray-900"
@@ -145,6 +194,7 @@ export const EditAddressModal: React.FC<EditAddressModalProps> = ({
               )}
             </div>
             <div>
+<<<<<<< HEAD
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Código postal*
               </label>
@@ -159,10 +209,19 @@ export const EditAddressModal: React.FC<EditAddressModalProps> = ({
                   {errors.postal.message}
                 </p>
               )}
+=======
+              <label className="block text-sm font-medium text-gray-700 mb-1">Código postal*</label>
+              <input
+                {...register('postal', { required: 'Este campo es obligatorio' })}
+                className="w-full px-3 py-2 border rounded text-gray-900"
+              />
+              {errors.postal && <p className="text-red-500 text-sm mt-1">{errors.postal.message}</p>}
+>>>>>>> 48f5ea6 (Refactor address and order management components; integrate new hooks for profile and order fetching, enhance error handling, and update address structure)
             </div>
           </div>
 
           <div>
+<<<<<<< HEAD
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Provincia*
             </label>
@@ -177,12 +236,21 @@ export const EditAddressModal: React.FC<EditAddressModalProps> = ({
                 {errors.province.message}
               </p>
             )}
+=======
+            <label className="block text-sm font-medium text-gray-700 mb-1">Provincia*</label>
+            <input
+              {...register('province', { required: 'Este campo es obligatorio' })}
+              className="w-full px-3 py-2 border rounded text-gray-900"
+            />
+            {errors.province && <p className="text-red-500 text-sm mt-1">{errors.province.message}</p>}
+>>>>>>> 48f5ea6 (Refactor address and order management components; integrate new hooks for profile and order fetching, enhance error handling, and update address structure)
           </div>
 
           <div className="flex items-center">
             <input
               type="checkbox"
               id="defaultAddress"
+<<<<<<< HEAD
               {...register("isDefault")}
               className="h-4 w-4 text-[#2E8B57] focus:ring-[#2E8B57] border-gray-300 rounded"
             />
@@ -190,6 +258,12 @@ export const EditAddressModal: React.FC<EditAddressModalProps> = ({
               htmlFor="defaultAddress"
               className="ml-2 block text-sm text-gray-900"
             >
+=======
+              {...register('isDefault')}
+              className="h-4 w-4 text-[#2E8B57] focus:ring-[#2E8B57] border-gray-300 rounded"
+            />
+            <label htmlFor="defaultAddress" className="ml-2 block text-sm text-gray-900">
+>>>>>>> 48f5ea6 (Refactor address and order management components; integrate new hooks for profile and order fetching, enhance error handling, and update address structure)
               Establecer como dirección principal
             </label>
           </div>

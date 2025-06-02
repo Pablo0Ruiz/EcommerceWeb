@@ -1,12 +1,21 @@
 // src/modules/cart/utils/orderUtils.ts
 import type { OrderItem, OrderInput } from "@/modules/orders/typesOrder";
+<<<<<<< HEAD
+=======
+import type { User } from "@/modules/auth/typesAuth";
+>>>>>>> 48f5ea6 (Refactor address and order management components; integrate new hooks for profile and order fetching, enhance error handling, and update address structure)
 import type { CartItem } from "@/modules/cart/typesCart";
 import { Address } from "@/modules/auth/typesAuth";
 
 export const prepareOrderData = (
+<<<<<<< HEAD
   user: {_id:string } | null,
   cart: CartItem[],
   shippingAddress: Address
+=======
+  user: User | null,
+  cart: CartItem[]
+>>>>>>> 48f5ea6 (Refactor address and order management components; integrate new hooks for profile and order fetching, enhance error handling, and update address structure)
 ): OrderInput | null => {
   if (!user) return null;
 
@@ -34,6 +43,18 @@ export const prepareOrderData = (
     state: "pending",
     deliveryMethod: determineDeliveryMethod(),
     items,
+<<<<<<< HEAD
     shippingAddress,
   };
 };
+=======
+    shippingAddress: user.address[0] || {
+      street: "",
+      number: "",
+      postal: "",
+      city: "",
+      province: "",
+    },
+  };
+};
+>>>>>>> 48f5ea6 (Refactor address and order management components; integrate new hooks for profile and order fetching, enhance error handling, and update address structure)

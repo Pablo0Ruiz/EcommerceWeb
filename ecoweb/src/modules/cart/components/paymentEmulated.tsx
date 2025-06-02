@@ -3,15 +3,24 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import HeaderWizardSteps from "@/modules/cart/utils/headerWizard";
 import { useCartStore } from "@/modules/cart/hook/cart";
+<<<<<<< HEAD
+=======
+import { getUserCookie } from "@/shared/utils/cookies";
+>>>>>>> 48f5ea6 (Refactor address and order management components; integrate new hooks for profile and order fetching, enhance error handling, and update address structure)
 import {
   CardData,
   FormErrors,
   formatCardInput,
   validatePaymentForm,
 } from "@/modules/cart/utils/paymentForm";
+<<<<<<< HEAD
 import { useOrder } from "../hook/useCart";
 import { prepareOrderData } from "../utils/orderUtils";
 import { useProfile } from "@/modules/client/hook/useProfile";
+=======
+import { useOrder } from "../hook/useCart"; //aqui va la llamada
+import { prepareOrderData } from "../utils/orderUtils";
+>>>>>>> 48f5ea6 (Refactor address and order management components; integrate new hooks for profile and order fetching, enhance error handling, and update address structure)
 import { User } from "@/modules/auth/typesAuth";
 import { Address } from "@/modules/auth/typesAuth";
 
@@ -20,11 +29,16 @@ type UserOrderFields = Pick<User, "_id">;
 export default function PaymentPage() {
   const router = useRouter();
   const { cart, loadCart } = useCartStore();
+<<<<<<< HEAD
   const { createNewOrder } = useOrder();
   const { fetchProfile } = useProfile();
 
   const [addr, setAddr] = useState<Address | null>(null);
 
+=======
+  const { createNewOrder  } = useOrder();
+  const [user, setUser] = useState<User | null>(null);
+>>>>>>> 48f5ea6 (Refactor address and order management components; integrate new hooks for profile and order fetching, enhance error handling, and update address structure)
   const [cardData, setCardData] = useState<CardData>({
     cardNumber: "",
     expiryDate: "",
@@ -66,6 +80,7 @@ export default function PaymentPage() {
     setErrors(validation.errors);
     if (!validation.isValid) return;
 
+<<<<<<< HEAD
     if (!addr) {
       alert("No hay dirección seleccionada para el envío.");
       return;
@@ -81,11 +96,21 @@ export default function PaymentPage() {
       const orderData = prepareOrderData(profileData, cart, addr);
       if (!orderData) return;
 
+=======
+    const orderData = prepareOrderData(user, cart);
+    if (!orderData) return;
+
+    try {
+>>>>>>> 48f5ea6 (Refactor address and order management components; integrate new hooks for profile and order fetching, enhance error handling, and update address structure)
       const order = await createNewOrder(orderData);
       if (order) {
         router.replace("/cart/completed");
       }
     } catch (err) {
+<<<<<<< HEAD
+=======
+      // Manejar error (puedes mostrarlo en la UI)
+>>>>>>> 48f5ea6 (Refactor address and order management components; integrate new hooks for profile and order fetching, enhance error handling, and update address structure)
       console.error("Error al crear la orden:", err);
     }
   };
