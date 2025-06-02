@@ -14,6 +14,7 @@ export default function CartList({
   const cart = useCartStore((s) => s.cart);
   const calculateTotal = useCartStore((s) => s.calculateTotal);
   const clearCart = useCartStore((s) => s.clearCart);
+  const shippingOptions = useCartStore((s) => s.shippingOptions); // Obtenemos las opciones de envío
 
   const [showPopup, setShowPopup] = useState(false);
   const router = useRouter();
@@ -26,15 +27,22 @@ export default function CartList({
     0
   );
 
-  // ✅ Calcular resumen de envíos
-  const shippingSummary: Record<string, number> = {};
+  // ✅ Calcular resumen de envíos y total de envíos
+  const shippingSummary: Record<string, {count: number, price: number}> = {};
+  let shippingTotal = 0;
+  
   cart.forEach((item) => {
-    const method = item.selectedShipping || "Desconocido";
-    shippingSummary[method] = (shippingSummary[method] || 0) + 1;
+    const method = item.selectedShipping || "standard";
+    const option = shippingOptions.find(o => o.method === method);
+    const price = option?.price || 0;
+    
+    if (!shippingSummary[method]) {
+      shippingSummary[method] = {count: 0, price};
+    }
+    
+    shippingSummary[method].count += 1;
+    shippingTotal += price * item.quantity; // Sumamos el precio por cada unidad del producto
   });
-
-  // ✅ Total de envíos (puedes cambiar este cálculo según reglas reales)
-  const shippingTotal = Object.keys(shippingSummary).length * 3; // Ej: 3€ por método único
 
   const handleNavigation = (path: string) => {
     clearCart();
@@ -42,7 +50,6 @@ export default function CartList({
   };
 
   const handleCheckout = () => {
-    // Aquí podrías enviar los datos al servidor si fuese necesario
     setShowPopup(true);
   };
 
@@ -67,14 +74,19 @@ export default function CartList({
             <span>€{shippingTotal.toFixed(2)}</span>
           </div>
           <div className="pl-2 text-xs text-gray-500">
-            {Object.entries(shippingSummary).map(([method, count]) => (
-              <div key={method} className="flex justify-between">
-                <span>
-                  {count} {count > 1 ? "pedidos" : "pedido"} con:
-                </span>
-                <span>{method}</span>
-              </div>
-            ))}
+            {Object.entries(shippingSummary).map(([method, {count, price}]) => {
+              const option = shippingOptions.find(o => o.method === method);
+              return (
+                <div key={method} className="flex justify-between">
+                  <span>
+                    {count} {count > 1 ? "productos" : "producto"} con:
+                  </span>
+                  <span>
+                    {option?.label || method} (€{price.toFixed(2)} c/u)
+                  </span>
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -84,6 +96,7 @@ export default function CartList({
         </div>
       </div>
 
+      {/* Resto del código permanece igual */}
       {showCheckoutButton && (
         <>
           <button
@@ -110,14 +123,12 @@ export default function CartList({
 
       {showNextButton && nextStepPath && (
         <button
-
           onClick={() => cart.length > 0 && router.push(nextStepPath)}
           className={`mt-4 w-full py-3 rounded-lg transition ${
             cart.length === 0
               ? "bg-gray-200 text-gray-500 cursor-not-allowed"
               : "bg-[#0CAA2A] hover:bg-green-700 text-white"
           }`}
-
         >
           {cart.length === 0
             ? "Agregue productos para continuar"

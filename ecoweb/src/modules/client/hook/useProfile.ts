@@ -1,10 +1,10 @@
 import { useRouter } from 'next/navigation';
 import { PutProfile } from '../services/profile';
-import { RegisterData } from '@/modules/auth/typesAuth';
+import { User } from '@/modules/auth/typesAuth';
 
 export const useProfile = (reset: () => void) => {
     const router = useRouter();
-const onSubmit = async (data: Partial<RegisterData>) => {
+const onSubmit = async (data: Partial<User>) => {
     try {
         const updatedUser = await PutProfile(data);
         // Do something with updatedUser if needed

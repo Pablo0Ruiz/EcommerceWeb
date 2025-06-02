@@ -1,5 +1,5 @@
 'use client'
-import { Address } from "@/modules/client/components/typesClient";
+import { Address } from "@/modules/auth/typesAuth";
 
 interface Props {
   address: Address;
@@ -23,14 +23,13 @@ export const AddressCard: React.FC<Props> = ({
       )}
       
       <div className={address.isDefault ? "mt-8" : ""}>
-        <h3 className="font-bold text-lg mb-2 text-gray-900">{address.name}</h3>
+        <h3 className="font-bold text-lg mb-2 text-gray-900">{address.nombre}</h3>
         <div className="space-y-1 text-gray-900">
           <p>{address.street}</p>
-          <p>{address.floor}</p>
+          <p>{address.number}</p>
+          <p>{address.postal}</p>
           <p>{address.city}</p>
-          <p>{address.postalCode}</p>
-          <p>{address.country}</p>
-          <p className="mt-2">Teléfono: {address.phone}</p>
+          <p>{address.province}</p>
         </div>
       </div>
 

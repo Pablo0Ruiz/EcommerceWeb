@@ -1,10 +1,10 @@
 "use client";
 import { useEffect, useState } from 'react';
 import { GetProfile } from '../services/getProfile';
-import { RegisterData } from '@/modules/auth/typesAuth';
+import { User } from '@/modules/auth/typesAuth';
 
 export const useGetProfile = () => {
-    const [userData, setUserData] = useState<RegisterData | null>(null);
+    const [userData, setUserData] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 

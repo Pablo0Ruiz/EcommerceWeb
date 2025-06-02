@@ -1,8 +1,8 @@
 "use client"
-import { RegisterData } from "@/modules/auth/typesAuth";
+import { User } from "@/modules/auth/typesAuth";
 import { getCookie } from "@/shared/utils/cookies";
 
-export const GetProfile = async (): Promise<RegisterData> => {
+export const GetProfile = async (): Promise<User> => {
     const token = getCookie();
     console.log("esto deberia ", `${process.env.NEXT_PUBLIC_API_BASE_URL}`)
     console.log(token)

@@ -4,13 +4,20 @@ import { useRouter } from "next/navigation";
 import HeaderWizardSteps from "@/modules/cart/utils/headerWizard";
 import { useCartStore } from "@/modules/cart/hook/cart";
 import { getUserCookie } from "@/shared/utils/cookies";
-import {CardData,FormErrors,formatCardInput,validatePaymentForm} from "@/modules/cart/utils/paymentForm";
-import {createNewOrder,saveOrderToLocalStorage} from "@/modules/cart/utils/orderUtils";
+import {
+  CardData,
+  FormErrors,
+  formatCardInput,
+  validatePaymentForm,
+} from "@/modules/cart/utils/paymentForm";
+import { useOrder } from "../hook/useCart"; //aqui va la llamada
+import { prepareOrderData } from "../utils/orderUtils";
 import { User } from "@/modules/auth/typesAuth";
 
 export default function PaymentPage() {
   const router = useRouter();
   const { cart, loadCart } = useCartStore();
+  const { createNewOrder  } = useOrder();
   const [user, setUser] = useState<User | null>(null);
   const [cardData, setCardData] = useState<CardData>({
     cardNumber: "",
@@ -31,7 +38,7 @@ export default function PaymentPage() {
     setCardData((prev) => ({ ...prev, [name]: formattedValue }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const validation = validatePaymentForm(cardData);
@@ -39,14 +46,18 @@ export default function PaymentPage() {
 
     if (!validation.isValid) return;
 
-    // Simula proceso de pago...
-    setTimeout(() => {
-      const order = createNewOrder(user, cart);
+    const orderData = prepareOrderData(user, cart);
+    if (!orderData) return;
+
+    try {
+      const order = await createNewOrder(orderData);
       if (order) {
-        saveOrderToLocalStorage(order);
         router.replace("/cart/completed");
       }
-    }, 1000);
+    } catch (err) {
+      // Manejar error (puedes mostrarlo en la UI)
+      console.error("Error al crear la orden:", err);
+    }
   };
 
   useEffect(() => {
