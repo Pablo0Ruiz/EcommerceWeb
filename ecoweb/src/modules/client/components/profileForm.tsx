@@ -23,7 +23,6 @@ export const ProfileForm = () => {
     const loadUser = async () => {
         try {
             const data = await fetchProfile();
-            console.log(data)
             reset(data);
         } catch (error) {
             console.error("Error cargando perfil", error);
@@ -39,11 +38,9 @@ export const ProfileForm = () => {
     };
 
     const onSubmit = async (data: RegisterData) => {
-        console.log('onsubmit:',data)
         await updateProfile(data);
         setEditingField(null);
         const updateUser = await fetchProfile()
-        console.log('datos actualizados',updateUser)
         reset(updateUser);
     };
 

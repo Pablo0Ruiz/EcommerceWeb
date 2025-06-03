@@ -5,7 +5,7 @@ import type { NextRequest } from 'next/server'
 import { jwtVerify } from 'jose'
 
 const SECRET = new TextEncoder().encode(process.env.JWT_SECRET!)
-console.log('este es el secreto:',SECRET)
+
 
 export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl
@@ -22,8 +22,6 @@ export async function middleware(request: NextRequest) {
         const { payload } = await jwtVerify(token, SECRET)
         console.log('este es el payload:',payload)
         const role = payload.role as string
-        console.log('este es el rol:',role)
-
         console.log('🎫 Usuario con rol:', role)
 
         // 🔒 Protección específica por ruta

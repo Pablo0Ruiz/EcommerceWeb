@@ -5,7 +5,7 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
 
-    const backendRes = await fetch('https://localhost:8000/api/order', {
+    const backendRes = await fetch('http://localhost:8000/api/order', {
         method: 'POST',
         headers: {
             Authorization: `Bearer ${token}`,
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
     const token = request.cookies.get('token')?.value;
 
-    const backendRes = await fetch('https://localhost:8000/api/order', {
+    const backendRes = await fetch('http://localhost:8000/api/order', {
         method: 'GET',
         headers: {
             Authorization: `Bearer ${token}`,
@@ -37,7 +37,7 @@ export async function GETId(request: NextRequest, { params }: { params: { id: st
     const token = request.cookies.get('token')?.value;
     const { id } = params;
 
-    const backendRes = await fetch(`https://localhost:8000/api/order/${id}`, {
+    const backendRes = await fetch(`http://localhost:8000/api/order/${id}`, {
         method: 'GET',
         headers: {
             Authorization: `Bearer ${token}`,
@@ -53,7 +53,7 @@ export async function PATCHID(request: NextRequest) {
 
     const body = await request.json();
 
-    const backendRes = await fetch('https://localhost:8000/api/order', {
+    const backendRes = await fetch('http://localhost:8000/api/order', {
         method: 'PATCH',
         headers: {
             Authorization: `Bearer ${token}`,
@@ -71,7 +71,7 @@ export async function DELETELogico(request: NextRequest, {params}: {params : {id
         const { id } = params;
 
 
-    const backendRes = await fetch(`https://localhost:8000/api/order/${id}`, {
+    const backendRes = await fetch(`http://localhost:8000/api/order/${id}`, {
         method: 'DELETE',
         headers: {
             Authorization: `Bearer ${token}`,

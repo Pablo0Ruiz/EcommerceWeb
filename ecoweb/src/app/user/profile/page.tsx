@@ -4,14 +4,13 @@ import { ProfileForm } from '@/modules/client/components/profileForm'
 import { Header } from '@/modules/market/components/header'
 
 const ProfilePage = () => {
+
+  
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Navbar */}
       <Header />
       
-      {/* Contenido principal */}
       <main className="container mx-auto px-4 py-8 max-w-4xl">
-        {/* Breadcrumb y botón de volver */}
         <div className="mb-8 flex justify-between items-center">
           <Link 
             href="/user" 

@@ -5,7 +5,7 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
 
-    const backendRes = await fetch('https://localhost:8000/api/product', {
+    const backendRes = await fetch('http://localhost:8000/api/product', {
         method: 'POST',
         headers: {
             Authorization: `Bearer ${token}`,
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
     const token = request.cookies.get('token')?.value;
 
-    const backendRes = await fetch('https://localhost:8000/api/product', {
+    const backendRes = await fetch('http://localhost:8000/api/product', {
         method: 'GET',
         headers: {
             Authorization: `Bearer ${token}`,
@@ -36,7 +36,7 @@ export async function GETId(request: NextRequest, { params }: { params: { id: st
     const token = request.cookies.get('token')?.value;
     const { id } = params;
 
-    const backendRes = await fetch(`https://localhost:8000/api/product/${id}`, {
+    const backendRes = await fetch(`http://localhost:8000/api/product/${id}`, {
         method: 'GET',
         headers: {
             Authorization: `Bearer ${token}`,
@@ -51,7 +51,7 @@ export async function PUTId(request: NextRequest, { params }: { params: { id: st
     const { id } = params;
     const body = await request.json();
 
-    const backendRes = await fetch(`https://localhost:8000/api/product/${id}`, {
+    const backendRes = await fetch(`http://localhost:8000/api/product/${id}`, {
         method: 'PUT',
         headers: {
             Authorization: `Bearer ${token}`,
@@ -69,7 +69,7 @@ export async function DELETEId(request: NextRequest, { params }: { params: { id:
     const token = request.cookies.get('token')?.value;
     const { id } = params;
 
-    const backendRes = await fetch(`https://localhost:8000/api/product/${id}`, {
+    const backendRes = await fetch(`http://localhost:8000/api/product/${id}`, {
         method: 'DELETE',
         headers: {
             Authorization: `Bearer ${token}`,
@@ -108,7 +108,7 @@ export async function POSTID(request: NextRequest, { params }: { params: { id: s
     const { id } = params;
     const body = await request.json();
 
-    const backendRes = await fetch(`https://localhost:8000/api/product/${id}/review`, {
+    const backendRes = await fetch(`http://localhost:8000/api/product/${id}/review`, {
         method: 'POST',
         headers: {
             Authorization: `Bearer ${token}`,
@@ -126,7 +126,7 @@ export async function DELETEReview(request: NextRequest, {params}: {params : {id
         const { idProduct } = params;
         const { idReview } = params;
 
-    const backendRes = await fetch(`https://localhost:8000/api/product/${idProduct}/review/${idReview}`, {
+    const backendRes = await fetch(`http://localhost:8000/api/product/${idProduct}/review/${idReview}`, {
         method: 'DELETE',
         headers: {
             Authorization: `Bearer ${token}`,
