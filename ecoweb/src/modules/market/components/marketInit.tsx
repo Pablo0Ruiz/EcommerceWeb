@@ -5,18 +5,20 @@ import Image from "next/image";
 import { Footer } from "@/modules/market/components/footer";
 import { PopUp } from "@/shared/components/popup";
 import { Product } from "@/modules/product/typesProduct";
-import { sampleProducts } from "@/modules/product/mockProduct/ProductList";
 import Link from "next/link";
 import { CATEGORIES } from "@/shared/components/categories";
 import { useRouter, useSearchParams } from "next/navigation";
 import bgMarket from "@/../public/matezone_market.jpeg";
-
-// ✅ Importa tu hook de carrito
 import { useCartStore } from "@/modules/cart/hook/cart";
+import { getProducts } from "@/modules/product/services/product";
 
 export default function Market() {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   const router = useRouter();
   const searchParams = useSearchParams();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -27,6 +29,30 @@ export default function Market() {
     const category = searchParams.get("category");
     setSelectedCategory(category);
   }, [searchParams]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const fetchedProducts = await getProducts({    //aqui va la llamada, cambiala todo lo que quieras , esta el esqueleto con todo lo que tiene el controller
+          category: selectedCategory || undefined,
+          // aqui se ponen los parametros que puso alvaro:
+          // minPrice: 0,
+          // maxPrice: 1000,
+          // sortBy: 'sold',
+          // etc.
+        });
+        setProducts(fetchedProducts);
+      } catch (err) {
+        setError("Error al cargar los productos");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [selectedCategory]);
 
   const handleAddToCart = (product: Product) => {
     setSelectedProduct(product);
@@ -45,13 +71,29 @@ export default function Market() {
   };
 
   const filteredProducts = selectedCategory
-    ? sampleProducts.filter((p) => p.category === selectedCategory)
-    : sampleProducts;
+    ? products.filter((p) => p.category === selectedCategory)
+    : products;
 
   const productsByCategory = CATEGORIES.map((category) => ({
     ...category,
     products: filteredProducts.filter((p) => p.category === category.value),
   }));
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p>Cargando productos...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p className="text-red-500">{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="relative bg-gray-100/30 min-h-screen overflow-hidden">
@@ -68,7 +110,6 @@ export default function Market() {
 
       <Header />
       <main className="container mx-auto p-4">
-
         {/* Filtro activo */}
         {selectedCategory && (
           <div className="mb-4 flex justify-between items-center bg-white p-3 rounded shadow">
@@ -98,7 +139,6 @@ export default function Market() {
                   <Link
                     href={`/${value.toLowerCase()}`}
                     className="text-[#000000] hover:text-[#0CAA2A] text-sm"
-
                   >
                     Ver todos
                   </Link>
@@ -150,7 +190,6 @@ export default function Market() {
                         }`}
                         disabled={product.stock <= 0}
                       >
-
                         {product.stock > 0 ? "Añadir al carrito" : "Sin stock"}
                       </button>
                     </Link>
@@ -159,7 +198,6 @@ export default function Market() {
               </section>
             )
         )}
-
       </main>
       <Footer />
 
