@@ -21,30 +21,56 @@ import { useState, useEffect } from "react";
 import { EditAddressModal } from "@/modules/client/components/editAddressModal";
 import Link from "next/link";
 import { Header } from '@/modules/market/components/header'
-import { useGetProfile } from "@/modules/client/hook/useGetProfile"; 
-import { useProfile } from "@/modules/client/hook/useProfile"; //revisa que se haga bien el put de las address
+import { useProfile } from "@/modules/client/hook/useProfile";
 import { Address } from "@/modules/auth/typesAuth";
 
 export default function AddressPage() {
-  const { userData: user, loading, error, refetch } = useGetProfile();
-  const { onSubmit: updateProfile } = useProfile(() => {});
+  const { fetchProfile, updateProfile } = useProfile();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Cargar direcciones del perfil
   useEffect(() => {
-    if (user?.address) {
-      setAddresses(user.address);
+    const loadAddresses = async () => {
+      try {
+        const userData = await fetchProfile();
+        if (userData.address) {
+          setAddresses(userData.address);
+        }
+      } catch (err) {
+        setError("Error al cargar direcciones");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadAddresses();
+  }, [fetchProfile]);
+
+  const refetch = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const userData = await fetchProfile();
+      if (userData.address) {
+        setAddresses(userData.address);
+      }
+    } catch (err) {
+      setError("Error al recargar direcciones");
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
-  }, [user]);
+  };
 
   const setDefault = async (nombre: string) => {
     try {
-      if (!user) return;
-      
       // Actualizar todas las direcciones para marcar solo una como predeterminada
-      const updatedAddresses = user.address.map(addr => ({
+      const updatedAddresses = addresses.map(addr => ({
         ...addr,
         isDefault: addr.nombre === nombre
       }));
@@ -70,9 +96,7 @@ export default function AddressPage() {
 
   const handleDelete = async (nombre: string) => {
     try {
-      if (!user) return;
-      
-      const updatedAddresses = user.address.filter(addr => addr.nombre !== nombre);
+      const updatedAddresses = addresses.filter(addr => addr.nombre !== nombre);
       
       await updateProfile({
         address: updatedAddresses
@@ -88,13 +112,11 @@ export default function AddressPage() {
 
   const handleSave = async (updatedAddress: Address) => {
     try {
-      if (!user) return;
-      
       const updatedAddresses = editingAddress
-        ? user.address.map(addr => 
+        ? addresses.map(addr => 
             addr.nombre === editingAddress.nombre ? updatedAddress : addr
           )
-        : [...user.address, updatedAddress];
+        : [...addresses, updatedAddress];
       
       await updateProfile({
         address: updatedAddresses
@@ -197,7 +219,7 @@ export default function AddressPage() {
           {/* Lista de direcciones */}
           {addresses.map((addr) => (
             <AddressCard
-              key={addr.nombre}
+              key={`${addr.street}-${addr.number}-${addr.postal}`}
               address={{
                 nombre: addr.nombre,
                 street: addr.street,

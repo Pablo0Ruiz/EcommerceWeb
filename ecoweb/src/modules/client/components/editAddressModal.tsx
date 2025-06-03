@@ -126,11 +126,15 @@ export const EditAddressModal: React.FC<EditAddressModalProps> = ({
 =======
             <label className="block text-sm font-medium text-gray-700 mb-1">Nombre de la dirección*</label>
             <input
-              {...register('nombre', { required: 'Este campo es obligatorio' })}
+              {...register("nombre", { required: "Este campo es obligatorio" })}
               className="w-full px-3 py-2 border rounded text-gray-900"
               placeholder="Ej: Casa, Trabajo..."
             />
-            {errors.nombre && <p className="text-red-500 text-sm mt-1">{errors.nombre.message}</p>}
+            {errors.nombre && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.nombre.message}
+              </p>
+            )}
           </div>
 
           <div>
@@ -166,7 +170,7 @@ export const EditAddressModal: React.FC<EditAddressModalProps> = ({
 =======
             <label className="block text-sm font-medium text-gray-700 mb-1">Número*</label>
             <input
-              {...register('number', { required: 'Este campo es obligatorio' })}
+              {...register("number", { required: "Este campo es obligatorio" })}
               className="w-full px-3 py-2 border rounded text-gray-900"
               placeholder="Ej: 12"
             />
@@ -212,7 +216,9 @@ export const EditAddressModal: React.FC<EditAddressModalProps> = ({
 =======
               <label className="block text-sm font-medium text-gray-700 mb-1">Código postal*</label>
               <input
-                {...register('postal', { required: 'Este campo es obligatorio' })}
+                {...register("postal", {
+                  required: "Este campo es obligatorio",
+                })}
                 className="w-full px-3 py-2 border rounded text-gray-900"
               />
               {errors.postal && <p className="text-red-500 text-sm mt-1">{errors.postal.message}</p>}
@@ -239,7 +245,9 @@ export const EditAddressModal: React.FC<EditAddressModalProps> = ({
 =======
             <label className="block text-sm font-medium text-gray-700 mb-1">Provincia*</label>
             <input
-              {...register('province', { required: 'Este campo es obligatorio' })}
+              {...register("province", {
+                required: "Este campo es obligatorio",
+              })}
               className="w-full px-3 py-2 border rounded text-gray-900"
             />
             {errors.province && <p className="text-red-500 text-sm mt-1">{errors.province.message}</p>}
