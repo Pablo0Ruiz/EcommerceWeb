@@ -49,12 +49,11 @@ const ProfilePage = () => {
             </p>
           </div>
           
-          {/* Contenido del formulario */}
           <div className="p-6 md:p-8">
             <ProfileForm />
           </div>
           
-          {/* Pie de la tarjeta */}
+
           <div className="bg-gray-50 px-6 py-4 border-t border-gray-200">
             <p className="text-sm text-gray-600">
               Tus datos están protegidos según nuestra{' '}
