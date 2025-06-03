@@ -4,9 +4,9 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import InputField from "@/shared/components/inputField";
 import { useProfile } from "../hook/useProfile";
-import { RegisterData } from "@/modules/auth/typesAuth";
-import Cookies from "js-cookie";
-import { getCookie, getUserCookie } from "@/shared/utils/cookies";
+import { User } from "@/modules/auth/typesAuth";
+
+type EditableUserFields = Pick<User, 'name' | 'surnames' | 'email' | 'phoneNumber'>;
 
 export const ProfileForm = () => {
     const {
@@ -15,35 +15,47 @@ export const ProfileForm = () => {
         reset,
         formState: { errors, isDirty },
         watch
-    } = useForm<RegisterData>();
+    } = useForm<EditableUserFields>();
 
     const { fetchProfile, updateProfile } = useProfile();
     const [loading, setLoading] = useState(true);
-    const [editingField, setEditingField] = useState<keyof RegisterData | null>(null);
+    const [editingField, setEditingField] = useState<keyof EditableUserFields | null>(null);
 
     useEffect(() => {
-    const loadUser = async () => {
-        try {
-            const data = await fetchProfile();
-            reset(data);
-        } catch (error) {
-            console.error("Error cargando perfil", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-    loadUser();
-}, [reset,fetchProfile]); 
+        const loadUser = async () => {
+            try {
+                const data = await fetchProfile();
+                const editableData: EditableUserFields = {
+                    name: data.name,
+                    surnames: data.surnames,
+                    email: data.email,
+                    phoneNumber: data.phoneNumber,
+                };
+                reset(editableData);
+            } catch (error) {
+                console.error("Error cargando perfil", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadUser();
+    }, [reset, fetchProfile]);
 
-    const toggleEdit = (field: keyof RegisterData) => {
+    const toggleEdit = (field: keyof EditableUserFields) => {
         setEditingField(prev => (prev === field ? null : field));
     };
 
-    const onSubmit = async (data: RegisterData) => {
-        await updateProfile(data);
+    const onSubmit = async (data: EditableUserFields) => {
+        await updateProfile(data as User); // Cast if needed
         setEditingField(null);
-        const updateUser = await fetchProfile()
-        reset(updateUser);
+        const updatedUser = await fetchProfile();
+        const editableData: EditableUserFields = {
+            name: updatedUser.name,
+            surnames: updatedUser.surnames,
+            email: updatedUser.email,
+            phoneNumber: updatedUser.phoneNumber,
+        };
+        reset(editableData);
     };
 
     const formValues = watch();
@@ -59,10 +71,9 @@ export const ProfileForm = () => {
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)}>
-
                 <div className="p-6 flex flex-col items-center border-b border-gray-200">
                     <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 mb-4">
-                        <span className="text-3xl">👤</span>
+                        <span className="text-3xl">�</span>
                     </div>
                     <button
                         type="button"
@@ -72,7 +83,7 @@ export const ProfileForm = () => {
                     </button>
                 </div>
 
-                {(["name", "surnames", "email", "phoneNumber"] as (keyof RegisterData)[]).map((field) => (
+                {(["name", "surnames", "email", "phoneNumber"] as (keyof EditableUserFields)[]).map((field) => (
                     <div className="p-6 border-b border-gray-200" key={field}>
                         <div className="flex justify-between items-start mb-2">
                             <label htmlFor={field} className="block text-sm font-medium text-gray-700 capitalize">
@@ -91,7 +102,7 @@ export const ProfileForm = () => {
                         </div>
 
                         {editingField === field ? (
-                            <InputField<RegisterData>
+                            <InputField<EditableUserFields>
                                 id={field}
                                 label=""
                                 register={register}
