@@ -1,22 +1,33 @@
-import { useRouter } from 'next/navigation';
-import { PutProfile } from '../services/profile';
-import { User } from '@/modules/auth/typesAuth';
+import { RegisterData } from "@/modules/auth/typesAuth";
+import { useCallback  } from "react";
 
-export const useProfile = (reset: () => void) => {
-    const router = useRouter();
-const onSubmit = async (data: Partial<User>) => {
-    try {
-        const updatedUser = await PutProfile(data);
-        // Do something with updatedUser if needed
-        console.log('Updated user data:', updatedUser);
-        
-        alert('Perfil actualizado correctamente');
-        router.push('/user/profile');
-        reset();
-    } catch (error) {
-        console.error('Error en useProfile:', error);
-        alert(error instanceof Error ? error.message : 'Error desconocido al actualizar perfil');
-    }
-}
-    return { onSubmit };
+export const useProfile = () => {
+    const fetchProfile = useCallback(async (): Promise<RegisterData> => {
+        const res = await fetch('/api/auth/user', {
+            method: 'GET',
+            credentials: 'include',
+            cache: 'no-store'
+        });
+        if (!res.ok) {
+            throw new Error('Error al obtener perfil');
+        }
+
+        return await res.json();
+    },[]);
+
+    const updateProfile = async (data: RegisterData): Promise<void> => {
+        const res = await fetch('/api/auth/user', {
+            method: 'PUT',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        });
+        if (!res.ok) {
+            throw new Error('Error al actualizar perfil');
+        }
+    };
+
+    return { fetchProfile, updateProfile };
 }
