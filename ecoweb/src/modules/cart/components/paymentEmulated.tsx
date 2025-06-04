@@ -3,34 +3,55 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import HeaderWizardSteps from "@/modules/cart/utils/headerWizard";
 import { useCartStore } from "@/modules/cart/hook/cart";
-import { getUserCookie } from "@/shared/utils/cookies";
 import {
   CardData,
   FormErrors,
   formatCardInput,
   validatePaymentForm,
 } from "@/modules/cart/utils/paymentForm";
-import { useOrder } from "../hook/useCart"; //aqui va la llamada
+import { useOrder } from "../hook/useCart";
 import { prepareOrderData } from "../utils/orderUtils";
+import { useProfile } from "@/modules/client/hook/useProfile";
 import { User } from "@/modules/auth/typesAuth";
+import { Address } from "@/modules/auth/typesAuth";
+
+type UserOrderFields = Pick<User, "_id">;
 
 export default function PaymentPage() {
   const router = useRouter();
   const { cart, loadCart } = useCartStore();
-  const { createNewOrder  } = useOrder();
-  const [user, setUser] = useState<User | null>(null);
+  const { createNewOrder } = useOrder();
+  const { fetchProfile } = useProfile();
+
+  const [addr, setAddr] = useState<Address | null>(null);
+
   const [cardData, setCardData] = useState<CardData>({
     cardNumber: "",
     expiryDate: "",
     cvv: "",
     cardholderName: "",
   });
+
   const [errors, setErrors] = useState<FormErrors>({
     cardNumber: "",
     expiryDate: "",
     cvv: "",
     cardholderName: "",
   });
+
+  // Cargar dirección del localStorage al montar el componente
+  useEffect(() => {
+    const storedAddr = localStorage.getItem("selectedAddress");
+    if (storedAddr) {
+      try {
+        const parsedAddr: Address = JSON.parse(storedAddr);
+        setAddr(parsedAddr);
+      } catch (e) {
+        console.error("Error parsing address from localStorage", e);
+        setAddr(null);
+      }
+    }
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -43,26 +64,34 @@ export default function PaymentPage() {
 
     const validation = validatePaymentForm(cardData);
     setErrors(validation.errors);
-
     if (!validation.isValid) return;
 
-    const orderData = prepareOrderData(user, cart);
-    if (!orderData) return;
+    if (!addr) {
+      alert("No hay dirección seleccionada para el envío.");
+      return;
+    }
 
     try {
+      const profileData: UserOrderFields = await fetchProfile();
+      if (!profileData || !profileData._id) {
+        console.error("Usuario no autenticado");
+        return;
+      }
+
+      const orderData = prepareOrderData(profileData, cart, addr);
+      if (!orderData) return;
+
       const order = await createNewOrder(orderData);
       if (order) {
         router.replace("/cart/completed");
       }
     } catch (err) {
-      // Manejar error (puedes mostrarlo en la UI)
       console.error("Error al crear la orden:", err);
     }
   };
 
   useEffect(() => {
     loadCart();
-    setUser(getUserCookie());
   }, [loadCart]);
 
   return (

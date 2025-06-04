@@ -1,11 +1,12 @@
 // src/modules/cart/utils/orderUtils.ts
 import type { OrderItem, OrderInput } from "@/modules/orders/typesOrder";
-import type { User } from "@/modules/auth/typesAuth";
 import type { CartItem } from "@/modules/cart/typesCart";
+import { Address } from "@/modules/auth/typesAuth";
 
 export const prepareOrderData = (
-  user: User | null,
-  cart: CartItem[]
+  user: {_id:string } | null,
+  cart: CartItem[],
+  shippingAddress: Address
 ): OrderInput | null => {
   if (!user) return null;
 
@@ -33,12 +34,6 @@ export const prepareOrderData = (
     state: "pending",
     deliveryMethod: determineDeliveryMethod(),
     items,
-    shippingAddress: user.address[0] || {
-      street: "",
-      number: "",
-      postal: "",
-      city: "",
-      province: "",
-    },
+    shippingAddress,
   };
 };
