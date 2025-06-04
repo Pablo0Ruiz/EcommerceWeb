@@ -1,6 +1,6 @@
 import { Order } from "../typesOrder";
 
-export const getOrders = async (userId: string): Promise<Order[]> => {
+export const getOrders = async (userId: string): Promise<Order[]> => { //aqui va la llamada
   try {
     const response = await fetch(`/api/orders?userId=${userId}`, {
       method: 'GET',

@@ -96,7 +96,7 @@ export default function AddressPage() {
                 {/* Lista de direcciones - Reemplazo de AddressCard */}
                 {addresses.map((addr) => (
                   <div 
-                    key={addr.nombre}
+                    key={`${addr.nombre}-${addr.postal}`}
                     className="border border-gray-200 rounded-lg p-6 w-72 h-[336px] relative shadow-sm hover:shadow-md transition-shadow bg-white flex flex-col"
                   >
                     {addr.isDefault && (

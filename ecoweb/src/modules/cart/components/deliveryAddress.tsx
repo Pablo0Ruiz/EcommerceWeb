@@ -86,7 +86,7 @@ export default function DeliveryAddressPage() {
                 {/* Lista de direcciones */}
                 {addresses.map((addr) => (
                   <div
-                    key={addr.nombre}
+                    key={`${addr.nombre}-${addr.postal}`}
                     className={`border rounded-lg p-6 w-72 h-[336px] relative shadow-sm hover:shadow-md transition-shadow bg-white flex flex-col cursor-pointer ${
                       selectedAddress?.nombre === addr.nombre ? "border-green-600 border-2" : "border-gray-200"
                     }`}
