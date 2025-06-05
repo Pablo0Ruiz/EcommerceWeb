@@ -17,7 +17,7 @@ export const setCookie = (value: string, options: CookiesAtribute = {}) => {
 }
 
 
-export const setUserCookie = (user: User) => {
+export const setUserCookie = (user:Partial<User>) => {
     Cookies.set('user', JSON.stringify(user), {
         expires: 1, // 1 día
         secure: process.env.NODE_ENV === 'production',

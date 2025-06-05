@@ -1,21 +1,33 @@
-import { useRouter } from 'next/navigation';
-import { PutProfile } from '../services/profile';
+import { User } from "@/modules/auth/typesAuth";
+import { useCallback  } from "react";
 
-
-export const useProfile = (reset: () => void) => {
-
-    const router = useRouter();
-
-    const onSubmit = async (data: unknown) => {
-        try {
-            const response = await PutProfile(data)
-            if (!response) { throw new Error('Error al actualizar!') }
-            router.push('/perfil(crear esta ruta)')
-            reset()
-        } catch (error) {
-            console.error(error);
+export const useProfile = () => {
+    const fetchProfile = useCallback(async (): Promise<User> => {
+        const res = await fetch('/api/auth/user', {
+            method: 'GET',
+            credentials: 'include',
+            cache: 'no-store'
+        });
+        if (!res.ok) {
+            throw new Error('Error al obtener perfil');
         }
-    }
 
-    return {onSubmit}
+        return await res.json();
+    },[]);
+
+    const updateProfile = async (data: Partial<User>): Promise<void> => {
+        const res = await fetch('/api/auth/user', {
+            method: 'PUT',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        });
+        if (!res.ok) {
+            throw new Error('Error al actualizar perfil');
+        }
+    };
+
+    return { fetchProfile, updateProfile };
 }

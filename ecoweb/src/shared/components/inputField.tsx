@@ -1,4 +1,4 @@
-// shared/components/inputField.tsx
+
 'use client'
 import { UseFormRegister, FieldValues, FieldError, Path, RegisterOptions } from "react-hook-form";
 

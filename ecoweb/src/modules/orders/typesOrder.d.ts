@@ -1,39 +1,43 @@
+// modules/orders/typesOrder.d.ts
 import { ShippingAddress } from "../cart/typesOrder";
+
+export type OrderState = 'pending' | 'in-process' | 'sent' | 'received' | 'cancelled';
+export type DeliveryMethod = 'standard' | 'express' | 'urgent';
 
 export interface Order {
   _id: string;
-  client: string; // Solo el ID del usuario (Mongo ObjectId como string)
-  date: string | Date;
+  client: string; // ID del usuario
+  date: Date | string;
   total: number;
-  state: 'pending' | 'in-process' | 'sent' | 'received' | 'cancelled';
-  deliveryMethod: string
+  state: OrderState;
+  deliveryMethod: DeliveryMethod; // Cambiado de string a tipo específico
   items: OrderItem[];
   shippingAddress: ShippingAddress;
-  createdAt?: string | Date;
-  updatedAt?: string | Date;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
   deleted?: boolean;
-  deletedAt?: string | Date;
-  deletedBy?: string; // ID del usuario que borró, opcional
+  deletedAt?: Date | string;
+  deletedBy?: string;
 }
 
 export interface OrderItem {
-  product: string; // Solo el ID del producto (Mongo ObjectId como string)
-  quantity: number;
-  unit_price: number;
-}
-
-export interface OrderItemInput {
   product: string; // ID del producto
   quantity: number;
   unit_price: number;
 }
 
+export interface OrderItemInput {
+  product: string;
+  quantity: number;
+  unit_price: number;
+}
+
 export interface OrderInput {
-  client: string; // ID del usuario
-  date: string;
+  client: string;
+  date?: Date | string;
   total: number;
-  state: 'pending' | 'in-process' | 'sent' | 'received' | 'cancelled';
-  deliveryMethod: 'standard' | 'express' | 'urgent';
+  state?: OrderState;
+  deliveryMethod: DeliveryMethod;
   items: OrderItemInput[];
   shippingAddress: ShippingAddress;
 }

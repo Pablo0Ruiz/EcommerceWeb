@@ -4,14 +4,13 @@ import { ProfileForm } from '@/modules/client/components/profileForm'
 import { Header } from '@/modules/market/components/header'
 
 const ProfilePage = () => {
+
+  
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Navbar */}
       <Header />
       
-      {/* Contenido principal */}
       <main className="container mx-auto px-4 py-8 max-w-4xl">
-        {/* Breadcrumb y botón de volver */}
         <div className="mb-8 flex justify-between items-center">
           <Link 
             href="/user" 
@@ -50,12 +49,11 @@ const ProfilePage = () => {
             </p>
           </div>
           
-          {/* Contenido del formulario */}
           <div className="p-6 md:p-8">
             <ProfileForm />
           </div>
           
-          {/* Pie de la tarjeta */}
+
           <div className="bg-gray-50 px-6 py-4 border-t border-gray-200">
             <p className="text-sm text-gray-600">
               Tus datos están protegidos según nuestra{' '}
