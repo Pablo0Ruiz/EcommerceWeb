@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { Order } from "@/modules/orders/typesOrder";
 import { User } from "@/modules/auth/typesAuth";
 import { getUserCookie } from "@/shared/utils/cookies";
@@ -8,44 +8,37 @@ import { Header } from "@/modules/market/components/header";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Product } from "@/modules/product/typesProduct";
+import { useGetOrders } from "@/modules/orders/hook/useGetOrders";
 
 const MisPedidosPage: React.FC = () => {
-  const [orders, setOrders] = useState<Order[]>([]);
   const [user, setUser] = useState<User | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const router = useRouter();
+  
+  // Usamos el hook para obtener los pedidos
+  const { orders, loading, error, refetch } = useGetOrders(); //aqui va la llamada
 
-  const loadUser = useCallback(() => {
+  const loadUser = () => {
     const cookieUser = getUserCookie();
     setUser(cookieUser);
-  }, []);
+  };
 
-  const loadOrders = useCallback(() => {
-    const data = localStorage.getItem("orders");
-    if (data) {
-      setOrders(JSON.parse(data));
-    } else {
-      setOrders([]);
-    }
-  }, []);
-
-  const loadProducts = useCallback(() => {
+  const loadProducts = () => {
     const data = localStorage.getItem("products");
     if (data) {
       setProducts(JSON.parse(data));
     } else {
       setProducts([]);
     }
-  }, []);
+  };
 
   useEffect(() => {
     loadUser();
-    loadOrders();
     loadProducts();
-  }, [loadUser, loadOrders, loadProducts]);
+  }, []);
 
   const canReview = (order: Order) => {
-    return order.state === "received"; // Solo permitir reseñas si el pedido ha sido recibido
+    return order.state === "received";
   };
 
   const hasReviewed = (productId: string) => {
@@ -55,6 +48,36 @@ const MisPedidosPage: React.FC = () => {
       (r) => String(r.user) === String(user._id)
     );
   };
+
+  if (loading) {
+    return (
+      <div className="relative min-h-screen bg-gray-50 text-gray-800">
+        <Header />
+        <main className="pt-[94px] px-4 sm:px-6 md:px-16 lg:px-32 pb-12">
+          <div className="text-center">Cargando pedidos...</div>
+        </main>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="relative min-h-screen bg-gray-50 text-gray-800">
+        <Header />
+        <main className="pt-[94px] px-4 sm:px-6 md:px-16 lg:px-32 pb-12">
+          <div className="text-center text-red-500">
+            Error al cargar los pedidos: {error}
+            <button 
+              onClick={refetch}
+              className="ml-4 px-4 py-2 bg-blue-500 text-white rounded"
+            >
+              Reintentar
+            </button>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="relative min-h-screen bg-gray-50 text-gray-800">

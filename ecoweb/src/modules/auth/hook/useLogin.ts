@@ -4,7 +4,7 @@ import { loginClient } from "@/modules/auth/services/login";
 import { LoginData } from "../typesAuth";
 
 export const useLogin = (reset: () => void) => {
-    const router = useRouter();
+  const router = useRouter();
 
     const onSubmit = async (data: LoginData) => {
         try {
@@ -19,6 +19,7 @@ export const useLogin = (reset: () => void) => {
             });
 
             router.push('/market');
+            console.log("deberia redirigir a /market");
             reset();
         } catch (error) {
             console.error('Error inesperado:', error);

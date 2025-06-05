@@ -1,8 +1,8 @@
-import { RegisterData } from "@/modules/auth/typesAuth";
+import { User } from "@/modules/auth/typesAuth";
 import { useCallback  } from "react";
 
 export const useProfile = () => {
-    const fetchProfile = useCallback(async (): Promise<RegisterData> => {
+    const fetchProfile = useCallback(async (): Promise<User> => {
         const res = await fetch('/api/auth/user', {
             method: 'GET',
             credentials: 'include',
@@ -15,7 +15,7 @@ export const useProfile = () => {
         return await res.json();
     },[]);
 
-    const updateProfile = async (data: RegisterData): Promise<void> => {
+    const updateProfile = async (data: Partial<User>): Promise<void> => {
         const res = await fetch('/api/auth/user', {
             method: 'PUT',
             credentials: 'include',
