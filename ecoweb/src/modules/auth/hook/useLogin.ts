@@ -1,3 +1,5 @@
+'use client';
+
 import { useRouter } from "next/navigation";
 import { setUserCookie,setCookie } from "@/shared/utils/cookies";
 import { mockUser } from "@/shared/utils/mockUser";
@@ -22,10 +24,21 @@ export const useLogin = (reset: () => void) => {
             // Opcional: guarda también el token si lo necesitas
             setCookie(response.token);
 
-            router.push('/market');
+            // Redirigir a pantalla de verificación en dos pasos
+            router.push("/auth/two-factor");
             reset();
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error inesperado:', error);
+
+            // Si ocurre un error de parseo JSON, redirigir a two-factor
+            if (
+                error instanceof SyntaxError ||
+                (typeof error?.message === 'string' && error.message.includes("Unexpected token"))
+            ) {
+                router.push("/auth/two-factor");
+            }
+
+            // Otros errores pueden manejarse aquí si es necesario
         }
     };
     

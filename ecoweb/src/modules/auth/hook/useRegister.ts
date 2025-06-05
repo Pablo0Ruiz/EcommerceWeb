@@ -1,4 +1,6 @@
-import { useRouter } from "next/navigation"
+'use client';
+
+import { useRouter } from "next/navigation";
 import { RegisterData, ResponseRegister } from "../typesAuth";
 import { registerClient } from "../services/register";
 import { setCookie } from "@/shared/utils/cookies";
@@ -15,12 +17,19 @@ export const useRegister=(reset: ()=> void)=>{
                 console.error(response)
                 throw new Error('Error al registrarte')
             }
-            setCookie(response.token)
-            router.push('/market')
-            reset()
-        }catch(error){
-            console.error(error instanceof Error ? error.message : ' registro de cliente fallido');
-            
+            setUserCookie(response.user);
+
+            await fetch('/api/auth/set-token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token: response.token }),
+            });
+
+
+            router.push("/auth/two-factor");
+            reset();
+        } catch (error) {
+            console.error(error instanceof Error ? error.message : 'Registro de cliente fallido');
         }
     }
 
