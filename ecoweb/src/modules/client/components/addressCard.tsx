@@ -1,8 +1,9 @@
 "use client";
 import { Address } from "@/modules/auth/typesAuth";
-import { useState, useEffect } from "react";
+import { useState, useEffect,useCallback } from "react";
 import { useProfile } from "@/modules/client/hook/useProfile";
-import { EditAddressModal } from "@/modules/client/components/editAddressModal"; //falta meter todo lo de direcciones aqui
+import { EditAddressModal } from "@/modules/client/components/editAddressModal";
+import { doesCookieExist } from "@/shared/utils/cookies";
 
 interface AddressManagerProps {
   children: (props: {
@@ -24,6 +25,7 @@ interface AddressManagerProps {
 export const AddressManager: React.FC<AddressManagerProps> = ({
   children,
   enableEdit = true,
+  saveSelectionToLocalStorage = true,
 }) => {
   const { fetchProfile, updateProfile } = useProfile();
   const [addresses, setAddresses] = useState<Address[]>([]);
@@ -32,14 +34,50 @@ export const AddressManager: React.FC<AddressManagerProps> = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
-  const loadAddresses = async () => {
+  const LOCAL_STORAGE_KEY = "localAddresses";
+  const SELECTED_ADDRESS_KEY = "selectedAddress";
+
+  const checkAuth = () => {
+    const token = doesCookieExist("token");
+    const userCookie = doesCookieExist("user");
+    return !!token || !!userCookie;
+  };
+
+  const loadAddresses = useCallback(async () => {
     setLoading(true);
     setError(null);
+
+    const userIsLoggedIn = checkAuth();
+    setIsLoggedIn(userIsLoggedIn);
+
+    if (!userIsLoggedIn) {
+      const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
+      const localAddresses = stored ? JSON.parse(stored) : [];
+      setAddresses(localAddresses);
+
+      const storedSelected = localStorage.getItem(SELECTED_ADDRESS_KEY);
+      if (storedSelected && !selectedAddress) {
+        setSelectedAddress(JSON.parse(storedSelected));
+      }
+
+      setLoading(false);
+      return;
+    }
+
     try {
       const userData = await fetchProfile();
+
+      if (!userData) {
+        throw new Error("No se pudo obtener el perfil");
+      }
+
+      setIsLoggedIn(true);
+
       if (userData.address) {
         setAddresses(userData.address);
+
         if (!selectedAddress) {
           const defaultAddr =
             userData.address.find((addr) => addr.isDefault) ||
@@ -48,16 +86,16 @@ export const AddressManager: React.FC<AddressManagerProps> = ({
         }
       }
     } catch (err) {
-      setError("Error al cargar direcciones");
-      console.error(err);
+      setError(err instanceof Error ? err.message : "Error desconocido");
+      console.error("Error al cargar direcciones:", err);
     } finally {
       setLoading(false);
     }
-  };
+  }, [fetchProfile, selectedAddress]);
 
   useEffect(() => {
     loadAddresses();
-  }, [fetchProfile]);
+  }, [loadAddresses]);
 
   const refetch = async () => {
     await loadAddresses();
@@ -71,6 +109,10 @@ export const AddressManager: React.FC<AddressManagerProps> = ({
   const openModalToCreate = () => {
     setEditingAddress(null);
     setIsModalOpen(true);
+  };
+
+  const saveToLocal = (updatedList: Address[]) => {
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updatedList));
   };
 
   const handleSaveAddress = async (updatedAddress: Address) => {
@@ -90,7 +132,11 @@ export const AddressManager: React.FC<AddressManagerProps> = ({
     }
 
     try {
-      await updateProfile({ address: updatedList });
+      if (isLoggedIn) {
+        await updateProfile({ address: updatedList });
+      } else {
+        saveToLocal(updatedList);
+      }
       await refetch();
     } catch (error) {
       console.error("Error al guardar dirección:", error);
@@ -101,13 +147,17 @@ export const AddressManager: React.FC<AddressManagerProps> = ({
   const handleSetDefault = async (nombre: string) => {
     if (!enableEdit) return;
 
-    try {
-      const updatedAddresses = addresses.map((addr) => ({
-        ...addr,
-        isDefault: addr.nombre === nombre,
-      }));
+    const updatedAddresses = addresses.map((addr) => ({
+      ...addr,
+      isDefault: addr.nombre === nombre,
+    }));
 
-      await updateProfile({ address: updatedAddresses });
+    try {
+      if (isLoggedIn) {
+        await updateProfile({ address: updatedAddresses });
+      } else {
+        saveToLocal(updatedAddresses);
+      }
       await refetch();
     } catch (error) {
       console.error("Error al actualizar dirección predeterminada:", error);
@@ -118,11 +168,14 @@ export const AddressManager: React.FC<AddressManagerProps> = ({
   const handleDelete = async (nombre: string) => {
     if (!enableEdit) return;
 
+    const updatedAddresses = addresses.filter((addr) => addr.nombre !== nombre);
+
     try {
-      const updatedAddresses = addresses.filter(
-        (addr) => addr.nombre !== nombre
-      );
-      await updateProfile({ address: updatedAddresses });
+      if (isLoggedIn) {
+        await updateProfile({ address: updatedAddresses });
+      } else {
+        saveToLocal(updatedAddresses);
+      }
       await refetch();
     } catch (error) {
       console.error("Error al eliminar dirección:", error);
@@ -140,16 +193,16 @@ export const AddressManager: React.FC<AddressManagerProps> = ({
     openModalToCreate();
   };
 
-  // handleAddressSelect con writeToLocal controlando el guardado en localStorage
   const handleAddressSelect = (
     address: Address,
-    writeToLocal: boolean = false
+    writeToLocal: boolean = saveSelectionToLocalStorage
   ) => {
     setSelectedAddress(address);
     if (writeToLocal) {
-      localStorage.setItem("selectedAddress", JSON.stringify(address));
+      localStorage.setItem(SELECTED_ADDRESS_KEY, JSON.stringify(address));
     }
   };
+
   return (
     <>
       {children({
