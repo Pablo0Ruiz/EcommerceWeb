@@ -30,7 +30,7 @@ type ProductAttribute = {
     _id: string;
 };
 
-export type ProductsLanding = {
+export interface ProductsLanding  {
     reviews: Reviews;
     _id: string;
     name: string;
@@ -42,6 +42,8 @@ export type ProductsLanding = {
     sold: number;
     attributes: ProductAttribute[];
     images: string[];
+    createdAt?: string;
+    updatedAt?: string;
 
 };
 
@@ -59,7 +61,7 @@ const Hero = () => {
                     <p className="text-gray-700 mb-6 text-lg">
                         Descubrí los mejores mates, bombillas y kits materos artesanales. Envío a todo el país.
                     </p>
-                    <Link href="/market">
+                    <Link href={`/product/${products[0]?._id}`} className="inline-block">
                         <button className="bg-green-600 text-white px-6 py-3 rounded-full text-lg hover:bg-green-700 transition">
                             ¡Comprar ahora!
                         </button>

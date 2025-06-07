@@ -1,108 +1,61 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { Order } from "@/modules/orders/typesOrder";
-import { User } from "@/modules/auth/typesAuth";
-import { getUserCookie } from "@/shared/utils/cookies";
-import { Header } from "@/modules/market/components/header";
-import Image from "next/image";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Product } from "@/modules/product/typesProduct";
-import { useGetOrders } from "@/modules/orders/hook/useGetOrders";
+import Image from "next/image";
+
+import { Header } from "@/modules/market/components/header";
+import useGetOrders from "@/modules/orders/hook/useGetOrders";
+import type { ProductsLanding } from "@/modules/landing/components/heroSection";
+import { Order } from "@/modules/orders/typesOrder";
+import { getUserCookie } from "@/shared/utils/cookies";
+import { User } from "@/modules/auth/typesAuth";
 
 const MisPedidosPage: React.FC = () => {
+  const [orders, setOrders] = useState<Order[] | null>(null);
+  const [products, setProducts] = useState<ProductsLanding[]>([]);
   const [user, setUser] = useState<User | null>(null);
-  const [products, setProducts] = useState<Product[]>([]);
   const router = useRouter();
-  
-  // Usamos el hook para obtener los pedidos
-  const { orders, loading, error, refetch } = useGetOrders(); //aqui va la llamada
-
-  const loadUser = () => {
-    const cookieUser = getUserCookie();
-    setUser(cookieUser);
-  };
-
-  const loadProducts = () => {
-    const data = localStorage.getItem("products");
-    if (data) {
-      setProducts(JSON.parse(data));
-    } else {
-      setProducts([]);
-    }
-  };
 
   useEffect(() => {
-    loadUser();
-    loadProducts();
+    setUser(getUserCookie() || null);
+    const localProducts = localStorage.getItem("products");
+    setProducts(localProducts ? JSON.parse(localProducts) : []);
   }, []);
 
-  const canReview = (order: Order) => {
-    return order.state === "received";
-  };
+  useGetOrders(setOrders);
+
+  const canReview = (state: string) => state === "received";
 
   const hasReviewed = (productId: string) => {
     if (!user) return false;
-    const product = products.find(p => String(p.id) === String(productId));
-    return product?.reviews?.reviewTexts?.some(
-      (r) => String(r.user) === String(user._id)
+    const prod = products.find(p => p._id === productId);
+    return prod?.reviews?.reviewTexts?.some(r =>
+      typeof r.user === "object" ? r.user._id === user._id : r.user === user._id
     );
   };
-
-  if (loading) {
-    return (
-      <div className="relative min-h-screen bg-gray-50 text-gray-800">
-        <Header />
-        <main className="pt-[94px] px-4 sm:px-6 md:px-16 lg:px-32 pb-12">
-          <div className="text-center">Cargando pedidos...</div>
-        </main>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="relative min-h-screen bg-gray-50 text-gray-800">
-        <Header />
-        <main className="pt-[94px] px-4 sm:px-6 md:px-16 lg:px-32 pb-12">
-          <div className="text-center text-red-500">
-            Error al cargar los pedidos: {error}
-            <button 
-              onClick={refetch}
-              className="ml-4 px-4 py-2 bg-blue-500 text-white rounded"
-            >
-              Reintentar
-            </button>
-          </div>
-        </main>
-      </div>
-    );
-  }
 
   return (
     <div className="relative min-h-screen bg-gray-50 text-gray-800">
       <Header />
-
       <main className="pt-[94px] px-4 sm:px-6 md:px-16 lg:px-32 pb-12">
         <h1 className="text-3xl md:text-4xl font-bold mb-8 text-center text-green-700">
           Mis Pedidos
         </h1>
 
-        {!user && (
+        {!user ? (
           <div className="text-center text-lg text-gray-600">
-            Debes iniciar sesión para ver tus pedidos.
+            Debés iniciar sesión para ver tus pedidos.
           </div>
-        )}
-
-        {user && orders.length === 0 && (
+        ) : orders === null ? (
+          <div className="text-center text-lg text-gray-600">Cargando pedidos...</div>
+        ) : !orders.length ? (
           <div className="text-center text-lg text-gray-600">
-            No tienes pedidos registrados.
+            No hay pedidos registrados.
           </div>
-        )}
-
-        {user && orders.length > 0 && (
+        ) : (
           <div className="space-y-8">
-            {orders.map((order) => (
+            {orders.map(order => (
               <div
                 key={order._id}
                 className="bg-white shadow-md rounded-2xl p-4 sm:p-6 border border-gray-200 transition hover:shadow-lg"
@@ -123,44 +76,42 @@ const MisPedidosPage: React.FC = () => {
                     </p>
                   </div>
                   <div className="mt-2 md:mt-0">
-                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                      order.state === "received"
-                        ? "bg-green-100 text-green-800"
-                        : order.state === "cancelled"
-                        ? "bg-red-100 text-red-800"
-                        : "bg-yellow-100 text-yellow-800"
-                    }`}>
-                      {order.state === "pending" && "Pendiente"}
-                      {order.state === "in-process" && "En proceso"}
-                      {order.state === "sent" && "Enviado"}
-                      {order.state === "received" && "Recibido"}
-                      {order.state === "cancelled" && "Cancelado"}
+                    <span
+                      className={`px-3 py-1 rounded-full text-sm font-medium ${order.state === "received"
+                          ? "bg-green-100 text-green-800"
+                          : order.state === "cancelled"
+                            ? "bg-red-100 text-red-800"
+                            : "bg-yellow-100 text-yellow-800"
+                        }`}
+                    >
+                      {{
+                        pending: "Pendiente",
+                        "in-process": "En proceso",
+                        sent: "Enviado",
+                        received: "Recibido",
+                        cancelled: "Cancelado",
+                      }[order.state]}
                     </span>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm md:text-base mb-4">
-                  <p>
-                    <strong>Total:</strong> {order.total.toFixed(2)}€
-                  </p>
-                  <p>
-                    <strong>Método de envío:</strong>{" "}
-                    {order.deliveryMethod === "standard" && "Estándar"}
-                    {order.deliveryMethod === "express" && "Express"}
-                    {order.deliveryMethod === "urgent" && "Urgente"}
-                  </p>
+                  <p><strong>Total:</strong> {order.total.toFixed(2)}€</p>
+                  <p><strong>Método de envío:</strong> {{
+                    standard: "Estándar",
+                    express: "Express",
+                    urgent: "Urgente"
+                  }[order.deliveryMethod] || "Desconocido"}</p>
                 </div>
 
                 <div className="mt-4">
-                  <h3 className="font-semibold text-lg mb-3 text-gray-700">
-                    Artículos
-                  </h3>
+                  <h3 className="font-semibold text-lg mb-3 text-gray-700">Artículos</h3>
                   <ul className="space-y-4 border-t border-gray-200 pt-4">
                     {order.items.map((item, idx) => {
-                      const product = products.find(p => String(p.id) === String(item.product));
-
-                      const reviewed = hasReviewed(item.product);
-                      const showReviewButton = canReview(order) && product && !reviewed;
+                      const productData = item.product;
+                      const product = products.find(p => p._id === productData);
+                      const reviewed = hasReviewed(productData);
+                      const showReviewButton = canReview(order.state) && product && !reviewed;
 
                       return (
                         <li
@@ -171,7 +122,7 @@ const MisPedidosPage: React.FC = () => {
                             {product && (
                               <div className="w-16 h-16 relative flex-shrink-0">
                                 <Image
-                                  src={product.images[0] || "/placeholder-product.png"}
+                                  src={product.images?.[0] || "/placeholder-product.png"}
                                   alt={product.name}
                                   fill
                                   className="object-cover rounded"
@@ -180,7 +131,7 @@ const MisPedidosPage: React.FC = () => {
                             )}
                             <div>
                               <h4 className="font-medium text-gray-900">
-                                {product?.name || `Producto ID: ${item.product}`}
+                                {product?.name || `Producto ID: ${productData}`}
                               </h4>
                               <p>Cantidad: {item.quantity}</p>
                               <p>Precio unitario: {item.unit_price.toFixed(2)}€</p>
@@ -192,13 +143,13 @@ const MisPedidosPage: React.FC = () => {
                             </p>
                             {showReviewButton && (
                               <button
-                                onClick={() => router.push(`/review/${item.product}`)}
+                                onClick={() => router.push(`/review/${productData}`)}
                                 className="mt-2 bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 transition"
                               >
                                 Escribir reseña
                               </button>
                             )}
-                            {canReview(order) && product && reviewed && (
+                            {canReview(order.state) && reviewed && (
                               <span className="mt-2 text-green-600 text-sm">
                                 Reseña enviada
                               </span>
@@ -211,20 +162,14 @@ const MisPedidosPage: React.FC = () => {
                 </div>
 
                 <div className="mt-6">
-                  <h3 className="font-semibold text-lg mb-2 text-gray-700">
-                    Dirección de envío
-                  </h3>
+                  <h3 className="font-semibold text-lg mb-2 text-gray-700">Dirección de envío</h3>
                   <div className="text-sm text-gray-600 space-y-1">
+                    <p><strong>Nombre:</strong> {order.shippingAddress?.nombre || "-"}</p>
+                    <p><strong>Dirección:</strong> {order.shippingAddress?.street || "-"}{order.shippingAddress?.number ? `, ${order.shippingAddress.number}` : ""}</p>
                     <p>
-                      <strong>Nombre:</strong> {order.shippingAddress.nombre}
-                    </p>
-                    <p>
-                      <strong>Dirección:</strong> {order.shippingAddress.street},{" "}
-                      {order.shippingAddress.number}
-                    </p>
-                    <p>
-                      {order.shippingAddress.city} ({order.shippingAddress.postal}
-                      ), {order.shippingAddress.province}
+                      {order.shippingAddress?.city || "-"}
+                      {order.shippingAddress?.postal ? ` (${order.shippingAddress.postal})` : ""}
+                      {order.shippingAddress?.province ? `, ${order.shippingAddress.province}` : ""}
                     </p>
                   </div>
                 </div>
@@ -238,3 +183,4 @@ const MisPedidosPage: React.FC = () => {
 };
 
 export default MisPedidosPage;
+

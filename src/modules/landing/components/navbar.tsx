@@ -38,11 +38,11 @@ const NavbarLanding = () => {
 
             {show && (
                 <div className="md:hidden bg-white px-4 pb-4 space-y-2 text-gray-700">
-                    <Link href="#inicio" onClick={() => setShow(false)}>Inicio</Link>
-                    <Link href="#porque" onClick={() => setShow(false)}>¿Por qué elegirnos?</Link>
-                    <Link href="#productos" onClick={() => setShow(false)}>Productos</Link>
-                    <Link href="#testimonios" onClick={() => setShow(false)}>Testimonios</Link>
-                    <Link href="#contacto" onClick={() => setShow(false)}>Contacto</Link>
+                    <Link href="#inicio" >Inicio</Link>
+                    <Link href="#porque" >¿Por qué elegirnos?</Link>
+                    <Link href="#productos" >Productos</Link>
+                    <Link href="#testimonios" >Testimonios</Link>
+                    <Link href="#contacto" >Contacto</Link>
                     <div className="flex flex-col gap-2 pt-2 border-t">
                         <Link href="/auth/login" className="text-sm text-gray-600">Iniciar sesion</Link>
                         <Link href="/auth/register" className="text-sm bg-green-600 text-white px-3 py-1 rounded">

@@ -8,8 +8,6 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-gray-90">
       <Header />
 
-
-      {/* Fondo con imagen */}
       <div className="fixed inset-0 -z-10">
         <Image
           src={miCuenta}
@@ -21,13 +19,11 @@ export default function ProfilePage() {
         />
       </div>
 
-
-      {/* Contenido principal */}
       <main className="pl-20 pr-4 py-4 max-w-6xl">
         <h2 className="text-2xl font-bold mb-6 text-black">Mi cuenta</h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 justify-start">
-          {/* Mis pedidos */}
+
           <Link href="/user/orders">
             <div className="bg-white rounded-lg shadow hover:shadow-md transition border cursor-pointer p-4 flex items-start gap-4 min-h-[160px]">
               <div className="bg-green-600 text-white rounded-full p-4 text-2xl">📦</div>
@@ -40,7 +36,6 @@ export default function ProfilePage() {
             </div>
           </Link>
 
-          {/* Mi perfil */}
           <Link href="/user/profile">
             <div className="bg-white rounded-lg shadow hover:shadow-md transition border cursor-pointer p-4 flex items-start gap-4 min-h-[160px]">
               <div className="bg-green-600 text-white rounded-full p-4 text-2xl">👤</div>
@@ -53,7 +48,6 @@ export default function ProfilePage() {
             </div>
           </Link>
 
-          {/* Direcciones */}
           <Link href="/user/addresses">
             <div className="bg-white rounded-lg shadow hover:shadow-md transition border cursor-pointer p-4 flex items-start gap-4 min-h-[160px]">
               <div className="bg-green-600 text-white rounded-full p-4 text-2xl">🗺️</div>

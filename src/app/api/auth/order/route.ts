@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
+    console.log('Received POST request to /api/auth/order');
     const token = request.cookies.get('token')?.value;
 
     const body = await request.json();
-
+    console.log('Request body:', body);
     const backendRes = await fetch('http://localhost:8000/api/order', {
         method: 'POST',
         headers: {

@@ -7,7 +7,7 @@ export async function PATCH(request: NextRequest) {
 
     const backendForm = new FormData();
     const image = formData.get('image');
-    
+    console.log('Enviando imagen al servidor', image);
     if (image) {
         backendForm.append('image', image);
     }
@@ -21,5 +21,6 @@ export async function PATCH(request: NextRequest) {
     });
 
     const data = await backendRes.json();
+    console.log('Respuesta del backend:', data);
     return NextResponse.json(data);
 }
