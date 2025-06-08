@@ -3,7 +3,7 @@
 export const useEmail = () => {
     const fetchVerifyCode = async (code: string): Promise<void> => {
         const res = await fetch('/api/auth/email', {
-            method: 'POST',
+            method: 'PUT',
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
