@@ -10,7 +10,6 @@ const SECRET = new TextEncoder().encode(process.env.JWT_SECRET!)
 export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl
     const token = request.cookies.get('token')?.value
-    console.log('token middleware:',token)
     console.log('🔐 Middleware ejecutado en:', pathname)
 
     if (!token) {
@@ -24,12 +23,14 @@ export async function middleware(request: NextRequest) {
         const role = payload.role as string
         console.log('🎫 Usuario con rol:', role)
 
-        // 🔒 Protección específica por ruta
         if (pathname.startsWith('/admin') && role !== 'admin') {
             return NextResponse.redirect(new URL('/auth/login', request.url))
         }
 
-        if (pathname.startsWith('/market') && !['admin', 'user', 'seller'].includes(role)) {
+        if (pathname.startsWith('/seller-admin') && !['admin', 'seller'].includes(role)) {
+            return NextResponse.redirect(new URL('/auth/login', request.url))
+        }
+        if (pathname.startsWith('/user') && !['admin','user','seller'].includes(role)) {
             return NextResponse.redirect(new URL('/auth/login', request.url))
         }
 
@@ -41,5 +42,14 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/admin', '/admin/:path*', '/market', '/market/:path*'],
+    matcher: [
+        '/admin',
+        '/admin/:path*',
+        '/market',
+        '/market/:path*',
+        '/seller-admin',
+        '/seller-admin/:path*',
+        '/user',
+        '/user/:path*',
+    ],
 }

@@ -6,6 +6,8 @@ import InputField from '@/shared/components/inputField';
 import Header from '../../components/headers';
 import Main from '../../components/main';
 import Footer from '../../components/footer';
+import Image from 'next/image';
+import bgAdmin from "@/../public/mate2.webp";
 
 type Attribute = {
     nombre: string;
@@ -23,7 +25,12 @@ type FormData = {
 };
 
 export default function CreateProductPage() {
-    const { register, handleSubmit, control, formState: { errors } } = useForm<FormData>({
+    const {
+        register,
+        handleSubmit,
+        control,
+        formState: { errors },
+    } = useForm<FormData>({
         defaultValues: {
             attributes: [{ nombre: '', valor: '' }],
         },
@@ -42,13 +49,12 @@ export default function CreateProductPage() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_TOKEN}`, 
+                    Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_TOKEN}`,
                 },
                 body: JSON.stringify(data),
             });
 
             if (!res.ok) throw new Error('Error al crear producto');
-
             router.push('/admin/products');
         } catch (err) {
             console.error(err);
@@ -57,12 +63,26 @@ export default function CreateProductPage() {
     };
 
     return (
-        <div className="flex flex-col min-h-screen">
+        <div className="relative flex flex-col min-h-screen">
+
+            <div className="fixed inset-0 -z-10">
+                <Image
+                    src={bgAdmin}
+                    alt="Background administrativo"
+                    fill
+                    className="object-cover"
+                    quality={100}
+                    priority
+                    style={{ objectPosition: 'center' }}
+                />
+                <div className="absolute inset-0 bg-[#D9D9D9]/20" />
+
+            </div>
+
             <Header />
             <Main>
                 <h2 className="text-xl font-bold mb-4">Crear Nuevo Producto</h2>
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 max-w-xl">
-
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 max-w-xl p-6 rounded-xl bg-white/30 backdrop-blur-md shadow-lg">
                     <InputField<FormData>
                         id="name"
                         label="Nombre"
@@ -113,7 +133,7 @@ export default function CreateProductPage() {
                         </label>
                         <select
                             id="category"
-                            {...register("category", { required: "La categoría es obligatoria" })}
+                            {...register('category', { required: 'La categoría es obligatoria' })}
                             className="w-full px-3 py-2 border rounded"
                             defaultValue=""
                         >

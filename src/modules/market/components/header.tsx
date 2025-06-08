@@ -18,9 +18,9 @@ export const Header = () => {
 
   return (
     <header className="bg-[#2E8B57] text-white sticky top-0 z-50 shadow-lg">
-      {/* Main Navigation */}
+
       <div className="flex items-center justify-between p-3 px-6">
-        {/* Logo */}
+
 
         <Link href="/" className="relative flex items-center group pl-26">
           <div className="absolute -left-3 w-32 h-32">
@@ -39,7 +39,7 @@ export const Header = () => {
           </div>
         </Link>
 
-        {/* Categories Button */}
+
         <div className="relative">
           <button
             onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
@@ -99,15 +99,12 @@ export const Header = () => {
           )}
         </div>
 
-        {/* Search Bar */}
         <div className="flex-grow mx-6 max-w-3xl">
           <div className="[&_.border]:border-0 [&_input]:rounded-r-none [&_input]:focus:ring-2 [&_input]:focus:ring-[#C1F7D5] [&_button]:rounded-l-none [&_button]:bg-[#3DA56A] [&_button:hover]:bg-[#2E8B57] ">
             <SearchBar />
           </div>
         </div>
 
-
-        {/* User Section */}
         <div className="flex items-center space-x-4">
           <Link href={"/user"}>
             <div className="hidden md:flex items-center px-4 py-2 bg-[#3DA56A] hover:bg-[#2E8B57] rounded-lg transition-colors duration-200 cursor-pointer">
@@ -147,8 +144,6 @@ export const Header = () => {
             </div>
           </Link>
 
-
-          {/* Cart */}
           <Link
             href="/cart"
             className="flex items-center px-4 py-2 bg-[#3DA56A] hover:bg-[#2E8B57] rounded-lg transition-colors duration-200 relative group"
