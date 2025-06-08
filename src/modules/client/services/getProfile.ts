@@ -4,8 +4,7 @@ import { getCookie } from "@/shared/utils/cookies";
 
 export const GetProfile = async (): Promise<User> => {
     const token = getCookie();
-    console.log("esto deberia ", `${process.env.NEXT_PUBLIC_API_BASE_URL}`)
-    console.log(token)
+
     
     if (!token) {
         throw new Error('No hay token de autenticación disponible');

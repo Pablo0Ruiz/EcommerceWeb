@@ -5,6 +5,8 @@ import Image from 'next/image';
 import useLanding from '../services/useLanding';
 import { useState } from 'react';
 import { ProductsLanding } from './heroSection';
+import Link from 'next/link';
+
 
 const ProductList = () => {
     const [products, setProducts] = useState<ProductsLanding[]>([]);
@@ -19,6 +21,7 @@ const ProductList = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {products.map((product) => (
+                        <Link href={'/market'} key={product._id}>
                         <div key={product._id} className="bg-white rounded-lg shadow-md hover:shadow-lg transition p-4">
                             <Image
                                 src={product?.images[0] || '/logo.png'}
@@ -33,6 +36,7 @@ const ProductList = () => {
                                 Ver más
                             </button>
                         </div>
+                        </Link>
                     ))}
                 </div>
             </div>

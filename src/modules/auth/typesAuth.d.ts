@@ -13,12 +13,12 @@ export type LoginData = {
 }
 
 
-// Actualiza tu tipo ResponseLogin
+
 export type ResponseLogin = {
     success: boolean;
     token: string;
     user: {
-        _id: string;  // Cambiado de 'id' a '_id'
+        _id: string;  
         name: string;
         surnames: string;
         email: string;
@@ -32,7 +32,7 @@ export interface ResponseRegister {
     success: boolean,
     token: string
     user: {
-      _id: string;  // Cambiado de 'id' a '_id',
+      _id: string;  
         name?: string,
         surnames?: string,
         email?: string
@@ -73,18 +73,18 @@ export interface User {
 }
 
 export interface Address {
-  nombre: string;  // Mantener para coincidir con el backend
+  _id?: string;
+  nombre?: string;  
   street: string;
   number: string;
   postal: string;
   city: string;
   province: string;
   isDefault?: boolean; 
-  // Eliminar phoneNumber e isDefault o moverlos a donde corresponda
 }
 
 
-// Tipos para la respuesta de login
+
 interface LoginResponse {
   token: string;
   user: {

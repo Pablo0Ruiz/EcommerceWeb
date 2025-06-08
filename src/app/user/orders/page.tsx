@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-
 import { Header } from "@/modules/market/components/header";
 import useGetOrders from "@/modules/orders/hook/useGetOrders";
 import type { ProductsLanding } from "@/modules/landing/components/heroSection";
@@ -164,7 +163,7 @@ const MisPedidosPage: React.FC = () => {
                 <div className="mt-6">
                   <h3 className="font-semibold text-lg mb-2 text-gray-700">Dirección de envío</h3>
                   <div className="text-sm text-gray-600 space-y-1">
-                    <p><strong>Nombre:</strong> {order.shippingAddress?.nombre || "-"}</p>
+                    <p><strong>Nombre:</strong> {user.name || "-"}</p>
                     <p><strong>Dirección:</strong> {order.shippingAddress?.street || "-"}{order.shippingAddress?.number ? `, ${order.shippingAddress.number}` : ""}</p>
                     <p>
                       {order.shippingAddress?.city || "-"}

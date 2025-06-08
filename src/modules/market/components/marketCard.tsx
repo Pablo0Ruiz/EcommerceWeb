@@ -6,7 +6,7 @@ import Link from "next/link";
 const OfferCard: React.FC<PropsOffer> = ({ producto, add, remove, disminuirItem }) => {
     return (
         <div className="border p-4 rounded-md shadow-md hover:shadow-lg transition">
-            <Link href={`/${producto.id}`}>
+            <Link href={`/${producto._id}`}>
                 <div className="cursor-pointer">
                     <Image
                         src={producto.images[0]}
@@ -28,13 +28,13 @@ const OfferCard: React.FC<PropsOffer> = ({ producto, add, remove, disminuirItem 
                         Añadir al carrito
                     </button>
                     <button
-                        onClick={() => disminuirItem(producto.id)}
+                        onClick={() => disminuirItem(producto._id)}
                         className="bg-[#0CAA2A] hover:bg-green-700 text-white px-3 py-1 rounded text-sm"
                     >
                         -
                     </button>
                     <button
-                        onClick={() => remove(producto.id)}
+                        onClick={() => remove(producto._id)}
                         className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm"
                     >
                         Eliminar

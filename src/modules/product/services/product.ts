@@ -1,4 +1,4 @@
-// src/modules/product/services/product.service.ts
+
 import { Product } from "../typesProduct";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';

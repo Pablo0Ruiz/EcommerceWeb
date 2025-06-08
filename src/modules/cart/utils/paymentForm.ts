@@ -45,25 +45,23 @@ export const validatePaymentForm = (cardData: CardData): { isValid: boolean; err
     cardholderName: "",
   };
 
-  // Validación número de tarjeta (16 dígitos)
+
   if (!cardData.cardNumber || cardData.cardNumber.replace(/\s/g, "").length !== 16) {
     errors.cardNumber = "Número de tarjeta inválido";
     isValid = false;
   }
 
-  // Validación fecha de expiración (MM/YY)
   if (!cardData.expiryDate || !/^\d{2}\/\d{2}$/.test(cardData.expiryDate)) {
     errors.expiryDate = "Fecha inválida";
     isValid = false;
   }
 
-  // Validación CVV (3 o 4 dígitos)
+
   if (!cardData.cvv || !/^\d{3,4}$/.test(cardData.cvv)) {
     errors.cvv = "CVV inválido";
     isValid = false;
   }
 
-  // Validación nombre del titular
   if (!cardData.cardholderName || cardData.cardholderName.trim().length < 3) {
     errors.cardholderName = "Nombre inválido";
     isValid = false;

@@ -70,9 +70,9 @@ export default function PaymentPage() {
       return;
     }
     const orderData = prepareOrderData(user, cart);
-    console.log("Datos de la orden:", orderData);
-    if (!orderData) return;
 
+    if (!orderData) return;
+    orderData.state = "received";
     try {
       const order = await createNewOrder(orderData);
       if (order) router.replace("/cart/completed");

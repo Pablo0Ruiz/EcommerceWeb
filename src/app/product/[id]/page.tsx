@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Header } from "@/modules/market/components/header";
 import { Footer } from "@/modules/market/components/footer";
 import { ProductsLanding } from "@/modules/landing/components/heroSection";
-import { PopUp } from "@/shared/components/popup"; // Importamos el componente PopUp
+import { PopUp } from "@/shared/components/popup"; 
 import { Product } from "@/modules/product/typesProduct";
 import useLanding from "@/modules/landing/services/useLanding";
 

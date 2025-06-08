@@ -54,14 +54,14 @@ export const EditAddressModal: React.FC<EditAddressModalProps> = ({
         </h2>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <InputField
+          {/* <InputField
             id="nombre"
             label="Nombre de la dirección*"
             type="text"
             register={register}
             error={errors.nombre}
             requiredMsg="Este campo es obligatorio"
-          />
+          /> */}
 
           <InputField
             id="street"

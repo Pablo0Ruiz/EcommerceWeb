@@ -4,7 +4,7 @@ import { Header } from "@/modules/market/components/header";
 import Image from "next/image";
 import { Footer } from "@/modules/market/components/footer";
 import { PopUp } from "@/shared/components/popup";
-import { Product } from "@/modules/product/typesProduct";
+
 import Link from "next/link";
 import bgMarket from "@/../public/matezone_market.jpeg";
 import { useCartStore } from "@/modules/cart/hook/cart";
@@ -14,14 +14,14 @@ import { ProductsLanding } from "@/modules/landing/components/heroSection";
 
 export default function Market() {
   const [showPopup, setShowPopup] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<ProductsLanding | null>(null);
   const [products, setProducts] = useState<ProductsLanding[]>([]);
 
   const addToCart = useCartStore((state) => state.addToCart);
 
   useLanding(setProducts);
 
-  const handleAddToCart = (product: Product) => {
+  const handleAddToCart = (product: ProductsLanding) => {
     setSelectedProduct(product);
     setShowPopup(true);
     addToCart(product);
@@ -60,7 +60,7 @@ export default function Market() {
               >
                 <div className="relative h-48 w-full mb-3">
                   <Image
-                    src={product.images[0]}
+                    src={product.images[0] || "/logo.png"}
                     alt={product.name}
                     fill
                     className="object-contain"
@@ -89,7 +89,7 @@ export default function Market() {
                   onClick={(e) => {
                     e.preventDefault();
                     handleAddToCart({...product,
-                      id:product._id});
+                      _id:product._id});
                   }}
                   className={`mt-2 w-full py-1 rounded text-sm font-medium transition ${product.stock > 0
                       ? "bg-[#0CAA2A] hover:bg-green-700 text-white"

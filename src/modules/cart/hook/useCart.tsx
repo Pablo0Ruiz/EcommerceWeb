@@ -12,7 +12,7 @@ export const useOrder = () => {
     setError(null);
     
     try {
-      console.log('Creando nueva orden con los datos desde useorder:', orderData);
+
       const order = await createOrder(orderData);
       return order;
     } catch (err) {

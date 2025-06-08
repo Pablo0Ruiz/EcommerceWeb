@@ -9,8 +9,8 @@ interface AddressManagerProps {
     loading: boolean;
     error: string | null;
     handleEdit: (address: Address) => void;
-    handleDelete: (nombre: string) => void;
-    handleSetDefault: (nombre: string) => void;
+    handleDelete: (idOrKey: string) => void;
+    handleSetDefault: (idOrKey: string) => void;
     handleAddNew: () => void;
     refetch: () => void;
     selectedAddress: Address | null;
@@ -18,6 +18,10 @@ interface AddressManagerProps {
   }) => React.ReactNode;
   enableEdit?: boolean;
   saveSelectionToLocalStorage?: boolean;
+}
+
+function getAddressKey(addr: Address) {
+  return addr._id || `${addr.street}-${addr.number}-${addr.postal}`;
 }
 
 export const AddressManager: React.FC<AddressManagerProps> = ({
@@ -40,9 +44,12 @@ export const AddressManager: React.FC<AddressManagerProps> = ({
       const fetchedAddresses = userData.address ?? [];
       setAddresses(fetchedAddresses);
 
-      if (!selectedAddress && fetchedAddresses.length > 0) {
+      if (
+        (!selectedAddress && fetchedAddresses.length > 0) ||
+        (selectedAddress && !fetchedAddresses.some(a => a._id === selectedAddress._id))
+      ) {
         const defaultAddr = fetchedAddresses.find((a) => a.isDefault) || fetchedAddresses[0];
-        setSelectedAddress(defaultAddr);
+        if (defaultAddr) setSelectedAddress(defaultAddr);
       }
     } catch (err) {
       console.error(err);
@@ -54,46 +61,46 @@ export const AddressManager: React.FC<AddressManagerProps> = ({
 
   useEffect(() => {
     loadAddresses();
-    
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const refetch = loadAddresses;
 
-  const handleSaveAddress = async (updatedAddress: Address) => {
+  const handleSaveAddress = async (newAddress: Address) => {
     try {
-      let updatedList = addresses.filter((a) => a.nombre !== updatedAddress.nombre);
+      const user = await fetchProfile();
+      const existingAddresses = user.address || [];
 
-      if (updatedAddress.isDefault) {
-        updatedList = updatedList.map((a) => ({ ...a, isDefault: false }));
+      let updatedList: Address[];
+
+      if (newAddress._id) {
+
+        updatedList = existingAddresses.map(addr =>
+          addr._id === newAddress._id ? newAddress : addr
+        );
+      } else {
+
+        updatedList = [...existingAddresses, newAddress];
       }
 
-      updatedList.push(updatedAddress);
+      console.log("Mandando al backend:", updatedList);
 
       await updateProfile({ address: updatedList });
-      await refetch();
-
-      if (
-        updatedAddress.isDefault ||
-        updatedList.length === 1 ||
-        !selectedAddress ||
-        selectedAddress.nombre === updatedAddress.nombre
-      ) {
-        setSelectedAddress(updatedAddress);
-      }
+      await loadAddresses();
     } catch (err) {
       console.error("Error al guardar dirección:", err);
-      alert("No se pudo guardar la dirección");
     }
   };
 
 
-  const handleSetDefault = async (nombre: string) => {
+  const handleSetDefault = async (idOrKey: string) => {
     if (!enableEdit) return;
     try {
       const updatedAddresses = addresses.map((addr) => ({
         ...addr,
-        isDefault: addr.nombre === nombre,
+        isDefault:
+          (addr._id && addr._id === idOrKey) ||
+          (!addr._id && getAddressKey(addr) === idOrKey),
       }));
       await updateProfile({ address: updatedAddresses });
       await refetch();
@@ -103,10 +110,14 @@ export const AddressManager: React.FC<AddressManagerProps> = ({
     }
   };
 
-  const handleDelete = async (nombre: string) => {
+  const handleDelete = async (idOrKey: string) => {
     if (!enableEdit) return;
     try {
-      const updatedAddresses = addresses.filter((addr) => addr.nombre !== nombre);
+      const updatedAddresses = addresses.filter(
+        (addr) =>
+          (addr._id && addr._id !== idOrKey) ||
+          (!addr._id && getAddressKey(addr) !== idOrKey)
+      );
       await updateProfile({ address: updatedAddresses });
       await refetch();
     } catch (err) {
@@ -149,11 +160,12 @@ export const AddressManager: React.FC<AddressManagerProps> = ({
         handleAddressSelect,
       })}
 
-  <EditAddressModal
+      <EditAddressModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         address={editingAddress}
         onSave={handleSaveAddress}
-        />
-      </>)
+      />
+    </>
+  );
 };

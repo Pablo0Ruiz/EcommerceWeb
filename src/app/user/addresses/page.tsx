@@ -48,11 +48,11 @@ export default function AddressPage() {
     }
   };
 
-  const setDefault = async (nombre: string) => {
+  const setDefault = async (id: string) => {
     try {
       const updatedAddresses = addresses.map(addr => ({
         ...addr,
-        isDefault: addr.nombre === nombre
+        isDefault: addr._id === id
       }));
 
       await updateProfile({
@@ -68,9 +68,9 @@ export default function AddressPage() {
   };
 
 
-  const handleDelete = async (nombre: string) => {
+  const handleDelete = async (id: string) => {
     try {
-      const updatedAddresses = addresses.filter(addr => addr.nombre !== nombre);
+      const updatedAddresses = addresses.filter(addr => addr._id !== id);
 
       await updateProfile({
         address: updatedAddresses
@@ -88,7 +88,7 @@ export default function AddressPage() {
     try {
       const updatedAddresses = editingAddress
         ? addresses.map(addr =>
-          addr.nombre === editingAddress.nombre ? updatedAddress : addr
+          addr._id === editingAddress._id ? updatedAddress : addr
         )
         : [...addresses, updatedAddress];
 
@@ -136,14 +136,12 @@ export default function AddressPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      return (
       <div className="min-h-screen bg-white">
         <Header />
 
         <h1 className="text-2xl font-bold mb-8 text-center text-gray-900">Direcciones de entrega</h1>
 
         <div className="flex flex-wrap justify-center gap-6">
-          {/* Tarjeta para añadir nueva dirección */}
           <div
             className="border-dashed border-2 border-gray-400 rounded-lg p-6 w-72 h-[336px] flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors"
             onClick={() => {
@@ -164,7 +162,7 @@ export default function AddressPage() {
 
           {addresses.map((addr) => (
             <div
-              key={`${addr.nombre}-${addr.postal}`}
+              key={`${addr._id}-${addr.postal}`}
               className="border border-gray-200 rounded-lg p-6 w-72 h-[336px] relative shadow-sm hover:shadow-md transition-shadow bg-white flex flex-col"
             >
               {addr.isDefault && (
@@ -174,7 +172,7 @@ export default function AddressPage() {
               )}
 
               <div className={addr.isDefault ? "mt-8" : ""}>
-                <h3 className="font-bold text-lg mb-2 text-gray-900">{addr.nombre}</h3>
+                <h3 className="font-bold text-lg mb-2 text-gray-900">{addr.street}</h3>
                 <div className="space-y-1 text-gray-900">
                   <p>{addr.street}</p>
                   <p>{addr.number}</p>
@@ -185,9 +183,9 @@ export default function AddressPage() {
               </div>
 
               <div className="mt-auto pt-4 border-t border-gray-200 flex flex-wrap gap-3">
-                {!addr.isDefault && (
+                {!addr.isDefault && addr._id && (
                   <button
-                    onClick={() => setDefault(addr.nombre)}
+                    onClick={() => setDefault(addr._id!)}
                     className="text-green-600 hover:text-green-800 text-sm font-medium underline"
                   >
                     Establecer como predeterminado
@@ -202,12 +200,14 @@ export default function AddressPage() {
                 >
                   Editar
                 </button>
-                <button
-                  onClick={() => handleDelete(addr.nombre)}
-                  className="text-red-600 hover:text-red-800 text-sm font-medium underline"
-                >
-                  Eliminar
-                </button>
+                {addr._id && (
+                  <button
+                    onClick={() => handleDelete(addr._id!)}
+                    className="text-red-600 hover:text-red-800 text-sm font-medium underline"
+                  >
+                    Eliminar
+                  </button>
+                )}
               </div>
             </div>
           ))}

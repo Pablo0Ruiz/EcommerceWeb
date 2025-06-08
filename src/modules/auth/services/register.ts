@@ -2,7 +2,7 @@
 import { RegisterData,ResponseRegister } from "../typesAuth";
 
 export const registerClient = async (data: RegisterData): Promise<ResponseRegister> =>{
-    console.log('data entrando a registro',data)
+
     const response = await fetch('http://localhost:8000/api/user/register',{
         method: 'POST',
         headers: {'Content-Type': 'application/json'},

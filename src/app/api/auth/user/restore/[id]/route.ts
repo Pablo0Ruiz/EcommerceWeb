@@ -17,22 +17,4 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     return NextResponse.json(data);
 }
 
-// esta es la forma de usarlo 
-// const restoreUser = async (id: string) => {
-//     try {
-//         const res = await fetch(`/api/auth/user/restore/${id}`, {
-//             method: 'PATCH',
-//             credentials: 'include', // para que mande la cookie httpOnly con el token
-//         });
 
-//         if (!res.ok) {
-//             throw new Error('Error al restaurar el usuario');
-//         }
-
-//         const data = await res.json();
-//         console.log('Usuario restaurado:', data);
-//         return data;
-//     } catch (err) {
-//         console.error(err);
-//     }
-// };

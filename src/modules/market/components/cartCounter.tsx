@@ -7,7 +7,7 @@ export const CartCounter = () => {
   const { cart } = useCartStore();
   const [itemCount, setItemCount] = useState(0);
 
-  // Efecto para sincronizar con el localStorage y reaccionar a cambios
+
   useEffect(() => {
     const updateCount = () => {
       const storedCart = localStorage.getItem("cart");
@@ -15,16 +15,16 @@ export const CartCounter = () => {
       setItemCount(parsedCart.reduce((total: number, item: CartItem) => total + (item.quantity || 0), 0));
     };
 
-    // Actualizar al montar el componente
+
     updateCount();
 
-    // Escuchar eventos personalizados de actualización del carrito
+
     window.addEventListener("cartUpdated", updateCount);
 
     return () => {
       window.removeEventListener("cartUpdated", updateCount);
     };
-  }, [cart]); // Dependencia del carrito del store
+  }, [cart]); 
 
   return (
     <span className="absolute top-0 right-0 bg-[#fff820] text-[#131921] text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">

@@ -14,20 +14,20 @@ export default function CartList({
   const cart = useCartStore((s) => s.cart);
   const calculateTotal = useCartStore((s) => s.calculateTotal);
   const clearCart = useCartStore((s) => s.clearCart);
-  const shippingOptions = useCartStore((s) => s.shippingOptions); // Obtenemos las opciones de envío
+  const shippingOptions = useCartStore((s) => s.shippingOptions); 
 
   const [showPopup, setShowPopup] = useState(false);
   const router = useRouter();
 
   const total = calculateTotal();
 
-  // ✅ Calcular subtotal (solo suma de precios * cantidad)
+
   const subTotal = cart.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
 
-  // ✅ Calcular resumen de envíos y total de envíos
+
   const shippingSummary: Record<string, {count: number, price: number}> = {};
   let shippingTotal = 0;
   
@@ -41,7 +41,7 @@ export default function CartList({
     }
     
     shippingSummary[method].count += 1;
-    shippingTotal += price * item.quantity; // Sumamos el precio por cada unidad del producto
+    shippingTotal += price * item.quantity; 
   });
 
   const handleNavigation = (path: string) => {
@@ -96,7 +96,6 @@ export default function CartList({
         </div>
       </div>
 
-      {/* Resto del código permanece igual */}
       {showCheckoutButton && (
         <>
           <button

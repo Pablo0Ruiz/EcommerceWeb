@@ -6,6 +6,8 @@ import InputField from "@/shared/components/inputField";
 import { useProfile } from "../hook/useProfile";
 import { User } from "@/modules/auth/typesAuth";
 import Image from "next/image";
+import ChangePasswordModal from "./modalPerfil";
+
 
 type EditableUserFields = Pick<User, 'name' | 'surnames' | 'email' | 'phoneNumber' | 'urlToAvatar'>;
 
@@ -21,6 +23,8 @@ export const ProfileForm = () => {
 
     const { fetchProfile, updateProfile } = useProfile();
     const [loading, setLoading] = useState(true);
+    const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+
     const [editingField, setEditingField] = useState<keyof EditableUserFields | null>(null);
 
     useEffect(() => {
@@ -68,7 +72,6 @@ export const ProfileForm = () => {
 
         const formData = new FormData();
         formData.append("image", file);
-        console.log("Enviando imagen al servidor", formData);
         await fetch('/api/auth/user/image', {
             method: 'PATCH',
             credentials: 'include',
@@ -80,7 +83,7 @@ export const ProfileForm = () => {
             surnames: updatedUser.surnames,
             email: updatedUser.email,
             phoneNumber: updatedUser.phoneNumber,
-            urlToAvatar: updatedUser.urlToAvatar, 
+            urlToAvatar: updatedUser.urlToAvatar,
         });
     };
 
@@ -99,13 +102,13 @@ export const ProfileForm = () => {
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="p-6 flex flex-col items-center border-b border-gray-200">
                     <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 mb-4 overflow-hidden">
-                            <Image
-                                src={formValues.urlToAvatar || "/logo.png"}
-                                alt="Avatar"
-                                width={96}
-                                height={96}
-                                className="w-full h-full object-cover"
-                            />
+                        <Image
+                            src={formValues.urlToAvatar || "/logo.png"}
+                            alt="Avatar"
+                            width={96}
+                            height={96}
+                            className="w-full h-full object-cover"
+                        />
 
                     </div>
                     <input
@@ -181,6 +184,19 @@ export const ProfileForm = () => {
                     </div>
                 )}
             </form>
+            <div className="p-6 border-b border-gray-200">
+                <button
+                    type="button"
+                    className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+                    onClick={() => setIsPasswordModalOpen(true)}
+                >
+                    Cambiar contraseña
+                </button>
+            </div>
+            <ChangePasswordModal
+                isOpen={isPasswordModalOpen}
+                onClose={() => setIsPasswordModalOpen(false)}
+            />
         </div>
     );
 };
