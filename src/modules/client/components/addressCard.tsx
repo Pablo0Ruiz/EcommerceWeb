@@ -83,8 +83,6 @@ export const AddressManager: React.FC<AddressManagerProps> = ({
         updatedList = [...existingAddresses, newAddress];
       }
 
-      console.log("Mandando al backend:", updatedList);
-
       await updateProfile({ address: updatedList });
       await loadAddresses();
     } catch (err) {

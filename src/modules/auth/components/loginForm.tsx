@@ -5,9 +5,9 @@ import Link from 'next/link';
 import { useForm } from "react-hook-form";
 import { useLogin } from "../hook/useLogin";
 import { LoginData } from "../typesAuth";
-
+import { useState } from "react";
 import InputField from "@/shared/components/inputField";
-
+import RecoverPasswordModal from "@/modules/recover-password/components/modalRecover";
 import bgImage from "@/../public/bgImage.jpg"
 import logo from '@/../public/logo.png';
 import image34 from '@/../public/imLogin.png';
@@ -15,6 +15,7 @@ import image34 from '@/../public/imLogin.png';
 const LoginForm = () => {
   const { register, handleSubmit, reset, formState: { errors } } = useForm<LoginData>();
   const { onSubmit } = useLogin(reset);
+  const [showRecoverModal, setShowRecoverModal] = useState(false)
 
   return (
     <div className="relative w-full min-h-screen overflow-hidden flex flex-col items-center justify-center">
@@ -103,13 +104,19 @@ const LoginForm = () => {
               </span>
             </button>
           </form>
-
+          <button
+            onClick={() => setShowRecoverModal(true)}
+            className="mt-6 font-inter text-[16px] text-[#8aff8a] hover:text-[#0CAA2A] hover:underline"
+          >
+            ¿Olvidaste tu contraseña?
+          </button>
           <Link
             href="/auth/register"
             className="mt-6 font-inter text-[16px] text-[#8aff8a] hover:text-[#0CAA2A] hover:underline"
           >
             ¿No tenés cuenta? Registrate acá
           </Link>
+          <RecoverPasswordModal isOpen={showRecoverModal} onClose={() => setShowRecoverModal(false)} />
         </div>
       </div>
     </div>

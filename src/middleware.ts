@@ -24,7 +24,7 @@ export async function middleware(request: NextRequest) {
         const role = payload.role as string
         console.log('🎫 Usuario con rol:', role)
 
-
+        // 🔒 Protección específica por ruta
         if (pathname.startsWith('/admin') && role !== 'admin') {
             return NextResponse.redirect(new URL('/auth/login', request.url))
         }

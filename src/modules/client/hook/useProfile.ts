@@ -23,7 +23,6 @@ export const useProfile = () => {
     }, []);
 
     const updateProfile = async (data: Partial<User>): Promise<void> => {
-        console.log("Updating profile with data:", data);
         const res = await fetch('/api/auth/user', {
             method: 'PUT',
             credentials: 'include',

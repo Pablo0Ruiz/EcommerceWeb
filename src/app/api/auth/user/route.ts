@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
 export async function PUT(request: NextRequest) {
     const token = request.cookies.get('token')?.value;
     const body = await request.json();
-    console.log("Received body:", body);
+
     
     const backendRes = await fetch('http://localhost:8000/api/user/profile', {
         method: 'PUT',
