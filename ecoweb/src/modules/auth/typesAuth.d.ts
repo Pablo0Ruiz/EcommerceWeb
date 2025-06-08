@@ -94,3 +94,13 @@ interface LoginResponse {
     role: string;
   };
 }
+
+
+export interface regEmailResponse {
+  token: string;
+  user: {
+    _id: string;
+    email: string;
+  };
+}
+

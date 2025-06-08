@@ -2,6 +2,7 @@ import Image from "next/image";
 import { ProductCardProps } from "../productProps";
 import { useCartStore } from "@/modules/cart/hook/cart";
 import { CartItem } from "@/modules/cart/typesCart";
+import bgMarket from "@/../public/matezone_market.jpeg";
 
 const ProductCards: React.FC<ProductCardProps> = ({
   producto,
@@ -26,7 +27,7 @@ const ProductCards: React.FC<ProductCardProps> = ({
       {/* Imagen del producto */}
       <div className="w-full sm:w-24 h-24 relative">
         <Image
-          src={producto.images[0]}
+          src={producto.images[0] || bgMarket}
           alt={producto.name}
           fill
           className="object-cover rounded-lg"

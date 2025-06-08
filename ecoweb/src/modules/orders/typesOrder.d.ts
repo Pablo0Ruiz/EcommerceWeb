@@ -23,13 +23,11 @@ export interface Order {
 export interface OrderItem {
   product: string; // ID del producto
   quantity: number;
-  unit_price: number;
 }
 
 export interface OrderItemInput {
   product: string;
   quantity: number;
-  unit_price: number;
 }
 
 export interface OrderInput {

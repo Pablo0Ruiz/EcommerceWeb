@@ -46,7 +46,7 @@ export const doesCookieExist = (name: string) => {
     if (!value) return undefined;
     
     const cookieValue = value.split('=')[1];
-    return decodeURIComponent(cookieValue); // Decodifica valores como el objeto user
+    return decodeURIComponent(cookieValue);
   } catch (error) {
     console.error("Error al leer cookies:", error);
     return undefined;

@@ -34,18 +34,23 @@ export default function Market() {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const fetchedProducts = await getProducts({    //aqui va la llamada, cambiala todo lo que quieras , esta el esqueleto con todo lo que tiene el controller
+        const fetchedProducts = await getProducts({
           category: selectedCategory || undefined,
-          // aqui se ponen los parametros que puso alvaro:
-          // minPrice: 0,
-          // maxPrice: 1000,
-          // sortBy: 'sold',
-          // etc.
         });
-        setProducts(fetchedProducts);
+        const normalizedProducts = fetchedProducts.map((p) => ({
+          ...p,
+          id: p._id ? String(p._id) : String(p.id),
+          category:
+            p.category.charAt(0).toUpperCase() +
+            p.category.slice(1).toLowerCase(), // Capitalizar la primera letra
+        }));
+
+        setProducts(normalizedProducts);
+        console.log("Productos cargados:", normalizedProducts);
       } catch (err) {
-        setError("Error al cargar los productos");
-        console.error(err);
+        setError(
+          err instanceof Error ? err.message : "Error al cargar productos"
+        );
       } finally {
         setLoading(false);
       }
@@ -152,7 +157,7 @@ export default function Market() {
                     >
                       <div className="relative h-48 w-full mb-3">
                         <Image
-                          src={product.images[0]}
+                          src={product.images[0] || bgMarket}
                           alt={product.name}
                           fill
                           className="object-contain"

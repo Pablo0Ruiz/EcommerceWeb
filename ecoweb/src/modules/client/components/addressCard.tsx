@@ -1,31 +1,35 @@
 "use client";
 import { Address } from "@/modules/auth/typesAuth";
-import { useState, useEffect,useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useProfile } from "@/modules/client/hook/useProfile";
 import { EditAddressModal } from "@/modules/client/components/editAddressModal";
 import { doesCookieExist } from "@/shared/utils/cookies";
 
 interface AddressManagerProps {
-  children: (props: {
+  children?: (props: {
     addresses: Address[];
     loading: boolean;
     error: string | null;
-    handleEdit: (address: Address) => void;
     handleDelete: (nombre: string) => void;
     handleSetDefault: (nombre: string) => void;
+    handleEdit: (address: Address) => void;
     handleAddNew: () => void;
-    refetch: () => void;
+    handleSelect: (address: Address) => void;
     selectedAddress: Address | null;
-    handleAddressSelect: (address: Address, writeToLocal?: boolean) => void;
+    refetch: () => void;
   }) => React.ReactNode;
   enableEdit?: boolean;
-  saveSelectionToLocalStorage?: boolean;
+  defaultView?: boolean;
+  selectable?: boolean;
+  onSelect?: (address: Address) => void;
 }
 
 export const AddressManager: React.FC<AddressManagerProps> = ({
   children,
   enableEdit = true,
-  saveSelectionToLocalStorage = true,
+  defaultView = false,
+  selectable = false,
+  onSelect,
 }) => {
   const { fetchProfile, updateProfile } = useProfile();
   const [addresses, setAddresses] = useState<Address[]>([]);
@@ -33,8 +37,8 @@ export const AddressManager: React.FC<AddressManagerProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
-  const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
 
   const LOCAL_STORAGE_KEY = "localAddresses";
   const SELECTED_ADDRESS_KEY = "selectedAddress";
@@ -42,9 +46,15 @@ export const AddressManager: React.FC<AddressManagerProps> = ({
   const checkAuth = () => {
     const token = doesCookieExist("token");
     const userCookie = doesCookieExist("user");
+    const regEmailFlag = doesCookieExist("regEmail"); // Buscamos la flag regEmail
+
+    // Si existe regEmail (true), consideramos que es un usuario invitado (no autenticado)
+    if (regEmailFlag === "true") {
+      return false;
+    }
+
     return !!token || !!userCookie;
   };
-
   const loadAddresses = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -58,7 +68,7 @@ export const AddressManager: React.FC<AddressManagerProps> = ({
       setAddresses(localAddresses);
 
       const storedSelected = localStorage.getItem(SELECTED_ADDRESS_KEY);
-      if (storedSelected && !selectedAddress) {
+      if (storedSelected) {
         setSelectedAddress(JSON.parse(storedSelected));
       }
 
@@ -68,54 +78,30 @@ export const AddressManager: React.FC<AddressManagerProps> = ({
 
     try {
       const userData = await fetchProfile();
-
-      if (!userData) {
-        throw new Error("No se pudo obtener el perfil");
-      }
-
-      setIsLoggedIn(true);
-
+      if (!userData) throw new Error("No se pudo obtener el perfil");
       if (userData.address) {
         setAddresses(userData.address);
 
-        if (!selectedAddress) {
+        // Usamos el estado actual de selectedAddress con el callback
+        setSelectedAddress((prevSelected) => {
+          if (prevSelected) return prevSelected;
           const defaultAddr =
             userData.address.find((addr) => addr.isDefault) ||
             userData.address[0];
-          setSelectedAddress(defaultAddr || null);
-        }
+          return defaultAddr || null;
+        });
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error desconocido");
-      console.error("Error al cargar direcciones:", err);
     } finally {
       setLoading(false);
     }
-  }, [fetchProfile, selectedAddress]);
-
-  useEffect(() => {
-    loadAddresses();
-  }, [loadAddresses]);
-
-  const refetch = async () => {
-    await loadAddresses();
-  };
-
-  const openModalToEdit = (address: Address) => {
-    setEditingAddress(address);
-    setIsModalOpen(true);
-  };
-
-  const openModalToCreate = () => {
-    setEditingAddress(null);
-    setIsModalOpen(true);
-  };
-
+  }, [fetchProfile]); // Eliminamos selectedAddress de las dependencias
   const saveToLocal = (updatedList: Address[]) => {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updatedList));
   };
 
-  const handleSaveAddress = async (updatedAddress: Address) => {
+  const handleAddressUpdate = async (updatedAddress: Address) => {
     const updatedList = [...addresses];
     const existingIndex = updatedList.findIndex(
       (addr) => addr.nombre === updatedAddress.nombre
@@ -142,6 +128,14 @@ export const AddressManager: React.FC<AddressManagerProps> = ({
       console.error("Error al guardar dirección:", error);
       alert("No se pudo guardar la dirección");
     }
+  };
+
+useEffect(() => {
+  loadAddresses();
+}, [loadAddresses, isLoggedIn]); // Añadimos isLoggedIn como dependencia
+
+  const refetch = async () => {
+    await loadAddresses();
   };
 
   const handleSetDefault = async (nombre: string) => {
@@ -185,44 +179,153 @@ export const AddressManager: React.FC<AddressManagerProps> = ({
 
   const handleEdit = (address: Address) => {
     if (!enableEdit) return;
-    openModalToEdit(address);
+    setEditingAddress(address);
+    setIsModalOpen(true);
   };
 
   const handleAddNew = () => {
     if (!enableEdit) return;
-    openModalToCreate();
+    setEditingAddress(null);
+    setIsModalOpen(true);
   };
 
-  const handleAddressSelect = (
-    address: Address,
-    writeToLocal: boolean = saveSelectionToLocalStorage
-  ) => {
-    setSelectedAddress(address);
-    if (writeToLocal) {
-      localStorage.setItem(SELECTED_ADDRESS_KEY, JSON.stringify(address));
+  const handleSelect = (address: Address) => {
+    // Solo actualizamos el estado, no localStorage
+    if (onSelect) {
+      onSelect(address);
     }
+  };
+
+  const renderDefaultView = () => {
+    if (loading) {
+      return <p>Cargando direcciones...</p>;
+    }
+
+    if (error) {
+      return (
+        <div>
+          <p>Error: {error}</p>
+          <button onClick={refetch}>Reintentar</button>
+        </div>
+      );
+    }
+
+    return (
+      <div className="flex flex-wrap justify-center gap-6">
+        {enableEdit && (
+          <div
+            className="border-dashed border-2 border-gray-400 rounded-lg p-6 w-72 h-[336px] flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors"
+            onClick={handleAddNew}
+          >
+            <svg
+              className="w-12 h-12 text-gray-400 mb-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+              />
+            </svg>
+            <span className="text-gray-600 font-medium">Añadir dirección</span>
+          </div>
+        )}
+
+        {addresses.map((addr) => (
+          <div
+            key={`${addr.nombre}-${addr.postal}`}
+            className={`border rounded-lg p-6 w-72 h-[336px] relative shadow-sm hover:shadow-md transition-shadow flex flex-col ${
+              selectable && selectedAddress?.nombre === addr.nombre
+                ? "border-2 border-green-500"
+                : "border-gray-200"
+            }`}
+            onClick={() => selectable && handleSelect(addr)}
+          >
+            {addr.isDefault && (
+              <div className="absolute top-0 left-0 w-full bg-green-600 text-white text-center py-2 rounded-t-lg text-sm font-medium">
+                Predeterminado
+              </div>
+            )}
+
+            <div className={addr.isDefault ? "mt-8" : ""}>
+              <h3 className="font-bold text-lg mb-2 text-gray-900">
+                {addr.nombre}
+              </h3>
+              <div className="space-y-1 text-gray-900">
+                <p>{addr.street}</p>
+                <p>{addr.number}</p>
+                <p>{addr.postal}</p>
+                <p>{addr.city}</p>
+                <p>{addr.province}</p>
+              </div>
+            </div>
+
+            {enableEdit && (
+              <div className="mt-auto pt-4 border-t border-gray-200 flex flex-wrap gap-3">
+                {!addr.isDefault && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSetDefault(addr.nombre);
+                    }}
+                    className="text-green-600 hover:text-green-800 text-sm font-medium underline"
+                  >
+                    Establecer como predeterminado
+                  </button>
+                )}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleEdit(addr);
+                  }}
+                  className="text-blue-600 hover:text-blue-800 text-sm font-medium underline"
+                >
+                  Editar
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete(addr.nombre);
+                  }}
+                  className="text-red-600 hover:text-red-800 text-sm font-medium underline"
+                >
+                  Eliminar
+                </button>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    );
   };
 
   return (
     <>
-      {children({
-        addresses,
-        loading,
-        error,
-        handleEdit,
-        handleDelete,
-        handleSetDefault,
-        handleAddNew,
-        refetch,
-        selectedAddress,
-        handleAddressSelect,
-      })}
+      {children
+        ? children({
+            addresses,
+            loading,
+            error,
+            handleDelete,
+            handleSetDefault,
+            handleEdit,
+            handleAddNew,
+            handleSelect,
+            selectedAddress,
+            refetch,
+          })
+        : defaultView
+        ? renderDefaultView()
+        : null}
 
       <EditAddressModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         address={editingAddress}
-        onSave={handleSaveAddress}
+        onSave={handleAddressUpdate}
       />
     </>
   );

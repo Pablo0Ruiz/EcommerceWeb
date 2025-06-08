@@ -10,6 +10,8 @@ interface EditAddressModalProps {
   onSave: (address: Address) => void;
 }
 
+
+
 export const EditAddressModal: React.FC<EditAddressModalProps> = ({
   isOpen,
   onClose,
@@ -25,15 +27,7 @@ export const EditAddressModal: React.FC<EditAddressModalProps> = ({
 
   useEffect(() => {
     if (address) {
-      reset({
-        nombre: address.nombre,
-        street: address.street,
-        number: address.number,
-        postal: address.postal,
-        city: address.city,
-        province: address.province,
-        isDefault: address.isDefault || false,
-      });
+      reset(address);
     } else {
       reset({
         nombre: "",
@@ -48,25 +42,6 @@ export const EditAddressModal: React.FC<EditAddressModalProps> = ({
   }, [address, reset]);
 
   const onSubmit = (data: Address) => {
-    //aqui tiene que ir la llamada del put con la estrucura de Address que seria esta de ejemplo
-
-    //     PUT http://localhost:8000/api/user/profile
-    // Content-Type: application/json
-    // Authorization: Bearer
-    // {
-    //   "name": "Nuevo ",
-    //   "address": [
-    //     {
-    //       "name": "Casa Principal",
-    //       "street": "Calle Gran Vía",
-    //       "number": "28",
-    //       "postal": "28013",
-    //       "city": "Madrid",
-    //       "province": "Madrid",
-    //       "isDefault": true
-    //     }
-    //   ]
-    // }
     onSave(data);
     onClose();
   };
@@ -81,132 +56,55 @@ export const EditAddressModal: React.FC<EditAddressModalProps> = ({
         </h2>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Nombre de la dirección*
-            </label>
-            <input
-              {...register("nombre", { required: "Este campo es obligatorio" })}
-              className="w-full px-3 py-2 border rounded text-gray-900"
-              placeholder="Ej: Casa, Trabajo..."
-            />
-            {errors.nombre && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.nombre.message}
-              </p>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Calle*
-            </label>
-            <input
-              {...register("street", { required: "Este campo es obligatorio" })}
-              className="w-full px-3 py-2 border rounded text-gray-900"
-              placeholder="Ej: Calle Mayor"
-            />
-            {errors.street && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.street.message}
-              </p>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Número*
-            </label>
-            <input
-              {...register("number", { required: "Este campo es obligatorio" })}
-              className="w-full px-3 py-2 border rounded text-gray-900"
-              placeholder="Ej: 12"
-            />
-            {errors.number && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.number.message}
-              </p>
-            )}
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
+          {[
+            { name: "nombre", label: "Nombre de la dirección*", placeholder: "Ej: Casa, Trabajo..." },
+            { name: "street", label: "Calle*", placeholder: "Ej: Calle Mayor" },
+            { name: "number", label: "Número*", placeholder: "Ej: 12" },
+            { name: "city", label: "Ciudad*", placeholder: "" },
+            { name: "postal", label: "Código postal*", placeholder: "" },
+            { name: "province", label: "Provincia*", placeholder: "" },
+          ].map((field) => (
+            <div key={field.name}>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Ciudad*
+                {field.label}
               </label>
               <input
-                {...register("city", { required: "Este campo es obligatorio" })}
+                {...register(field.name as keyof Address, { required: "Este campo es obligatorio" })}
                 className="w-full px-3 py-2 border rounded text-gray-900"
+                placeholder={field.placeholder}
               />
-              {errors.city && (
+              {errors[field.name as keyof Address] && (
                 <p className="text-red-500 text-sm mt-1">
-                  {errors.city.message}
+                  {errors[field.name as keyof Address]?.message}
                 </p>
               )}
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Código postal*
-              </label>
-              <input
-                {...register("postal", {
-                  required: "Este campo es obligatorio",
-                })}
-                className="w-full px-3 py-2 border rounded text-gray-900"
-              />
-              {errors.postal && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.postal.message}
-                </p>
-              )}
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Provincia*
-            </label>
-            <input
-              {...register("province", {
-                required: "Este campo es obligatorio",
-              })}
-              className="w-full px-3 py-2 border rounded text-gray-900"
-            />
-            {errors.province && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.province.message}
-              </p>
-            )}
-          </div>
+          ))}
 
           <div className="flex items-center">
             <input
               type="checkbox"
-              id="defaultAddress"
               {...register("isDefault")}
-              className="h-4 w-4 text-[#2E8B57] focus:ring-[#2E8B57] border-gray-300 rounded"
+              className="mr-2"
             />
-            <label
-              htmlFor="defaultAddress"
-              className="ml-2 block text-sm text-gray-900"
-            >
-              Establecer como dirección principal
+            <label className="text-sm text-gray-700">
+              Establecer como dirección predeterminada
             </label>
           </div>
 
-          <div className="flex justify-end space-x-3 pt-4">
+          <div className="flex justify-end space-x-4">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+              className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 text-gray-800"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-[#2E8B57] rounded-md text-sm font-medium text-white hover:bg-[#3DA56A]"
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
             >
-              Guardar dirección
+              Guardar
             </button>
           </div>
         </form>

@@ -1,35 +1,36 @@
-// src/modules/product/services/product.service.ts
-import { Product } from "../typesProduct";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+import { Product } from "../typesProduct";
 
 export const getProducts = async (params?: {
   category?: string;
   minPrice?: number;
   maxPrice?: number;
   minRating?: number;
-  sortBy?: string;
+  sortBy?: 'price' | 'rating' | 'sold' | 'createdAt';
   name?: string;
 }): Promise<Product[]> => {
   try {
-    const queryParams = new URLSearchParams();
+    // Construye la URL de la API interna de Next.js
+    const queryString = new URLSearchParams();
     
-    if (params?.category) queryParams.append('category', params.category);
-    if (params?.minPrice) queryParams.append('minPrice', params.minPrice.toString());
-    if (params?.maxPrice) queryParams.append('maxPrice', params.maxPrice.toString());
-    if (params?.minRating) queryParams.append('minRating', params.minRating.toString());
-    if (params?.sortBy) queryParams.append('sortBy', params.sortBy);
-    if (params?.name) queryParams.append('name', params.name);
+    if (params?.category) queryString.append('category', params.category);
+    if (params?.minPrice) queryString.append('minPrice', params.minPrice.toString());
+    if (params?.maxPrice) queryString.append('maxPrice', params.maxPrice.toString());
+    if (params?.minRating) queryString.append('minRating', params.minRating.toString());
+    if (params?.sortBy) queryString.append('sortBy', params.sortBy);
+    if (params?.name) queryString.append('name', params.name);
 
-    const response = await fetch(`${API_URL}/products?${queryParams.toString()}`);
+    const response = await fetch(`/api/auth/product?${queryString.toString()}`, {
+    });
     
     if (!response.ok) {
-      throw new Error('Error fetching products');
+      throw new Error(`Error: ${response.status}`);
     }
 
-    return await response.json();
+    const { data } = await response.json();
+    return data;
   } catch (error) {
     console.error('Error fetching products:', error);
-    return [];
+    throw error; // Propaga el error para manejarlo en el componente
   }
 };

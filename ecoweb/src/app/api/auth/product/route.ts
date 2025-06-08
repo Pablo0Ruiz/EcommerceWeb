@@ -18,20 +18,41 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(data);
 }
 
+
+
 export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
     const token = request.cookies.get('token')?.value;
 
-    const backendRes = await fetch('http://localhost:8000/api/product', {
-        method: 'GET',
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-
+    // Construye la URL para tu backend externo
+    const backendUrl = new URL('http://localhost:8000/api/product');
+    searchParams.forEach((value, key) => {
+      backendUrl.searchParams.append(key, value);
     });
 
+    const backendRes = await fetch(backendUrl.toString(), {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (!backendRes.ok) {
+      throw new Error(`Backend error: ${backendRes.status}`);
+    }
+
     const data = await backendRes.json();
-    return NextResponse.json(data);
+    return NextResponse.json({ data });
+  } catch (error) {
+    console.error('Error in API route:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch products' },
+      { status: 500 }
+    );
+  }
 }
+
+
 export async function GETId(request: NextRequest, { params }: { params: { id: string } }) {
     const token = request.cookies.get('token')?.value;
     const { id } = params;
