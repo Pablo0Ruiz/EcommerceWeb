@@ -1,19 +1,51 @@
 'use client';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import HeaderWizardSteps from "@/modules/cart/utils/headerWizard";
 import { AddressManager } from "@/modules/client/components/addressCard";
 import { EditAddressModal } from "@/modules/client/components/editAddressModal";
 import { Address } from "@/modules/auth/typesAuth";
+import { PopUp } from "@/shared/components/popup"; // Importa el componente PopUp
 
 export default function DeliveryAddressPage() {
   const router = useRouter();
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showAuthPopup, setShowAuthPopup] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Verificar autenticación al cargar la página
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    setIsLoggedIn(!!token);
+    
+    if (!token) {
+      setShowAuthPopup(true);
+    }
+  }, []);
 
   const handleSave = async (updatedAddress: Address) => {
     console.log("Guardando dirección:", updatedAddress);
     setIsModalOpen(false);
+  };
+
+  const handleLogin = () => {
+    setShowAuthPopup(false);
+    router.push('/auth/login');
+  };
+
+  const handleRegister = () => {
+    setShowAuthPopup(false);
+    router.push('/auth/register');
+  };
+
+  const handleAddressAction = (e: React.MouseEvent, action: () => void) => {
+    if (!isLoggedIn) {
+      e.preventDefault();
+      setShowAuthPopup(true);
+    } else {
+      action();
+    }
   };
 
   return (
@@ -62,10 +94,10 @@ export default function DeliveryAddressPage() {
                 {/* Tarjeta para añadir nueva dirección */}
                 <div
                   className="border-dashed border-2 border-gray-400 rounded-lg p-6 w-72 h-[336px] flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors"
-                  onClick={() => {
+                  onClick={(e) => handleAddressAction(e, () => {
                     setEditingAddress(null);
                     setIsModalOpen(true);
-                  }}
+                  })}
                 >
                   <svg
                     className="w-12 h-12 text-gray-400 mb-2"
@@ -90,7 +122,13 @@ export default function DeliveryAddressPage() {
                     className={`border rounded-lg p-6 w-72 h-[336px] relative shadow-sm hover:shadow-md transition-shadow bg-white flex flex-col cursor-pointer ${
                       selectedAddress?.nombre === addr.nombre ? "border-green-600 border-2" : "border-gray-200"
                     }`}
-                    onClick={() => handleAddressSelect(addr,true)}
+                    onClick={() => {
+                      if (isLoggedIn) {
+                        handleAddressSelect(addr, true);
+                      } else {
+                        setShowAuthPopup(true);
+                      }
+                    }}
                   >
                     {addr.isDefault && (
                       <div className="absolute top-0 left-0 w-full bg-green-600 text-white text-center py-2 rounded-t-lg text-sm font-medium">
@@ -114,7 +152,7 @@ export default function DeliveryAddressPage() {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleSetDefault(addr.nombre);
+                            handleAddressAction(e, () => handleSetDefault(addr.nombre));
                           }}
                           className="text-green-600 hover:text-green-800 text-sm font-medium underline"
                         >
@@ -124,8 +162,10 @@ export default function DeliveryAddressPage() {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          setEditingAddress(addr);
-                          setIsModalOpen(true);
+                          handleAddressAction(e, () => {
+                            setEditingAddress(addr);
+                            setIsModalOpen(true);
+                          });
                         }}
                         className="text-blue-600 hover:text-blue-800 text-sm font-medium underline"
                       >
@@ -134,8 +174,12 @@ export default function DeliveryAddressPage() {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          // Aquí deberías llamar a tu lógica de eliminación
-                          alert("Implementa la lógica para eliminar si es necesario.");
+                          if (isLoggedIn) {
+                            // Aquí deberías llamar a tu lógica de eliminación
+                            alert("Implementa la lógica para eliminar si es necesario.");
+                          } else {
+                            setShowAuthPopup(true);
+                          }
                         }}
                         className="text-red-600 hover:text-red-800 text-sm font-medium underline"
                       >
@@ -166,7 +210,9 @@ export default function DeliveryAddressPage() {
                 </button>
                 <button
                   onClick={() => {
-                    if (selectedAddress) {
+                    if (!isLoggedIn) {
+                      setShowAuthPopup(true);
+                    } else if (selectedAddress) {
                       router.push("/cart/payment");
                     } else {
                       alert("Por favor selecciona una dirección de envío");
@@ -181,6 +227,22 @@ export default function DeliveryAddressPage() {
           );
         }}
       </AddressManager>
+
+      {/* Popup de autenticación */}
+      <PopUp
+        isOpen={showAuthPopup}
+        onClose={() => setShowAuthPopup(false)}
+        title="Acceso requerido"
+        message="Para gestionar direcciones, por favor inicia sesión o regístrate"
+        primaryButtonText="Iniciar sesión"
+        secondaryButtonText="Registrarse"
+        onPrimaryButtonClick={handleLogin}
+        onSecondaryButtonClick={handleRegister}
+        primaryButtonColor="bg-[#0CAA2A] hover:bg-green-700"
+        secondaryButtonColor="bg-white border border-[#131921] hover:bg-gray-100"
+        showSuccessIcon={false}
+        animationDuration={300}
+      />
     </div>
   );
 }

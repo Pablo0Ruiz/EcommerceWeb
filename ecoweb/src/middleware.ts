@@ -15,7 +15,7 @@ export async function middleware(request: NextRequest) {
 
     if (!token) {
         console.log('❌ Sin token')
-        return NextResponse.redirect(new URL('/auth/login', request.url))
+        // return NextResponse.redirect(new URL('/auth/login', request.url))
     }
 
     try {
@@ -36,7 +36,7 @@ export async function middleware(request: NextRequest) {
         return NextResponse.next()
     } catch (err) {
         console.error('❌ Token inválido:', err)
-        return NextResponse.redirect(new URL('/auth/login', request.url))
+        // return NextResponse.redirect(new URL('/auth/login', request.url))
     }
 }
 

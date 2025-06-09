@@ -22,7 +22,7 @@ export const useRegister = (reset: () => void) => {
                 body: JSON.stringify({ token: response.token }),
             });
 
-            router.push('/market');
+            router.push('/auth/two-factor');
             reset();
         } catch (error) {
             console.error(error instanceof Error ? error.message : 'Registro de cliente fallido');
