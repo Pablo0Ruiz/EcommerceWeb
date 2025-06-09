@@ -1,4 +1,4 @@
-import { Product } from "../product/typesProduct";
+// import { Product } from "../product/typesProduct";
 import {ProductsLanding} from "../landing/components/heroSection";
 export interface CartItem extends ProductsLanding {
   quantity: number;
@@ -13,7 +13,7 @@ export interface CartStore {
   setProductShipping: (productId: string, method: ShippingMethod) => void;
   calculateProductTotal: (productId: string) => number;
   calculateTotal: () => number;
-  addToCart: (product: Product) => void;
+  addToCart: (product: ProductsLanding) => void;
   removeFromCart: (productId: string) => void;
   decreaseQuantity: (productId: string) => void;
   clearCart: () => void;

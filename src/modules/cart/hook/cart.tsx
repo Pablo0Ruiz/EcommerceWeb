@@ -50,10 +50,10 @@ export const useCartStore = create<CartStore>((set, get) => ({
 
   addToCart: (product) => {
     const { cart } = get();
-    const existing = cart.find((item) => item._id === product.id);
+    const existing = cart.find((item) => item._id === product._id);
     const updatedCart = existing
       ? cart.map((item) =>
-          item._id === product.id
+          item._id === product._id
             ? { ...item, quantity: item.quantity + 1 }
             : item
         )
