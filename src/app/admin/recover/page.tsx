@@ -61,7 +61,7 @@ const api = {
         return await response.json();
     },
     fetchArchivedUsers: async () => {
-        const response = await fetch('/api/auth/user/recover', {
+        const response = await fetch('/api/user/login-attempts', {
             method: 'GET',
             credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
