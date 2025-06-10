@@ -4,7 +4,7 @@ export async function PATCH(request: NextRequest) {
     const token = request.cookies.get('token')?.value;
     const body = await request.json()
 
-    const backendRes = await fetch('http://localhost:8000//api/user/updaterole', {
+    const backendRes = await fetch('https://intelligent-karmen-areotar-52151d0d.koyeb.app/api/user/updaterole', {
         method:'PATCH',
         headers: {
             Authorization: `Bearer ${token}`,

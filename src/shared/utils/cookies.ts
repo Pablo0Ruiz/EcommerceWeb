@@ -1,5 +1,9 @@
+
 import Cookies from 'js-cookie';
 import { User } from '@/modules/auth/typesAuth';
+
+
+
 const COOKIE_NAME = 'token';
 
 interface CookiesAtribute {
@@ -23,6 +27,9 @@ export const setUserCookie = (user:Partial<User>) => {
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'Strict'
     });
+};
+export const deleteUserCookie = () => {
+    Cookies.remove('user');
 };
 
 export const getUserCookie = (): User | null => {

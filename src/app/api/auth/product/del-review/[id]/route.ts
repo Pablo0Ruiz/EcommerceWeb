@@ -6,7 +6,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { idPro
     const { idProduct } = params;
     const { idReview } = params;
 
-    const backendRes = await fetch(`http://localhost:8000/api/product/${idProduct}/review/${idReview}`, {
+    const backendRes = await fetch(`https://intelligent-karmen-areotar-52151d0d.koyeb.app/api/product/${idProduct}/review/${idReview}`, {
         method: 'DELETE',
         headers: {
             Authorization: `Bearer ${token}`,

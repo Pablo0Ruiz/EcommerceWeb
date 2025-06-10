@@ -4,7 +4,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     const token = request.cookies.get('token')?.value;
     const { id } = params;
 
-    const backendRes = await fetch(`http://localhost:8000/api/order/${id}`, {
+    const backendRes = await fetch(`https://intelligent-karmen-areotar-52151d0d.koyeb.app/api/order/${id}`, {
         method: 'GET',
         headers: {
             Authorization: `Bearer ${token}`,
@@ -21,7 +21,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     const { id } = params;
 
 
-    const backendRes = await fetch(`http://localhost:8000/api/order/${id}`, {
+    const backendRes = await fetch(`https://intelligent-karmen-areotar-52151d0d.koyeb.app/api/order/${id}`, {
         method: 'DELETE',
         headers: {
             Authorization: `Bearer ${token}`,
@@ -39,7 +39,7 @@ export async function PATCH(request: NextRequest) {
 
     const body = await request.json();
 
-    const backendRes = await fetch('http://localhost:8000/api/order', {
+    const backendRes = await fetch('https://intelligent-karmen-areotar-52151d0d.koyeb.app/api/order', {
         method: 'PATCH',
         headers: {
             Authorization: `Bearer ${token}`,

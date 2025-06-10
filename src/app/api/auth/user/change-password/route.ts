@@ -5,7 +5,7 @@ export async function PUT(request: NextRequest) {
     const body =  await request.json()
 
 
-    const backendRes = await fetch('http://localhost:8000/api/user/changepswd', {
+    const backendRes = await fetch('https://intelligent-karmen-areotar-52151d0d.koyeb.app/api/user/changepswd', {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',

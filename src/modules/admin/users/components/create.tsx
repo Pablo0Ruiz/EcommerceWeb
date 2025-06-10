@@ -21,7 +21,7 @@ export default function CreateUserPage() {
     const router = useRouter();
 
     const onSubmit = async (data: FormData) => {
-        const response = await fetch('http://localhost:8000/api/user/register', {
+        const response = await fetch('https://intelligent-karmen-areotar-52151d0d.koyeb.app/api/user/register', {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),

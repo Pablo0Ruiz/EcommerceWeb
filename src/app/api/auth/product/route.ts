@@ -5,7 +5,7 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
 
-    const backendRes = await fetch('http://localhost:8000/api/product', {
+    const backendRes = await fetch('https://intelligent-karmen-areotar-52151d0d.koyeb.app/api/product', {
         method: 'POST',
         headers: {
             Authorization: `Bearer ${token}`,
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
     const token = request.cookies.get('token')?.value;
 
-    const backendRes = await fetch('http://localhost:8000/api/product', {
+    const backendRes = await fetch('https://intelligent-karmen-areotar-52151d0d.koyeb.app/api/product', {
         method: 'GET',
         headers: {
             Authorization: `Bearer ${token}`,

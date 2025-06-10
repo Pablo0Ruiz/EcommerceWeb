@@ -14,7 +14,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
         backendForm.append('image', image);
     }
 
-    const backendRes = await fetch(`http://localhost:8000/api/product/${id}/addimage`, {
+    const backendRes = await fetch(`https://intelligent-karmen-areotar-52151d0d.koyeb.app/api/product/${id}/addimage`, {
         method: 'PATCH',
         headers: {
             Authorization: `Bearer ${token}`,

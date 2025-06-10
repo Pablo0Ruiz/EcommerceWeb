@@ -12,7 +12,7 @@ export async function PATCH(request: NextRequest) {
         backendForm.append('image', image);
     }
 
-    const backendRes = await fetch('http://localhost:8000/api/user/addimage', {
+    const backendRes = await fetch('https://intelligent-karmen-areotar-52151d0d.koyeb.app/api/user/addimage', {
         method: 'PATCH',
         headers: {
             Authorization: `Bearer ${token}`,

@@ -5,7 +5,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     const { id } = params
     const body = await request.json()
 
-    const backendRes = await fetch(`http://localhost:8000/api/user/restore/${id}`, {
+    const backendRes = await fetch(`https://intelligent-karmen-areotar-52151d0d.koyeb.app/api/user/restore/${id}`, {
         method: 'PATCH',
         headers: {
             Authorization: `Bearer ${token}`,

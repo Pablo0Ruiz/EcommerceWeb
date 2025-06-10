@@ -126,6 +126,27 @@ const RegisterForm = () => {
               }}
               className="w-full px-4 py-2 bg-white border border-[#D9D9D9] rounded-lg font-inter text-[16px] text-[#1E1E1E]"
             />
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="terms"
+                name="terms"
+                required
+                className="accent-[#0CAA2A]"
+              />
+              <label htmlFor="terms" className="text-[16px] font-inter text-[#1E1E1E]">
+                Acepto los{' '}
+                <Link
+                  href="/legal"
+                  className="text-[#0CAA2A] underline hover:text-[#8aff8a]"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Términos y Condiciones
+                </Link>
+              </label>
+            </div>
+
 
             <button
               type="submit"

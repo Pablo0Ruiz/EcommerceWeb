@@ -7,7 +7,9 @@ import { useProfile } from "../hook/useProfile";
 import { User } from "@/modules/auth/typesAuth";
 import Image from "next/image";
 import ChangePasswordModal from "./modalPerfil";
-
+import Logout from "../hook/useLogout";
+import { useRouter } from 'next/navigation';
+import { deleteUserCookie } from "@/shared/utils/cookies";
 
 type EditableUserFields = Pick<User, 'name' | 'surnames' | 'email' | 'phoneNumber' | 'urlToAvatar'>;
 
@@ -24,7 +26,7 @@ export const ProfileForm = () => {
     const { fetchProfile, updateProfile } = useProfile();
     const [loading, setLoading] = useState(true);
     const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
-
+    const router = useRouter()
     const [editingField, setEditingField] = useState<keyof EditableUserFields | null>(null);
 
     useEffect(() => {
@@ -86,6 +88,12 @@ export const ProfileForm = () => {
             urlToAvatar: updatedUser.urlToAvatar,
         });
     };
+
+    const handleLogout = async()=>{
+        await Logout()
+        deleteUserCookie()
+        router.push('/')
+    }
 
     const formValues = watch();
 
@@ -191,6 +199,15 @@ export const ProfileForm = () => {
                     onClick={() => setIsPasswordModalOpen(true)}
                 >
                     Cambiar contraseña
+                </button>
+            </div>
+            <div className="p-6 border-b border-gray-200">
+                <button
+                    type="button"
+                    className="text-sm text-red-600 hover:text-red-800 font-medium"
+                    onClick={handleLogout}
+                >
+                    Cerrar Sesion
                 </button>
             </div>
             <ChangePasswordModal

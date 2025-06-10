@@ -1,4 +1,3 @@
-
 import { Product } from "../typesProduct";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
@@ -13,21 +12,44 @@ export const getProducts = async (params?: {
 }): Promise<Product[]> => {
   try {
     const queryParams = new URLSearchParams();
-    
-    if (params?.category) queryParams.append('category', params.category);
-    if (params?.minPrice) queryParams.append('minPrice', params.minPrice.toString());
-    if (params?.maxPrice) queryParams.append('maxPrice', params.maxPrice.toString());
-    if (params?.minRating) queryParams.append('minRating', params.minRating.toString());
-    if (params?.sortBy) queryParams.append('sortBy', params.sortBy);
-    if (params?.name) queryParams.append('name', params.name);
 
-    const response = await fetch(`${API_URL}/products?${queryParams.toString()}`);
-    
-    if (!response.ok) {
-      throw new Error('Error fetching products');
+    // Filtrar y agregar parámetros solo si tienen valores válidos
+    if (params?.category?.trim()) {
+      queryParams.append('category', params.category.trim());
     }
 
-    return await response.json();
+    if (params?.minPrice !== undefined && params.minPrice !== null && !isNaN(params.minPrice)) {
+      queryParams.append('minPrice', params.minPrice.toString());
+    }
+
+    if (params?.maxPrice !== undefined && params.maxPrice !== null && !isNaN(params.maxPrice)) {
+      queryParams.append('maxPrice', params.maxPrice.toString());
+    }
+
+    if (params?.minRating !== undefined && params.minRating !== null && !isNaN(params.minRating)) {
+      queryParams.append('minRating', params.minRating.toString());
+    }
+
+    if (params?.sortBy?.trim()) {
+      queryParams.append('sortBy', params.sortBy.trim());
+    }
+
+    if (params?.name?.trim()) {
+      queryParams.append('name', params.name.trim());
+    }
+
+    const url = `${API_URL}/products${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+    console.log('Fetching from URL:', url); // Para debugging
+
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Error fetching products: ${response.status} - ${errorText}`);
+    }
+
+    const data = await response.json();
+    return Array.isArray(data) ? data : [];
   } catch (error) {
     console.error('Error fetching products:', error);
     return [];

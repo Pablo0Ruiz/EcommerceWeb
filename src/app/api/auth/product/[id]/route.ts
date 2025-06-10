@@ -4,7 +4,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     const token = request.cookies.get('token')?.value;
     const { id } = params;
 
-    const backendRes = await fetch(`http://localhost:8000/api/product/${id}`, {
+    const backendRes = await fetch(`https://intelligent-karmen-areotar-52151d0d.koyeb.app/api/product/${id}`, {
         method: 'GET',
         headers: {
             Authorization: `Bearer ${token}`,
@@ -22,7 +22,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     const { id } = params;
     const body = await request.json();
 
-    const backendRes = await fetch(`http://localhost:8000/api/product/${id}`, {
+    const backendRes = await fetch(`https://intelligent-karmen-areotar-52151d0d.koyeb.app/api/product/${id}`, {
         method: 'PUT',
         headers: {
             Authorization: `Bearer ${token}`,
@@ -40,7 +40,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     const token = request.cookies.get('token')?.value;
     const { id } = params;
 
-    const backendRes = await fetch(`http://localhost:8000/api/product/${id}`, {
+    const backendRes = await fetch(`https://intelligent-karmen-areotar-52151d0d.koyeb.app/api/product/${id}`, {
         method: 'DELETE',
         headers: {
             Authorization: `Bearer ${token}`,
@@ -56,7 +56,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     const { id } = params;
     const body = await request.json();
 
-    const backendRes = await fetch(`http://localhost:8000/api/product/${id}/review`, {
+    const backendRes = await fetch(`https://intelligent-karmen-areotar-52151d0d.koyeb.app/api/product/${id}/review`, {
         method: 'POST',
         headers: {
             Authorization: `Bearer ${token}`,
