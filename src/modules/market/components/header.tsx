@@ -7,8 +7,9 @@ import { CartCounter } from "./cartCounter";
 import { useCartStore } from "@/modules/cart/hook/cart";
 import { CATEGORIES } from "@/shared/components/categories";
 import logo from '@/../public/logo.png';
+import { ProductsLanding } from "@/modules/landing/components/heroSection";
 
-export const Header = () => {
+export const Header = ({ onSearchResults }: { onSearchResults: (results: ProductsLanding[]) => void }) => {
   const { loadCart } = useCartStore();
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
 
@@ -62,11 +63,11 @@ export const Header = () => {
           </button>
 
           {isCategoriesOpen && (
-            <div 
+            <div
               className="fixed inset-0 z-40 "
               onClick={() => setIsCategoriesOpen(false)}
             >
-              <div 
+              <div
 
                 className="absolute left-0 top-0 h-full w-64 bg-[#2E8B57] shadow-xl z-50 transform transition-transform duration-200"
 
@@ -101,23 +102,23 @@ export const Header = () => {
 
         <div className="flex-grow mx-6 max-w-3xl">
           <div className="[&_.border]:border-0 [&_input]:rounded-r-none [&_input]:focus:ring-2 [&_input]:focus:ring-[#C1F7D5] [&_button]:rounded-l-none [&_button]:bg-[#3DA56A] [&_button:hover]:bg-[#2E8B57] ">
-            <SearchBar />
+            <SearchBar onSearchResults={onSearchResults} />
           </div>
         </div>
 
         <div className="flex items-center space-x-4">
           <Link href={"/user"}>
             <div className="hidden md:flex items-center px-4 py-2 bg-[#3DA56A] hover:bg-[#2E8B57] rounded-lg transition-colors duration-200 cursor-pointer">
-              <svg 
-                className="w-5 h-5 mr-2" 
-                fill="none" 
-                stroke="currentColor" 
+              <svg
+                className="w-5 h-5 mr-2"
+                fill="none"
+                stroke="currentColor"
                 viewBox="0 0 24 24"
               >
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth="2" 
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
                   d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                 />
               </svg>
@@ -127,16 +128,16 @@ export const Header = () => {
 
           <Link href={"/user/orders"}>
             <div className="hidden md:flex items-center px-4 py-2 bg-[#3DA56A] hover:bg-[#2E8B57] rounded-lg transition-colors duration-200 cursor-pointer">
-              <svg 
-                className="w-5 h-5 mr-2" 
-                fill="none" 
-                stroke="currentColor" 
+              <svg
+                className="w-5 h-5 mr-2"
+                fill="none"
+                stroke="currentColor"
                 viewBox="0 0 24 24"
               >
-                <path 
+                <path
                   strokeLinecap="round"
-                  strokeLinejoin="round" 
-                  strokeWidth="2" 
+                  strokeLinejoin="round"
+                  strokeWidth="2"
                   d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
                 />
               </svg>

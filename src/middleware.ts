@@ -10,18 +10,18 @@ const SECRET = new TextEncoder().encode(process.env.JWT_SECRET!)
 export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl
     const token = request.cookies.get('token')?.value
-    console.log('🔐 Middleware ejecutado en:', pathname)
+
 
     if (!token) {
-        console.log('❌ Sin token')
+
         return NextResponse.redirect(new URL('/auth/login', request.url))
     }
 
     try {
         const { payload } = await jwtVerify(token, SECRET)
-        console.log('este es el payload:',payload)
+
         const role = payload.role as string
-        console.log('🎫 Usuario con rol:', role)
+
 
         if (pathname.startsWith('/admin') && role !== 'admin') {
             return NextResponse.redirect(new URL('/auth/login', request.url))

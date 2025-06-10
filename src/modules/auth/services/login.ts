@@ -2,7 +2,7 @@ import { LoginData, ResponseLogin } from "../typesAuth";
 
 
 export const loginClient = async (data: LoginData): Promise<ResponseLogin> =>{
-    const response = await fetch('https://intelligent-karmen-areotar-52151d0d.koyeb.app/api/user/login',{
+    const response = await fetch('http://localhost:8000/api/user/login',{
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(data)

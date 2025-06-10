@@ -10,6 +10,11 @@ const Header = () => {
                     Usuarios
                 </button>
             </Link>
+            <Link href="/admin/intent">
+                <button className="bg-white text-green-900 px-4 py-2 rounded">
+                    Intentos de sesion
+                </button>
+            </Link>
         </header>
     );
 };

@@ -11,9 +11,10 @@ import bgAdmin from "@/../public/bgAdmin.jpg";
 
 type FormData = {
     name: string;
+    surnames: string;
     email: string;
     password: string;
-    rol: "user" | "seller";
+    phoneNumber: string;
 };
 
 export default function CreateUserPage() {
@@ -21,7 +22,8 @@ export default function CreateUserPage() {
     const router = useRouter();
 
     const onSubmit = async (data: FormData) => {
-        const response = await fetch('https://intelligent-karmen-areotar-52151d0d.koyeb.app/api/user/register', {
+
+        const response = await fetch('http://localhost:8000/api/user/register', {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),
@@ -38,7 +40,7 @@ export default function CreateUserPage() {
 
     return (
         <div className="flex flex-col min-h-screen relative">
-            {/* Imagen de fondo con capa y blur */}
+
             <div className="fixed inset-0 -z-10">
                 <Image
                     src={bgAdmin}
@@ -67,6 +69,14 @@ export default function CreateUserPage() {
                             error={errors.name}
                             requiredMsg="El nombre es obligatorio"
                         />
+                        <InputField<FormData>
+                            id="surnames"
+                            label="Apellidos"
+                            type="text"
+                            register={register}
+                            error={errors.surnames}
+                            requiredMsg="Los apellidos son obligatorios"
+                        />
 
                         <InputField<FormData>
                             id="email"
@@ -91,25 +101,20 @@ export default function CreateUserPage() {
                             error={errors.password}
                             requiredMsg="La contraseña es obligatoria"
                         />
-
-                        <div className="space-y-1">
-                            <label htmlFor="rol" className="block text-sm font-medium text-gray-700">
-                                Rol
-                            </label>
-                            <select
-                                id="rol"
-                                {...register("rol", { required: "El rol es obligatorio" })}
-                                className="w-full px-3 py-2 border rounded"
-                            >
-                                <option value="">Seleccioná un rol</option>
-                                <option value="user">User</option>
-                                <option value="seller">Seller</option>
-                            </select>
-                            {errors.rol && (
-                                <p className="mt-1 text-sm text-red-600">{errors.rol.message}</p>
-                            )}
-                        </div>
-
+                        <InputField<FormData>
+                            id="phoneNumber"
+                            label="Teléfono"
+                            type="text"
+                            register={register}
+                            error={errors.phoneNumber}
+                            requiredMsg="El teléfono es obligatorio"
+                            validationRules={{
+                                pattern: {
+                                    value: /^[0-9+\s()-]{7,20}$/,
+                                    message: "Teléfono inválido",
+                                },
+                            }}
+                        />
                         <button
                             type="submit"
                             className="bg-green-700 text-white px-4 py-2 rounded hover:bg-green-800 transition"

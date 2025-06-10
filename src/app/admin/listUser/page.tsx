@@ -70,12 +70,11 @@ export default function AdminDashboard() {
                     </div>
 
                     <div className="flex flex-wrap justify-between mb-6 gap-4">
+                        <Link href={"/admin/recover"}>
                         <button className="bg-green-100 hover:bg-green-200 text-green-800 border-green-300">
                             Usuarios archivados
                         </button>
-                        <button className="bg-green-500 hover:bg-green-600 text-white">
-                            Añadir usuario +
-                        </button>
+                        </Link>
                     </div>
 
                     <UserList />

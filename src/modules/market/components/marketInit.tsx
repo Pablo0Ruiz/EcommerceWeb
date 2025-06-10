@@ -4,11 +4,9 @@ import { Header } from "@/modules/market/components/header";
 import Image from "next/image";
 import { Footer } from "@/modules/market/components/footer";
 import { PopUp } from "@/shared/components/popup";
-
 import Link from "next/link";
 import bgMarket from "@/../public/matezone_market.jpeg";
 import { useCartStore } from "@/modules/cart/hook/cart";
-
 import useLanding from "@/modules/landing/services/useLanding";
 import { ProductsLanding } from "@/modules/landing/components/heroSection";
 
@@ -16,6 +14,7 @@ export default function Market() {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<ProductsLanding | null>(null);
   const [products, setProducts] = useState<ProductsLanding[]>([]);
+  const [searchResults, setSearchResults] = useState<ProductsLanding[] | null>(null);
 
   const addToCart = useCartStore((state) => state.addToCart);
 
@@ -32,6 +31,12 @@ export default function Market() {
     setShowPopup(false);
   };
 
+  const handleSearchResults = (results: ProductsLanding[]) => {
+    setSearchResults(results.length > 0 ? results : null);
+  };
+
+  const displayedProducts = searchResults !== null ? searchResults : products;
+
   return (
     <div className="relative bg-gray-100/30 min-h-screen overflow-hidden">
       <div className="fixed inset-0 -z-10">
@@ -45,14 +50,24 @@ export default function Market() {
         />
       </div>
 
-      <Header />
+      <Header onSearchResults={handleSearchResults} />
       <main className="container mx-auto p-4">
         <section className="mb-8 bg-white/0 p-4 rounded">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900">Productos</h2>
+            <h2 className="text-xl font-bold text-gray-900">
+              {searchResults !== null ? "Resultados de búsqueda" : "Productos"}
+            </h2>
+            {searchResults !== null && (
+              <button
+                onClick={() => setSearchResults(null)}
+                className="text-sm text-[#2E8B57] hover:underline"
+              >
+                Mostrar todos los productos
+              </button>
+            )}
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {products.map((product) => (
+            {displayedProducts.map((product) => (
               <Link
                 href={`/product/${product._id}`}
                 key={product._id}
@@ -78,8 +93,8 @@ export default function Market() {
                   </span>
                   <span
                     className={`text-xs px-2 py-1 rounded ${product.stock > 0
-                        ? "bg-green-100 text-green-800"
-                        : "bg-red-100 text-red-700"
+                      ? "bg-green-100 text-green-800"
+                      : "bg-red-100 text-red-700"
                       }`}
                   >
                     {product.stock > 0 ? "En stock" : "Agotado"}
@@ -88,12 +103,11 @@ export default function Market() {
                 <button
                   onClick={(e) => {
                     e.preventDefault();
-                    handleAddToCart({...product,
-                      _id:product._id});
+                    handleAddToCart({ ...product, _id: product._id });
                   }}
                   className={`mt-2 w-full py-1 rounded text-sm font-medium transition ${product.stock > 0
-                      ? "bg-[#0CAA2A] hover:bg-green-700 text-white"
-                      : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    ? "bg-[#0CAA2A] hover:bg-green-700 text-white"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
                     }`}
                   disabled={product.stock <= 0}
                 >
@@ -111,8 +125,8 @@ export default function Market() {
         onClose={() => setShowPopup(false)}
         title={`${selectedProduct?.name} añadido al carrito`}
         message={`Precio: ${selectedProduct?.price.toFixed(2)}€${selectedProduct?.discount
-            ? ` (${selectedProduct.discount}% de descuento)`
-            : ""
+          ? ` (${selectedProduct.discount}% de descuento)`
+          : ""
           }`}
         primaryButtonText="Seguir comprando"
         secondaryButtonText="Ir al carrito"

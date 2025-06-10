@@ -38,8 +38,8 @@ export const getProducts = async (params?: {
       queryParams.append('name', params.name.trim());
     }
 
-    const url = `${API_URL}/products${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
-    console.log('Fetching from URL:', url); // Para debugging
+    const url = `${API_URL}/product${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+
 
     const response = await fetch(url);
 

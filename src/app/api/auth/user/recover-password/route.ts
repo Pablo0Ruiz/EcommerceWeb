@@ -4,7 +4,7 @@ export async function PUT(request: NextRequest) {
     const token = request.cookies.get('token')?.value;
     const body = await request.json()
 
-    const backendRes = await fetch('https://intelligent-karmen-areotar-52151d0d.koyeb.app/api/user/recover-psswd', {
+    const backendRes = await fetch('http://localhost:8000/api/user/recover-psswd', {
         method: 'PUT',
         headers: {
             Authorization: `Bearer ${token}`,
