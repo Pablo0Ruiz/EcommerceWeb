@@ -43,11 +43,6 @@ const AdminDashboard = () => {
               href="/admin/users"
             />
             <TrapezoidButton
-              text="Borrar/Editar usuarios"
-              color="#848097"
-              href="/admin/edit-users"
-            />
-            <TrapezoidButton
               text="Añadir productos"
               color="#6A6972"
               href="/admin/product"

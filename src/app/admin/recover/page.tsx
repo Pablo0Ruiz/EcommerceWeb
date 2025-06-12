@@ -50,7 +50,8 @@ const ConfirmationPopup = ({
 
 const api = {
     restoreUser: async (userId: string) => {
-        const response = await fetch(`/api/user/restore/${userId}`, {
+        console.log(userId)
+        const response = await fetch(`/api/auth/user/restore/${userId}`, {
             method: 'PATCH',
             credentials: 'include',
             headers: { 'Content-Type': 'application/json' },

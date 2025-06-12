@@ -15,6 +15,7 @@ export default function Market() {
   const [selectedProduct, setSelectedProduct] = useState<ProductsLanding | null>(null);
   const [products, setProducts] = useState<ProductsLanding[]>([]);
   const [searchResults, setSearchResults] = useState<ProductsLanding[] | null>(null);
+  
 
   const addToCart = useCartStore((state) => state.addToCart);
 
@@ -32,6 +33,7 @@ export default function Market() {
   };
 
   const handleSearchResults = (results: ProductsLanding[]) => {
+    console.log('esto es result',results)
     setSearchResults(results.length > 0 ? results : null);
   };
 

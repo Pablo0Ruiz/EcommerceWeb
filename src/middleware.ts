@@ -45,8 +45,8 @@ export const config = {
     matcher: [
         '/admin',
         '/admin/:path*',
-        '/market',
-        '/market/:path*',
+        // '/market',
+        // '/market/:path*',
         '/seller-admin',
         '/seller-admin/:path*',
         '/user',
