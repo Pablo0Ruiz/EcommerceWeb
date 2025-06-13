@@ -10,7 +10,7 @@ interface PopUpProps {
   title: string;
   message: string;
   primaryButtonText: string;
-  secondaryButtonText: string;
+  secondaryButtonText?: string;
   onPrimaryButtonClick: () => void;
   onSecondaryButtonClick?: () => void;
   primaryButtonColor?: string;
@@ -120,22 +120,40 @@ export const PopUp: React.FC<PopUpProps> = ({
           >
             {primaryButtonText}
           </button>
+          {secondaryButtonText &&
+            (secondaryButtonHref ? (
+              <Link
+                href={secondaryButtonHref}
+                className={`${secondaryButtonColor} text-[#131921] py-2 rounded font-medium transition w-full text-center`}
+              >
+                {secondaryButtonText}
+              </Link>
+            ) : (
+              <button
+                onClick={onSecondaryButtonClick}
+                className={`${secondaryButtonColor} text-[#131921] py-2 rounded font-medium transition w-full`}
+              >
+                {secondaryButtonText}
+              </button>
+            ))}
 
-          {secondaryButtonHref ? (
-            <Link
-              href={secondaryButtonHref}
-              className={`${secondaryButtonColor} text-[#131921] py-2 rounded font-medium transition w-full text-center`}
-            >
-              {secondaryButtonText}
-            </Link>
-          ) : (
-            <button
-              onClick={onSecondaryButtonClick}
-              className={`${secondaryButtonColor} text-[#131921] py-2 rounded font-medium transition w-full`}
-            >
-              {secondaryButtonText}
-            </button>
-          )}
+          {/* Tercer botón opcional */}
+          {tertiaryButtonText &&
+            (tertiaryButtonHref ? (
+              <Link
+                href={tertiaryButtonHref}
+                className={`${tertiaryButtonColor} text-[#131921] py-2 rounded font-medium transition w-full text-center`}
+              >
+                {tertiaryButtonText}
+              </Link>
+            ) : (
+              <button
+                onClick={onTertiaryButtonClick}
+                className={`${tertiaryButtonColor} text-[#131921] py-2 rounded font-medium transition w-full`}
+              >
+                {tertiaryButtonText}
+              </button>
+            ))}
 
           {/* Tercer botón opcional */}
           {tertiaryButtonText &&

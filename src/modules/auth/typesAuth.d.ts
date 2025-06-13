@@ -74,7 +74,7 @@ export interface User {
 
 export interface Address {
   _id?: string;
-  nombre?: string;  
+  name: string;  
   street: string;
   number: string;
   postal: string;

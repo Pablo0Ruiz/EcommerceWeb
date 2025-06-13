@@ -5,8 +5,6 @@ export type OrderState = 'pending' | 'in-process' | 'sent' | 'received' | 'cance
 export type DeliveryMethod = 'standard' | 'express' | 'urgent';
 
 export interface Order {
-  _id: string;
-  client: string; 
   date: Date | string;
   total: number;
   state: OrderState;
@@ -41,7 +39,6 @@ export interface ShippingAddress {
 }
 
 export interface OrderInput {
-  client: string;
   date?: Date | string;
   total: number;
   state?: OrderState;

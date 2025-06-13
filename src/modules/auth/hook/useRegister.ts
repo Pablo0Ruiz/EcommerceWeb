@@ -24,6 +24,7 @@ export const useRegister = (reset: () => void) => {
             reset();
         } catch (error) {
             console.error(error instanceof Error ? error.message : 'Registro de cliente fallido');
+            console.log('Error al registrar cliente:', error);
         }
     };
 

@@ -4,6 +4,7 @@ export async function POST(request: NextRequest) {
     const token = request.cookies.get('token')?.value;
 
     const body = await request.json();
+    console.log('Received body:', body);
 
     const backendRes = await fetch('http://localhost:8000/api/order', {
         method: 'POST',
@@ -21,7 +22,7 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
     const token = request.cookies.get('token')?.value;
 
-    const backendRes = await fetch('https://intelligent-karmen-areotar-52151d0d.koyeb.app/api/order', {
+    const backendRes = await fetch('http://localhost:8000/api/order', {
         method: 'GET',
         headers: {
             Authorization: `Bearer ${token}`,
