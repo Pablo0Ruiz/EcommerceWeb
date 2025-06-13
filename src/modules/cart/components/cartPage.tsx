@@ -14,8 +14,7 @@ import { EmailModal } from "../../../shared/components/emailModal";
 import { EmailUser } from "../../../shared/components/emailModal";
 
 const CartPage = () => {
-  const { cart, loadCart, addToCart, removeFromCart, decreaseQuantity } =
-    useCartStore();
+  const { cart, loadCart, addToCart, removeFromCart, decreaseQuantity } = useCartStore();
   const [showPopup, setShowPopup] = useState(false);
   const [showEmailModal, setShowEmailModal] = useState(false);
   const router = useRouter();

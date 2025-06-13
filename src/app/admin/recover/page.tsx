@@ -185,8 +185,8 @@ export default function ArchivedUsersList() {
                                 <th className="py-3 px-4 text-left">Nombre</th>
                                 <th className="py-3 px-4 text-left">Email</th>
                                 <th className="py-3 px-4 text-left">Rol</th>
-                                <th className="py-3 px-4 text-left">Archivado el</th>
-                                <th className="py-3 px-4 text-right">Acciones</th>
+                                <th className="py-3 px-4 text-right"> </th>
+                                <th className="py-3 px-4 text-right"> </th>
                             </tr>
                         </thead>
                         <tbody>

@@ -2,7 +2,7 @@
 import React,{ useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Header } from "@/modules/market/components/header";
+
 import { Footer } from "@/modules/market/components/footer";
 import { ProductsLanding } from "@/modules/landing/components/heroSection";
 import { PopUp } from "@/shared/components/popup"; 
@@ -57,6 +57,7 @@ const handleAddToCart = () => {
 
   const handleContinueShopping = () => {
     setShowPopup(false);
+    router.push('/market')
   };
 
   const handleThumbnailClick = (img: string) => {
@@ -77,7 +78,7 @@ const handleAddToCart = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      <Header />
+
       <main className="flex-grow container mx-auto px-36 py-12">
         <button
           onClick={() => router.back()}
