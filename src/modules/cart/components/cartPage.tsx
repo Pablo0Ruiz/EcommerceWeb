@@ -99,7 +99,7 @@ const CartPage = () => {
                 <ProductCards
                   key={product._id}
                   producto={product}
-                  add={addToCart}
+                  add={addToCart(product)}
                   remove={removeFromCart}
                   disminuirItem={decreaseQuantity}
                 />
