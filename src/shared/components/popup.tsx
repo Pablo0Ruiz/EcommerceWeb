@@ -154,24 +154,6 @@ export const PopUp: React.FC<PopUpProps> = ({
                 {tertiaryButtonText}
               </button>
             ))}
-
-          {/* Tercer botón opcional */}
-          {tertiaryButtonText &&
-            (tertiaryButtonHref ? (
-              <Link
-                href={tertiaryButtonHref}
-                className={`${tertiaryButtonColor} text-[#131921] py-2 rounded font-medium transition w-full text-center`}
-              >
-                {tertiaryButtonText}
-              </Link>
-            ) : (
-              <button
-                onClick={onTertiaryButtonClick}
-                className={`${tertiaryButtonColor} text-[#131921] py-2 rounded font-medium transition w-full`}
-              >
-                {tertiaryButtonText}
-              </button>
-            ))}
         </div>
       </div>
     </div>
