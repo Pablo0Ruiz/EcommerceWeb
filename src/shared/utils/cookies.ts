@@ -44,3 +44,21 @@ export const getCookie = () => {
 export const removeCookie = () =>{
     Cookies.remove(COOKIE_NAME);
 }
+
+
+
+export const doesCookieExist = (name: string) => {
+    try {
+        const value = document.cookie
+            .split(';')
+            .find(c => c.trim().startsWith(`${name}=`));
+
+        if (!value) return undefined;
+
+        const cookieValue = value.split('=')[1];
+        return decodeURIComponent(cookieValue);
+    } catch (error) {
+        console.error("Error al leer cookies:", error);
+        return undefined;
+    }
+}

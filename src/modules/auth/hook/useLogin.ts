@@ -17,7 +17,9 @@ export const useLogin = (reset: () => void) => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ token: response.token }),
             });
-
+            if(response.user.role === 'admin') {
+                return router.push('/admin');
+            }
             router.push('/market');
             reset();
         } catch (error) {

@@ -20,7 +20,7 @@ export const useProfile = () => {
         console.error("Error al obtener perfil - Estado:", res.status);
         return null;
       }
-
+        
       return await res.json();
     } catch (error) {
       console.error("Error en fetchProfile:", error);

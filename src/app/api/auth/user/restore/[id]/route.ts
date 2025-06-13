@@ -2,13 +2,15 @@ import { NextResponse, NextRequest } from "next/server";
 
 export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
     const token = request.cookies.get('token')?.value;
-    const { id } = params
+    const { id } = await params
     const body = await request.json()
-
+    console.log(body)
+    console.log(id)
     const backendRes = await fetch(`http://localhost:8000/api/user/restore/${id}`, {
         method: 'PATCH',
         headers: {
             Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify(body)
     });

@@ -2,29 +2,29 @@ export const CATEGORIES = [
   { 
     name: "Yerbas", 
     icon: "🍃", 
-    path: "/hierbas", 
-    value: "Hierbas",
-    key: "hierbas" 
+    path: "/yerbas", 
+    value: "yerbas",
+    key: "yerbas" 
   },
   { 
     name: "Bombillas", 
     icon: "🥤", 
     path: "/bombillas", 
-    value: "Bombillas",
+    value: "bombillas",
     key: "bombillas" 
   },
   { 
     name: "Termos", 
     icon: "🧊", 
     path: "/termos", 
-    value: "Termos",
+    value: "termos",
     key: "termos" 
   },
   { 
     name: "Mates", 
     icon: "🧉", 
     path: "/mates", 
-    value: "Mates",
+    value: "mates",
     key: "mates" 
   },
 ] as const;
