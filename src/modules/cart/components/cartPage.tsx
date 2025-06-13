@@ -43,7 +43,7 @@ const CartPage = () => {
 
   const handleEmailSuccess = (data: { token: string; user: EmailUser }) => {
     console.log("Registro exitoso:", data);
-    // Aquí puedes guardar el token en cookies/localStorage si es necesario
+
     router.push("/cart/delivery");
   };
 
@@ -99,9 +99,9 @@ const CartPage = () => {
                 <ProductCards
                   key={product._id}
                   producto={product}
-                  add={(id) => addToCart(product)} // Or modify to work with just ID
-                  remove={(id) => removeFromCart(product)} // Or modify to work with just ID
-                  disminuirItem={(id) => decreaseQuantity(product)} // Or modify to work with just ID
+                  add={() => addToCart(product)} 
+                  remove={() => removeFromCart(product._id)} 
+                  disminuirItem={() => decreaseQuantity(product._id)}
                 />
               ))
             ) : (
