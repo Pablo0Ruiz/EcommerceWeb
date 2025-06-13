@@ -6,28 +6,14 @@ import HeaderWizardSteps from "@/modules/cart/utils/headerWizard";
 import { useCartStore } from "@/modules/cart/hook/cart";
 import { useOrder } from "../hook/useCart";
 import { prepareOrderData } from "../utils/orderUtils";
-import { User } from "@/modules/auth/typesAuth";
-import InputField from "@/shared/components/inputField"
-import { useProfile } from "@/modules/client/hook/useProfile";
-
-type PaymentForm = {
-  cardNumber: string;
-  expiryDate: string;
-  cvv: string;
-  cardholderName: string;
-};
+import { getUserCookie } from "@/shared/utils/cookies";
+import { Address } from "@/modules/auth/typesAuth";
 
 export default function PaymentPage() {
   const router = useRouter();
   const { fetchProfile } = useProfile()
   const { cart, loadCart } = useCartStore();
   const { createNewOrder } = useOrder();
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm<PaymentForm>();
 
   function formatExpiryDate(value: string): string {
 
@@ -69,115 +55,163 @@ export default function PaymentPage() {
       console.error("No se pudo obtener el usuario", e);
       return;
     }
-    const orderData = prepareOrderData(user, cart);
-
-    if (!orderData) return;
-    orderData.state = "received";
     try {
+      // Get user data from cookie
+      const profileData = getUserCookie();
+
+      // Check if we have valid user data
+      if (!profileData || !profileData._id) {
+        console.error("No valid user data available");
+        alert("Por favor inicia sesión nuevamente");
+        return;
+      }
+
+      // Prepare order data with full user object
+      const orderData = prepareOrderData(cart, addr);
+      if (!orderData) {
+        console.error("Failed to prepare order data");
+        return;
+      }
+
+      // Create the order
+      console.log("Creating order with data:", orderData);
       const order = await createNewOrder(orderData);
-      if (order) router.replace("/cart/completed");
+      if (order) {
+        // Clear stored address and redirect on success
+        localStorage.removeItem("selectedAddress");
+        router.replace("/cart/completed");
+      } else {
+        console.error("Order creation failed");
+        alert("No se pudo crear el pedido. Por favor intenta nuevamente.");
+      }
     } catch (err) {
-      console.error("Error al crear la orden:", err);
+      console.error("Error inesperado:", err);
+      alert(
+        "Ocurrió un error al procesar tu pedido. Por favor intenta nuevamente."
+      );
     }
   };
 
+  useEffect(() => {
+    loadCart();
+  }, [loadCart]);
+
   return (
     <div className="min-h-screen bg-white">
-      <HeaderWizardSteps currentStep={3} />
+      <HeaderWizardSteps currentStep={4} />
+
       <div className="max-w-4xl mx-auto px-4 py-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Método de pago</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-6">
+          Método de pago
+        </h1>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="bg-[#F5F5F5] rounded-[18px] p-6 mb-8 space-y-6">
-          <h2 className="text-xl font-bold text-gray-900">Introduce los datos de tu tarjeta</h2>
+        <div className="bg-[#F5F5F5] rounded-[18px] p-6 mb-8">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">
+            Introduce los datos de tu tarjeta
+          </h2>
 
-          <InputField
-            id="cardNumber"
-            label="Número de tarjeta"
-            type="text"
-            register={register}
-            error={errors.cardNumber}
-            requiredMsg="El número es obligatorio"
-            validationRules={{
-              required: "El número es obligatorio",
-              pattern: {
-                value: /^(\d{4} ?){3}\d{4}$/,
-                message: "Debe tener 16 dígitos válidos",
-              },
-              onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-                const formatted = formatCardNumber(e.target.value);
-                setValue("cardNumber", formatted);
-              },
-            }}
-            className="w-full p-3 border border-gray-300 rounded-[10px] text-lg text-black"
-          />
+          <form onSubmit={handleSubmit}>
+            <div className="mb-4">
+              <label
+                htmlFor="cardNumber"
+                className="block text-gray-700 font-medium mb-2"
+              >
+                Número de tarjeta
+              </label>
+              <input
+                type="text"
+                id="cardNumber"
+                name="cardNumber"
+                value={cardData.cardNumber}
+                onChange={handleInputChange}
+                placeholder="1234 5678 9012 3456"
+                className="w-full p-3 border border-gray-300 rounded-[10px] text-lg text-black"
+              />
+              {errors.cardNumber && (
+                <p className="text-red-500 mt-1">{errors.cardNumber}</p>
+              )}
+            </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <InputField
-              id="expiryDate"
-              label="Fecha de expiración (MM/AA)"
-              type="text"
-              register={register}
-              error={errors.expiryDate}
-              requiredMsg="Este campo es obligatorio"
-              validationRules={{
-                required: "Este campo es obligatorio",
-                pattern: {
-                  value: /^(0[1-9]|1[0-2])\/\d{2}$/,
-                  message: "Formato inválido (MM/AA)",
-                },
-                onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-                  const formatted = formatExpiryDate(e.target.value);
-                  setValue("expiryDate", formatted);
-                },
-              }}
-              className="w-full p-3 border border-gray-300 rounded-[10px] text-lg text-black"
-            />
-            <InputField
-              id="cvv"
-              label="CVV"
-              type="text"
-              register={register}
-              error={errors.cvv}
-              requiredMsg="Este campo es obligatorio"
-              validationRules={{
-                required: "Este campo es obligatorio",
-                pattern: {
-                  value: /^\d{3}$/,
-                  message: "Debe tener 3 dígitos",
-                },
-                onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-                  const formatted = formatCardCvv(e.target.value);
-                  setValue("cvv", formatted);
-                },
-              }}
-              className="w-full p-3 border border-gray-300 rounded-[10px] text-lg text-black"
-            />
-          </div>
-          <InputField
-            id="cardholderName"
-            label="Nombre del titular"
-            type="text"
-            register={register}
-            error={errors.cardholderName}
-            requiredMsg="Este campo es obligatorio"
-            className="w-full p-3 border border-gray-300 rounded-[10px] text-lg text-black"
-          />
-          <div className="flex justify-between mt-10 max-w-6xl mx-auto px-4">
-            <button
-              type="button"
-              onClick={() => router.push("/cart/delivery")}
-              className="bg-[#909090] hover:bg-gray-600 text-white font-bold py-3 px-10 rounded-[14px] text-[36px]"
-            >
-              Volver
-            </button>
-            <button
-              type="submit"
-              className="bg-[#0CAA2A] hover:bg-green-700 text-white font-bold py-3 px-10 rounded-[14px] text-[36px]"
-            >
-              Pagar ahora
-            </button>
-          </div>
-        </form>
+            <div className="grid grid-cols-2 gap-4 mb-4">
+              <div>
+                <label
+                  htmlFor="expiryDate"
+                  className="block text-gray-700 font-medium mb-2"
+                >
+                  Fecha de expiración (MM/AA)
+                </label>
+                <input
+                  type="text"
+                  id="expiryDate"
+                  name="expiryDate"
+                  value={cardData.expiryDate}
+                  onChange={handleInputChange}
+                  placeholder="MM/AA"
+                  className="w-full p-3 border border-gray-300 rounded-[10px] text-lg text-black"
+                />
+                {errors.expiryDate && (
+                  <p className="text-red-500 mt-1">{errors.expiryDate}</p>
+                )}
+              </div>
+              <div>
+                <label
+                  htmlFor="cvv"
+                  className="block text-gray-700 font-medium mb-2"
+                >
+                  CVV
+                </label>
+                <input
+                  type="text"
+                  id="cvv"
+                  name="cvv"
+                  value={cardData.cvv}
+                  onChange={handleInputChange}
+                  placeholder="123"
+                  className="w-full p-3 border border-gray-300 rounded-[10px] text-lg text-black"
+                />
+                {errors.cvv && (
+                  <p className="text-red-500 mt-1">{errors.cvv}</p>
+                )}
+              </div>
+            </div>
+
+            <div className="mb-6">
+              <label
+                htmlFor="cardholderName"
+                className="block text-gray-700 font-medium mb-2"
+              >
+                Nombre del titular
+              </label>
+              <input
+                type="text"
+                id="cardholderName"
+                name="cardholderName"
+                value={cardData.cardholderName}
+                onChange={handleInputChange}
+                placeholder="Como aparece en la tarjeta"
+                className="w-full p-3 border border-gray-300 rounded-[10px] text-lg text-black"
+              />
+              {errors.cardholderName && (
+                <p className="text-red-500 mt-1">{errors.cardholderName}</p>
+              )}
+            </div>
+          </form>
+        </div>
+
+        <div className="flex justify-between mt-10 max-w-6xl mx-auto px-4">
+          <button
+            onClick={() => router.push("/cart/delivery")}
+            className="bg-[#909090] hover:bg-gray-600 text-white font-bold py-3 px-10 rounded-[14px] text-[36px]"
+          >
+            Volver
+          </button>
+          <button
+            onClick={handleSubmit}
+            className="bg-[#0CAA2A] hover:bg-green-700 text-white font-bold py-3 px-10 rounded-[14px] text-[36px]"
+          >
+            Pagar ahora
+          </button>
+        </div>
       </div>
     </div>
   );

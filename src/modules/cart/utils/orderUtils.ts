@@ -1,17 +1,13 @@
 
 
 import type { OrderItem, OrderInput } from "@/modules/orders/typesOrder";
-import type { User } from "@/modules/auth/typesAuth";
 import type { CartItem } from "@/modules/cart/typesCart";
 import type { Address } from "@/modules/auth/typesAuth";
-
+// orderUtils.ts
 export const prepareOrderData = (
-  user: User | null,
   cart: CartItem[],
-  shippingAddress?: Address
-): OrderInput | null => {
-  if (!user) return null;
-
+  shippingAddress: Address
+): OrderInput => {
   const items: OrderItem[] = cart.map((item) => ({
     product: item._id,
     quantity: item.quantity,
@@ -29,21 +25,12 @@ export const prepareOrderData = (
     return "standard";
   };
 
-  const resolvedAddress: Address = shippingAddress ?? user.address?.[0] ?? {
-    street: "",
-    number: "",
-    postal: "",
-    city: "",
-    province: "",
-  };
-
   return {
-    client: user._id,
     date: new Date().toISOString(),
     total,
     state: "pending",
     deliveryMethod: determineDeliveryMethod(),
     items,
-    shippingAddress: resolvedAddress,
+    shippingAddress,
   };
 };
