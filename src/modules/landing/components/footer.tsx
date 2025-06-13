@@ -9,17 +9,6 @@ const Footer = () => {
                     <h3 className="text-xl font-bold mb-3">Matezon</h3>
                     <p>El sabor de nuestras tierras en cada sorbo. Distribuimos mates, bombillas y kits artesanales en todo el país.</p>
                 </div>
-
-                
-                <div>
-                    <h4 className="font-semibold mb-2">Secciones</h4>
-                    <ul className="space-y-1">
-                        <li><a href="#porque" className="hover:underline">Beneficios</a></li>
-                        <li><a href="#productos" className="hover:underline">Productos</a></li>
-                        <li><a href="#testimonios" className="hover:underline">Testimonios</a></li>
-                    </ul>
-                </div>
-
                 
                 <div>
                     <h4  className="font-semibold mb-2">Contacto</h4>

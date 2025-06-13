@@ -1,84 +1,50 @@
 'use client'
 
 import Image from 'next/image';
-import Link from 'next/link';
-import useLanding from '../services/useLanding';
-import { useState } from 'react';
-
-type ReviewUser = {
-    _id: string;
-    name: string;
-};
-
-type ReviewText = {
-    user: ReviewUser;
-    rating: number;
-    comment: string;
-    _id: string;
-    createdAt: string;
-};
-
-type Reviews = {
-    scoring: number;
-    totalRatings: number;
-    reviewTexts: ReviewText[];
-};
-
-type ProductAttribute = {
-    nombre: string;
-    valor: string;
-    _id: string;
-};
-
-export interface ProductsLanding  {
-    reviews: Reviews;
-    _id: string;
-    name: string;
-    description: string;
-    price: number;
-    discount: number;
-    stock: number;
-    category: string;
-    sold: number;
-    attributes: ProductAttribute[];
-    images: string[];
-    createdAt?: string;
-    updatedAt?: string;
-
-};
+import logo from '@/../../public/logo.png';
 
 const Hero = () => {
-    const [products, setProducts] = useState<ProductsLanding[]>([]);
-
-    useLanding(setProducts);
     return (
-        <section id="inicio" className="bg-green-50 py-16 px-4 md:px-0">
-            <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-10">
-                <div className="md:w-1/2 text-center md:text-left">
-                    <h1 className="text-4xl md:text-5xl font-bold text-green-800 mb-4">
-                        El sabor de nuestra tierra <br /> en cada sorbo 🍃
-                    </h1>
-                    <p className="text-gray-700 mb-6 text-lg">
-                        Descubrí los mejores mates, bombillas y kits materos artesanales. Envío a todo el país.
-                    </p>
-                    <Link href={`/product/${products[0]?._id}`} className="inline-block">
-                        <button className="bg-green-600 text-white px-6 py-3 rounded-full text-lg hover:bg-green-700 transition">
-                            ¡Comprar ahora!
-                        </button>
-                    </Link>
-                </div>
-                <div className="md:w-1/2">
+        <section
+            id="inicio"
+            className="relative h-screen flex items-center justify-center text-white px-4 overflow-hidden"
+            style={{
+                backgroundImage: `url('/fondo-mate.jpg')`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+            }}
+        >
+            <div className="absolute inset-0 bg-white opacity-30" />
+
+            <div className="relative z-10 text-center max-w-2xl space-y-6">
+                <h1 className="text-4xl md:text-5xl font-bold">Bienvenido a Matezone</h1>
+                <p className="text-lg md:text-xl">
+                    Nuestra yerba es cultivada, seleccionada y recogida a mano por los mejores agricultores.
+                </p>
+                <p className="text-lg md:text-xl">
+                    En nuestra web encontrarás también las mejores marcas para disfrutar del mate Argentino de toda la vida.
+                </p>
+            </div>
+
+            <div className="absolute top-1/2 left-0 transform -translate-y-1/2 z-10 flex flex-col items-center space-y-4 px-4">
+                <div className="w-62 h-62 relative">
                     <Image
-                        src={products[0]?.images[0] || '/logo.png'}
-                        alt="Imagen de mate artesanal"
-                        width={500}
-                        height={500}
-                        className="rounded-2xl shadow-lg mx-auto"
+                        src={logo}
+                        alt="Logo Matezone"
+                        fill
+                        className="object-contain"
                     />
+                </div>
+                <div className="bg-white text-black px-4 py-2 rounded-xl border border-black max-w-[220px] text-center shadow-md">
+                    <p className="text-sm font-medium leading-tight">
+                        Descubre los mejores<br />
+                        mates, bombillas, hierbas<br />
+                        y accesorios artesanales
+                    </p>
                 </div>
             </div>
         </section>
-    )
-}
+    );
+};
 
 export default Hero;
