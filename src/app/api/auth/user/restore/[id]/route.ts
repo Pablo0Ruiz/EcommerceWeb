@@ -3,8 +3,7 @@ import { NextResponse, NextRequest } from "next/server";
 export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
     const token = request.cookies.get('token')?.value;
     const { id } = await params
-    const body = await request.json()
-    console.log(body)
+
     console.log(id)
     const backendRes = await fetch(`http://localhost:8000/api/user/restore/${id}`, {
         method: 'PATCH',
@@ -12,7 +11,6 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(body)
     });
 
     const data = await backendRes.json();
