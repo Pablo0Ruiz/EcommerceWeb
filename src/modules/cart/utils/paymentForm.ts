@@ -29,7 +29,7 @@ export const formatCardInput = (name: string, value: string): string => {
     
     case "cvv":
       formattedValue = value.replace(/\D/g, "");
-      return formattedValue.length > 4 ? formattedValue.slice(0, 4) : formattedValue;
+      return formattedValue.length > 3 ? formattedValue.slice(0, 3) : formattedValue;
     
     default:
       return formattedValue;
