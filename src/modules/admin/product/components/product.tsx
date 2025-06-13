@@ -45,17 +45,17 @@ export default function CreateProductPage() {
 
     const onSubmit = async (data: FormData) => {
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/productos`, {
+            const res = await fetch(`/api/auth/product`, {
                 method: 'POST',
+                credentials: 'include',
                 headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_TOKEN}`,
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(data),
             });
-
+            console.log('Response:', res);
             if (!res.ok) throw new Error('Error al crear producto');
-            router.push('/admin/products');
+            router.push('/admin');
         } catch (err) {
             console.error(err);
             alert('Error al crear producto');

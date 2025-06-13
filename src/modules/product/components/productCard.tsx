@@ -18,9 +18,9 @@ type ProductCardProduct = {
 
 interface ProductCardPropsFixed {
   producto: ProductCardProduct;
-  add: (id: string) => void;
-  remove: (id: string) => void;
-  disminuirItem: (id: string) => void;
+  add: (_id: string) => void;
+  remove: (_id: string) => void;
+  disminuirItem: (_id: string) => void;
 }
 
 const ProductCards: React.FC<ProductCardPropsFixed> = ({

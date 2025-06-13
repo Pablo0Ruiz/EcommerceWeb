@@ -10,8 +10,8 @@ interface AddressManagerProps {
     addresses: Address[];
     loading: boolean;
     error: string | null;
-    handleDelete: (nombre: string) => void;
-    handleSetDefault: (nombre: string) => void;
+    handleDelete: (name: string) => void;
+    handleSetDefault: (name: string) => void;
     handleEdit: (address: Address) => void;
     handleAddNew: () => void;
     handleSelect: (address: Address) => void;
@@ -104,7 +104,7 @@ export const AddressManager: React.FC<AddressManagerProps> = ({
   const handleAddressUpdate = async (updatedAddress: Address) => {
     const updatedList = [...addresses];
     const existingIndex = updatedList.findIndex(
-      (addr) => addr.nombre === updatedAddress.nombre
+      (addr) => addr.name === updatedAddress.name
     );
 
     if (updatedAddress.isDefault) {
@@ -138,12 +138,12 @@ export const AddressManager: React.FC<AddressManagerProps> = ({
     await loadAddresses();
   };
 
-  const handleSetDefault = async (nombre: string) => {
+  const handleSetDefault = async (name: string) => {
     if (!enableEdit) return;
 
     const updatedAddresses = addresses.map((addr) => ({
       ...addr,
-      isDefault: addr.nombre === nombre,
+      isDefault: addr.name === name,
     }));
 
     try {
@@ -159,10 +159,10 @@ export const AddressManager: React.FC<AddressManagerProps> = ({
     }
   };
 
-  const handleDelete = async (nombre: string) => {
+  const handleDelete = async (name: string) => {
     if (!enableEdit) return;
 
-    const updatedAddresses = addresses.filter((addr) => addr.nombre !== nombre);
+    const updatedAddresses = addresses.filter((addr) => addr.name !== name);
 
     try {
       if (isLoggedIn) {
@@ -236,8 +236,8 @@ export const AddressManager: React.FC<AddressManagerProps> = ({
 
         {addresses.map((addr) => (
           <div
-            key={`${addr.nombre ?? addr.street}-${addr.postal ?? addr.city}`}
-            className={`border rounded-lg p-6 w-72 h-[336px] relative shadow-sm hover:shadow-md transition-shadow flex flex-col ${selectable && selectedAddress?.nombre === addr.nombre
+            key={`${addr.name ?? addr.street}-${addr.postal ?? addr.city}`}
+            className={`border rounded-lg p-6 w-72 h-[336px] relative shadow-sm hover:shadow-md transition-shadow flex flex-col ${selectable && selectedAddress?.name === addr.name
                 ? "border-2 border-green-500"
                 : "border-gray-200"
               }`}
@@ -251,7 +251,7 @@ export const AddressManager: React.FC<AddressManagerProps> = ({
 
             <div className={addr.isDefault ? "mt-8" : ""}>
               <h3 className="font-bold text-lg mb-2 text-gray-900">
-                {addr.nombre}
+                {addr.name}
               </h3>
               <div className="space-y-1 text-gray-900">
                 <p>{addr.street}</p>
@@ -268,7 +268,7 @@ export const AddressManager: React.FC<AddressManagerProps> = ({
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleSetDefault(addr.nombre);
+                      handleSetDefault(addr.name);
                     }}
                     className="text-green-600 hover:text-green-800 text-sm font-medium underline"
                   >
@@ -287,7 +287,7 @@ export const AddressManager: React.FC<AddressManagerProps> = ({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleDelete(addr.nombre);
+                    handleDelete(addr.name);
                   }}
                   className="text-red-600 hover:text-red-800 text-sm font-medium underline"
                 >

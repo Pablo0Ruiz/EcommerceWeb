@@ -30,7 +30,7 @@ export const EditAddressModal: React.FC<EditAddressModalProps> = ({
       reset(address);
     } else {
       reset({
-        nombre: "",
+        name: "",
         street: "",
         number: "",
         postal: "",
@@ -57,7 +57,7 @@ export const EditAddressModal: React.FC<EditAddressModalProps> = ({
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {[
-            { name: "nombre", label: "Nombre de la dirección*", placeholder: "Ej: Casa, Trabajo..." },
+            { name: "name", label: "Nombre de la dirección*", placeholder: "Ej: Casa, Trabajo..." },
             { name: "street", label: "Calle*", placeholder: "Ej: Calle Mayor" },
             { name: "number", label: "Número*", placeholder: "Ej: 12" },
             { name: "city", label: "Ciudad*", placeholder: "" },

@@ -99,9 +99,9 @@ const CartPage = () => {
                 <ProductCards
                   key={product._id}
                   producto={product}
-                  add={addToCart(product)}
-                  remove={removeFromCart}
-                  disminuirItem={decreaseQuantity}
+                  add={(id) => addToCart(product)} // Or modify to work with just ID
+                  remove={(id) => removeFromCart(product)} // Or modify to work with just ID
+                  disminuirItem={(id) => decreaseQuantity(product)} // Or modify to work with just ID
                 />
               ))
             ) : (
