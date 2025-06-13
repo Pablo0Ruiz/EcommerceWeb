@@ -45,7 +45,7 @@ export default function CreateProductPage() {
 
     const onSubmit = async (data: FormData) => {
         try {
-            const res = await fetch(`/api/auth/product`, {
+            const res = await fetch('/api/auth/product', {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
