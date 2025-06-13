@@ -44,7 +44,6 @@ const ProductCards: React.FC<ProductCardPropsFixed> = ({
         />
       </div>
 
-      {/* Info del producto */}
       <div className="flex-1 flex flex-col gap-3">
         <div>
           <h2 className="text-lg font-semibold text-gray-800">
@@ -53,12 +52,11 @@ const ProductCards: React.FC<ProductCardPropsFixed> = ({
           <p className="text-gray-600 text-sm">{producto.description}</p>
         </div>
 
-        {/* Precio y stock */}
         <div className="flex flex-wrap items-center gap-2">
           <span className="font-bold text-gray-900">
             {producto.price.toFixed(2)}€
           </span>
-          {/* If you want to show original price with discount, add logic here */}
+
           <span
             className={`text-xs px-2 py-1 rounded ${producto.stock > 5
               ? "bg-green-100 text-green-800"
@@ -69,7 +67,6 @@ const ProductCards: React.FC<ProductCardPropsFixed> = ({
           </span>
         </div>
 
-        {/* Envío */}
         <div>
           <h3 className="text-sm font-medium text-gray-700 mb-1">
             Método de envío:
@@ -90,7 +87,6 @@ const ProductCards: React.FC<ProductCardPropsFixed> = ({
           </div>
         </div>
 
-        {/* Especificaciones */}
         {producto.attributes && producto.attributes.length > 0 && (
           <div className="mt-1">
             <h3 className="text-sm font-medium text-gray-700">
@@ -104,7 +100,6 @@ const ProductCards: React.FC<ProductCardPropsFixed> = ({
           </div>
         )}
 
-        {/* Controles */}
         <div className="flex flex-col sm:flex-row items-center gap-2 self-center sm:self-start">
           <div className="flex items-center border border-gray-300 rounded-lg">
             <button

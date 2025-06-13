@@ -18,7 +18,7 @@ export const useProfile = () => {
         if (!res.ok) {
             throw new Error('Error al obtener perfil');
         }
-
+        
         return await res.json();
     }, []);
 

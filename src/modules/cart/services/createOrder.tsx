@@ -4,6 +4,7 @@ export const createOrder = async (orderData: OrderInput): Promise<Order> => {
 
   const response = await fetch('/api/auth/order', {
     method: 'POST',
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
     },

@@ -5,7 +5,7 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
 
-    const backendRes = await fetch('https://intelligent-karmen-areotar-52151d0d.koyeb.app/api/order', {
+    const backendRes = await fetch('http://localhost:8000/api/order', {
         method: 'POST',
         headers: {
             Authorization: `Bearer ${token}`,

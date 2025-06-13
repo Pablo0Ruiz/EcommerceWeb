@@ -1,9 +1,7 @@
 "use client";
-
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
 import { Address } from "@/modules/auth/typesAuth";
-import InputField from "@/shared/components/inputField";
+import { useForm } from "react-hook-form";
 
 interface EditAddressModalProps {
   isOpen: boolean;
@@ -12,15 +10,7 @@ interface EditAddressModalProps {
   onSave: (address: Address) => void;
 }
 
-const defaultValues: Address = {
-  nombre: "",
-  street: "",
-  number: "",
-  postal: "",
-  city: "",
-  province: "",
-  isDefault: false,
-};
+
 
 export const EditAddressModal: React.FC<EditAddressModalProps> = ({
   isOpen,
@@ -36,7 +26,19 @@ export const EditAddressModal: React.FC<EditAddressModalProps> = ({
   } = useForm<Address>();
 
   useEffect(() => {
-    reset(address ?? defaultValues);
+    if (address) {
+      reset(address);
+    } else {
+      reset({
+        nombre: "",
+        street: "",
+        number: "",
+        postal: "",
+        city: "",
+        province: "",
+        isDefault: false,
+      });
+    }
   }, [address, reset]);
 
   const onSubmit = (data: Address) => {
@@ -54,87 +56,55 @@ export const EditAddressModal: React.FC<EditAddressModalProps> = ({
         </h2>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {/* <InputField
-            id="nombre"
-            label="Nombre de la dirección*"
-            type="text"
-            register={register}
-            error={errors.nombre}
-            requiredMsg="Este campo es obligatorio"
-          /> */}
-
-          <InputField
-            id="street"
-            label="Calle*"
-            type="text"
-            register={register}
-            error={errors.street}
-            requiredMsg="Este campo es obligatorio"
-          />
-
-          <InputField
-            id="number"
-            label="Número*"
-            type="text"
-            register={register}
-            error={errors.number}
-            requiredMsg="Este campo es obligatorio"
-          />
-
-          <div className="grid grid-cols-2 gap-4">
-            <InputField
-              id="city"
-              label="Ciudad*"
-              type="text"
-              register={register}
-              error={errors.city}
-              requiredMsg="Este campo es obligatorio"
-            />
-
-            <InputField
-              id="postal"
-              label="Código postal*"
-              type="text"
-              register={register}
-              error={errors.postal}
-              requiredMsg="Este campo es obligatorio"
-            />
-          </div>
-
-          <InputField
-            id="province"
-            label="Provincia*"
-            type="text"
-            register={register}
-            error={errors.province}
-            requiredMsg="Este campo es obligatorio"
-          />
+          {[
+            { name: "nombre", label: "Nombre de la dirección*", placeholder: "Ej: Casa, Trabajo..." },
+            { name: "street", label: "Calle*", placeholder: "Ej: Calle Mayor" },
+            { name: "number", label: "Número*", placeholder: "Ej: 12" },
+            { name: "city", label: "Ciudad*", placeholder: "" },
+            { name: "postal", label: "Código postal*", placeholder: "" },
+            { name: "province", label: "Provincia*", placeholder: "" },
+          ].map((field) => (
+            <div key={field.name}>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                {field.label}
+              </label>
+              <input
+                {...register(field.name as keyof Address, { required: "Este campo es obligatorio" })}
+                className="w-full px-3 py-2 border rounded text-gray-900"
+                placeholder={field.placeholder}
+              />
+              {errors[field.name as keyof Address] && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors[field.name as keyof Address]?.message}
+                </p>
+              )}
+            </div>
+          ))}
 
           <div className="flex items-center">
             <input
               type="checkbox"
-              id="defaultAddress"
               {...register("isDefault")}
-              className="h-4 w-4 text-[#2E8B57] focus:ring-[#2E8B57] border-gray-300 rounded"
+              className="mr-2"
             />
-            <label htmlFor="defaultAddress" className="ml-2 block text-sm text-gray-900">
-              Establecer como dirección principal
+            <label className="text-sm text-gray-700">
+              Establecer como dirección predeterminada
             </label>
           </div>
 
-          <div className="flex justify-end space-x-3 pt-4">
+          <div className="flex justify-end space-x-4">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+              className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 text-gray-800"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-[#2E8B57] rounded-md text-sm font-medium text-white hover:bg-[#3DA56A]"
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
             >
-              Guardar dirección
+              Guardar
             </button>
           </div>
         </form>
