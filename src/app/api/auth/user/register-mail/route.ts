@@ -5,7 +5,7 @@ export async function POST(request: Request) {
     try {
         const body = await request.json();
         console.log('body:',body)
-        const backendRes = await fetch('http://localhost:8000/api/user/register-email', {
+        const backendRes = await fetch('https://intelligent-karmen-areotar-52151d0d.koyeb.app/api/user/register-email', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

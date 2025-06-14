@@ -5,7 +5,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     const token = request.cookies.get('token')?.value;
     const {id} = await params
 
-    const backendRes = await fetch(`http://localhost:8000/api/user/${id}?logic=true`, {
+    const backendRes = await fetch(`https://intelligent-karmen-areotar-52151d0d.koyeb.app/api/user/${id}?logic=true`, {
         method: 'DELETE',
         headers: {
             Authorization: `Bearer ${token}`,

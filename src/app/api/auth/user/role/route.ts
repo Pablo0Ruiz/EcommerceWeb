@@ -5,7 +5,7 @@ export async function PATCH(request: NextRequest) {
     const body = await request.json();
 
     const { userId, newRole } = body;
-    const backendRes = await fetch('http://localhost:8000/api/user/updaterole', {
+    const backendRes = await fetch('https://intelligent-karmen-areotar-52151d0d.koyeb.app/api/user/updaterole', {
         method: 'PATCH',
         headers: {
             Authorization: `Bearer ${token}`,
