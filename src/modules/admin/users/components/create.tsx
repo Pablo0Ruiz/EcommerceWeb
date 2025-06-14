@@ -8,6 +8,7 @@ import Footer from '../../components/footer';
 import InputField from '@/shared/components/inputField';
 import Image from 'next/image';
 import bgAdmin from "@/../public/bgAdmin.jpg";
+import toast from "react-hot-toast";
 
 type FormData = {
     name: string;
@@ -32,7 +33,8 @@ export default function CreateUserPage() {
         if (!response.ok) {
             const errorData = await response.json();
             console.error(errorData);
-            throw new Error(errorData.message || 'Error al registrar el usuario');
+            // throw new Error(errorData.message || 'Error al registrar el usuario');
+            toast.error("Error al crear el usuario, por favor intente más tarde");
         }
 
         router.push("/admin/users");

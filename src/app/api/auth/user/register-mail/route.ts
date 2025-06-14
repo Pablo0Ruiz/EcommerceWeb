@@ -1,5 +1,6 @@
 
 import { NextResponse } from 'next/server';
+import toast from 'react-hot-toast';
 
 export async function POST(request: Request) {
     try {
@@ -15,7 +16,8 @@ export async function POST(request: Request) {
         });
 
         if (!backendRes.ok) {
-            throw new Error(await backendRes.text());
+            // throw new Error(await backendRes.text());
+            toast.error('Error al registrar el email, por favor intente más tarde');
         }
 
         const data = await backendRes.json();

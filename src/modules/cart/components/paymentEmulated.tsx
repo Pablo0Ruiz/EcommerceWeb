@@ -12,6 +12,7 @@ import {
 import { useOrder } from "../hook/useCart";
 import { prepareOrderData } from "../utils/orderUtils";
 import { Address } from "@/modules/auth/typesAuth";
+import toast from "react-hot-toast";
 
 export default function PaymentPage() {
   const router = useRouter();
@@ -85,10 +86,10 @@ export default function PaymentPage() {
       }
     } catch (err) {
       console.error("Error inesperado:", err);
-      alert(
-        "Ocurrió un error al procesar tu pedido. Por favor intenta nuevamente."
-      );
-    }
+      // alert(
+      //   "Ocurrió un error al procesar tu pedido. Por favor intenta nuevamente."
+      // );
+      toast.error(`Ocurrió un error al procesar tu pedido: ${err instanceof Error ? err.message : 'Error inesperado'}`);
   };
 
   useEffect(() => {

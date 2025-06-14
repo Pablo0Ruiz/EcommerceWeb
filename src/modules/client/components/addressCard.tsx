@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useProfile } from "@/modules/client/hook/useProfile";
 import { EditAddressModal } from "@/modules/client/components/editAddressModal";
 import { doesCookieExist } from "@/shared/utils/cookies";
+import toast from "react-hot-toast";
 
 interface AddressManagerProps {
   children?: (props: {
@@ -78,7 +79,7 @@ export const AddressManager: React.FC<AddressManagerProps> = ({
 
     try {
       const userData = await fetchProfile();
-      if (!userData) throw new Error("No se pudo obtener el perfil");
+      if (!userData) toast.error("No se pudo cargar el perfil del usuario");
       if (userData.address) {
         setAddresses(userData.address);
 

@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import { VerifyMailCodeResponse } from '../components/recoverPasword';
 
 export const useVerifiMailCode = () => {
@@ -11,7 +12,8 @@ export const useVerifiMailCode = () => {
             body: JSON.stringify({ code, email })
         })
         if (!res.ok) {
-            throw new Error('Error al enviar el codigo de verificacion')
+            // throw new Error('Error al enviar el codigo de verificacion')
+            toast.error('Error al enviar el código de verificación, por favor intente más tarde');
         }
         const data = await res.json();
         return data;

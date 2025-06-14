@@ -8,6 +8,7 @@ import Main from '../../components/main';
 import Footer from '../../components/footer';
 import Image from 'next/image';
 import bgAdmin from "@/../public/mate2.webp";
+import toast from 'react-hot-toast';
 
 type Attribute = {
     nombre: string;
@@ -54,11 +55,13 @@ export default function CreateProductPage() {
                 body: JSON.stringify(data),
             });
             console.log('Response:', res);
-            if (!res.ok) throw new Error('Error al crear producto');
+            if (!res.ok)
+                toast.error('Error al crear producto, por favor intente más tarde');
             router.push('/admin');
         } catch (err) {
             console.error(err);
-            alert('Error al crear producto');
+            // alert('Error al crear producto');
+            toast.error('Error al crear producto, por favor intente más tarde');
         }
     };
 

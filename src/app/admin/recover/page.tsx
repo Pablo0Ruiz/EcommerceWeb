@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import toast from "react-hot-toast"
 
 interface User {
     _id: string
@@ -57,7 +58,8 @@ const api = {
             headers: { 'Content-Type': 'application/json' },
         });
         if (!response.ok) {
-            throw new Error('Error restaurando usuario');
+            // throw new Error('Error restaurando usuario');
+            toast.error("Error al restaurar el usuario");
         }
         return await response.json();
     },
@@ -68,7 +70,8 @@ const api = {
             headers: { 'Content-Type': 'application/json' },
         });
         if (!response.ok) {
-            throw new Error('Error obteniendo usuarios archivados');
+            // throw new Error('Error obteniendo usuarios archivados');
+            toast.error("Error al cargar los usuarios archivados");
         }
         return await response.json();
     }

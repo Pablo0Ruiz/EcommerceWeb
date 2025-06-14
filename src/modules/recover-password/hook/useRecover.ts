@@ -1,4 +1,5 @@
 import { setUserCookie } from "@/shared/utils/cookies";
+import toast from "react-hot-toast";
 
 type Recover = {
     email: string;
@@ -27,7 +28,8 @@ export default function useRecover({ setIsSubmitted }: { setIsSubmitted: (value:
             });
 
             if (!response.ok) {
-                throw new Error('Error al enviar el email de recuperación');
+                // throw new Error('Error al enviar el email de recuperación');
+                toast.error('Error al enviar el email de recuperación, por favor intente más tarde');
             }
             const recoverResponse: RecoverResponse = await response.json();
             setUserCookie(recoverResponse.user)

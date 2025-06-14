@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import toast from "react-hot-toast"
 
 interface Intent {
     _id: string
@@ -27,7 +28,8 @@ export default function IntentList() {
                 setIntents(data);
             }
         } catch (error) {
-            console.error("Error fetching intents:", error)
+            // console.error("Error fetching intents:", error)
+            toast.error(`${error instanceof Error ? error.message : "Error al cargar los intentos fallidos"}`)
         } finally {
             setIsLoading(false)
         }

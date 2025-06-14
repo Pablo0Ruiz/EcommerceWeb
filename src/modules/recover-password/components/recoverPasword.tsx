@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { getUserCookie, setUserCookie } from '@/shared/utils/cookies';
 import { useState, useEffect } from 'react';
 import { useVerifiMailCode } from '@/modules/recover-password/hook/useVerifiMailCode';
+import toast from 'react-hot-toast';
 
 export type RecoverUser = {
     _id: string;
@@ -63,8 +64,9 @@ const RecoverPassword = () => {
             });
             router.push('/market');
         } catch (error) {
-            console.error('Error al verificar el código:', error);
-            alert('Ocurrió un error al verificar el código');
+            // console.error('Error al verificar el código:', error);
+            // alert('Ocurrió un error al verificar el código');
+            toast.error(`${error instanceof Error ? error.message : 'Ocurrió un error al verificar el código'}`);
         }
     };
 

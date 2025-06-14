@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import toast from "react-hot-toast"
 
 interface User {
     _id: string
@@ -128,7 +129,8 @@ const api = {
             body: JSON.stringify({ userId, newRole }),
         });
         if (!response.ok) {
-            throw new Error('Error actualizando rol');
+            // throw new Error('Error actualizando rol');
+            toast.error("Error al actualizar el rol del usuario");
         }
         return await response.json();
     },
@@ -139,7 +141,8 @@ const api = {
             headers: { 'Content-Type': 'application/json' },
         });
         if (!response.ok) {
-            throw new Error('Error eliminando usuario');
+            // throw new Error('Error eliminando usuario');
+            toast.error("Error al eliminar el usuario");
         }
         return await response.json();
     }
@@ -167,6 +170,8 @@ export default function UserList() {
         if (response.ok) {
             const data: User[] = await response.json();
             setUsers(data);
+        }else{
+            toast.error("Error al cargar los usuarios, por favor intente más tarde");
         }
     }
     useEffect(() => {

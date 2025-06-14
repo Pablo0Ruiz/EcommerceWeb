@@ -1,4 +1,5 @@
 import { Order,OrderInput } from "@/modules/orders/typesOrder";
+import toast from "react-hot-toast";
 
 export const createOrder = async (orderData: OrderInput): Promise<Order> => { 
 
@@ -12,7 +13,7 @@ export const createOrder = async (orderData: OrderInput): Promise<Order> => {
   });
 
   if (!response.ok) {
-    throw new Error('Error al crear la orden');
+    toast.error("Error al crear la orden, verifica tus datos o intenta más tarde");
   }
 
   return response.json();

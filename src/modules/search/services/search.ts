@@ -1,4 +1,5 @@
 import { ProductsLanding } from "@/modules/landing/components/heroSection";
+import toast from "react-hot-toast";
 
 
 export const getSearch = async (params: URLSearchParams): Promise<ProductsLanding[]> => {
@@ -12,7 +13,8 @@ export const getSearch = async (params: URLSearchParams): Promise<ProductsLandin
         });
         console.log('response:',response)
         if (!response.ok) {
-            throw new Error(`Error fetching orders: ${response.statusText}`);
+            // throw new Error(`Error fetching orders: ${response.statusText}`);
+            toast.error("Error al obtener los productos, por favor intente más tarde");
         }
 
         const data = await response.json();
@@ -20,7 +22,9 @@ export const getSearch = async (params: URLSearchParams): Promise<ProductsLandin
         
         return data;
     } catch (error) {
-        console.error('Error fetching orders:', error);
-        throw error;
+        // console.error('Error fetching orders:', error);
+        // throw error;
+        toast.error(`${error instanceof Error ? error.message : "Error al obtener los productos"}`);
+        return [];
     }
 }

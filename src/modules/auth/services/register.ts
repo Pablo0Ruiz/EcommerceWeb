@@ -1,4 +1,5 @@
 
+import toast from "react-hot-toast";
 import { RegisterData,ResponseRegister } from "../typesAuth";
 
 export const registerClient = async (data: RegisterData): Promise<ResponseRegister> =>{
@@ -11,7 +12,8 @@ export const registerClient = async (data: RegisterData): Promise<ResponseRegist
 
     if(!response.ok){
         const errorData = await response.json()
-        throw new Error(errorData.message || 'Error al registrar el cliente')
+        // throw new Error(errorData.message || 'Error al registrar el cliente')
+        toast.error(`Error al registrarte: ${errorData.message || 'Inténtalo más tarde'}`);
     }
     const clientData = await response.json();
     return {success:true, token:clientData.token,user:clientData.user};

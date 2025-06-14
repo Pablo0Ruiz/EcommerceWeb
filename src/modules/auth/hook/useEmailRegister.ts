@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { setCookie, setUserCookie } from "@/shared/utils/cookies";
 import { regEmailResponse } from "../typesAuth";
+import toast from "react-hot-toast";
 
 export const useEmailRegister = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -22,14 +23,12 @@ export const useEmailRegister = () => {
             });
 
             if (!response.ok) {
-                throw new Error(await response.text());
+                // throw new Error(await response.text());
+                toast.error("Error al registrar el email, por favor intente más tarde");
             }
 
             const result = await response.json();
-            // es necesario añadirle esta flag, por que si no, no tengo forma de explicarle al addressmanager cuando hacer fetch y cuando no, y como en este caso
-            // es un usuario "invitado", no tiene sentido hacer fetch por que no tiene direcciones, y se queda mostrando el error y no aparece la tarjeta para añadir direcciones
-            // me imagino que tambien tendras que modificar algo en el misPedidosPage, pero no se como haras la peticion de pedidos, aun que bueno no se si tenemos contemplado
-            // que un usuario invitado pueda ver sus pedidos, pero bueno, si no es asi, no hay problema
+
             const resultWithFlag = {
                 ...result,
                 regEmail: true,
@@ -55,7 +54,8 @@ export const useEmailRegister = () => {
                         ? err
                         : "Error desconocido";
             setError(errorMsg);
-            throw new Error(errorMsg);
+            // throw new Error(errorMsg);
+            toast.error(`Error al registrar el email: ${errorMsg}`);
         } finally {
             setIsLoading(false);
         }

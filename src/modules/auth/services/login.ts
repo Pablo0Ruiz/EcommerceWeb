@@ -1,3 +1,4 @@
+import toast from "react-hot-toast";
 import { LoginData, ResponseLogin } from "../typesAuth";
 
 
@@ -10,7 +11,8 @@ export const loginClient = async (data: LoginData): Promise<ResponseLogin> =>{
 
     if(!response.ok){
         const errorData = await response.json()
-        throw new Error(errorData.message || 'Error al iniciar sesion');
+        // throw new Error(errorData.message || 'Error al iniciar sesion');
+        throw toast.error(`Error al iniciar sesión: ${errorData.message || 'Inténtalo más tarde'}`);
     }
     const dataLogin: ResponseLogin = await response.json()
     return {success: true, token: dataLogin.token,user: dataLogin.user}

@@ -1,3 +1,4 @@
+import toast from "react-hot-toast"
 
 
 export const useEmail = () => {
@@ -11,7 +12,8 @@ export const useEmail = () => {
             body: JSON.stringify({code})
         })
         if (!res.ok) {
-            throw new Error('Error al enviar el codigo de verificacion')
+            // throw new Error('Error al enviar el codigo de verificacion')
+            toast.error('Error al enviar el código de verificación, por favor intente más tarde')
         }
         return await res.json()
     }

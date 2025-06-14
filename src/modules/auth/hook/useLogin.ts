@@ -2,6 +2,7 @@ import { useRouter } from "next/navigation";
 import { setUserCookie } from "@/shared/utils/cookies";
 import { loginClient } from "@/modules/auth/services/login";
 import { LoginData } from "../typesAuth";
+import toast from "react-hot-toast";
 
 export const useLogin = (reset: () => void) => {
     const router = useRouter();
@@ -22,8 +23,9 @@ export const useLogin = (reset: () => void) => {
             }
             router.push('/market');
             reset();
-        } catch (error) {
-            console.error('Error inesperado:', error);
+        } catch  {
+            // console.error('Error inesperado:', error);
+            toast.error("Error al iniciar sesión, verifica tus credenciales");
         }
     };
 
