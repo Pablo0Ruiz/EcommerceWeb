@@ -54,12 +54,6 @@ export default function Market() {
 
   const displayedProducts = searchResults !== null ? searchResults : products;
 
-  // Función para determinar si una imagen debe tener priority
-  const shouldHavePriority = (index: number, product: ProductsLanding) => {
-    // Solo las primeras 4 imágenes (primera fila) y que tengan imagen válida
-    return index < 4 && product.images?.[0] && product.images[0].trim() !== '';
-  };
-
   return (
     <div className="relative bg-gray-100/30 min-h-screen overflow-hidden">
       <div className="fixed inset-0 -z-10">
@@ -106,7 +100,6 @@ export default function Market() {
               {displayedProducts.map((product, index) => {
                 const hasValidImage = product.images?.[0] && product.images[0].trim() !== '';
                 const imageSrc = hasValidImage ? product.images[0] : "/logo.png";
-                const hasPriority = shouldHavePriority(index, product);
 
                 return (
                   <Link
@@ -121,7 +114,7 @@ export default function Market() {
                         fill
                         sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
                         className={`object-contain ${!hasValidImage ? 'opacity-50' : ''}`}
-                        priority={hasPriority}
+                        priority={index < 4 && Boolean(product.images?.[0])}
                         onError={(e) => {
                           if (e.currentTarget.src.includes('/logo.png')) return; // Evitar loop
                           e.currentTarget.src = "/logo.png";
