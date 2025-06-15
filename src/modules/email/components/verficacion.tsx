@@ -4,11 +4,12 @@ import { useRouter } from 'next/navigation';
 import { getUserCookie } from '@/shared/utils/cookies';
 import { useState, useEffect, useRef } from 'react';
 import { useEmail } from '../hook/useEmail';
+import toast from 'react-hot-toast';
 
 const EmailValidation = () => {
     const [code, setCode] = useState<string[]>(Array(6).fill(''));
     const [userEmail, setUserEmail] = useState<{ email?: string } | null>(null);
-    const { fetchVerifyCode } = useEmail()
+    const { fetchVerifyCode } = useEmail();
     const router = useRouter();
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -51,13 +52,16 @@ const EmailValidation = () => {
             alert('Por favor ingresa el código completo');
             return;
         }
+        handleVerifyCode(fullCode);
+    };
+
+    const handleVerifyCode = async (code: string) => {
         try {
-            await fetchVerifyCode(fullCode);
+            await fetchVerifyCode(code);
+            toast.success('Código verificado correctamente');
             router.push('/market');
-        }
-        catch (error) {
-            console.error('Error al verificar el código:', error);
-            alert('Ocurrió un error al verificar el código');
+        } catch (error) {
+            toast.error(`Error al verificar el código: ${error instanceof Error ? error.message : 'Error desconocido'}`);
         }
     };
 
