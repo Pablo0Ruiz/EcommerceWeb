@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, use, useRef } from "react";
+import { useState, useEffect, use, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { toast } from "react-hot-toast";
@@ -19,17 +19,18 @@ export default function ReviewPage({ params }: { params: Promise<{ id: string }>
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const hasCheckedRef = useRef(false); // Usar useRef en lugar de useState
+  const hasCheckedRef = useRef(false);
   const user = getUserCookie() as User | null;
 
-  const hasUserReviewed = (product: ProductsLanding) => {
+  // Usar useCallback para estabilizar la función
+  const hasUserReviewed = useCallback((product: ProductsLanding) => {
     if (!user || !product?.reviews?.reviewTexts) return false;
     return product.reviews.reviewTexts.some((review) =>
       typeof review.user === "object" 
         ? review.user._id === user._id 
         : review.user === user._id
     );
-  };
+  }, [user]);
 
   useEffect(() => {
     // Evitar múltiples ejecuciones con useRef
@@ -62,7 +63,7 @@ export default function ReviewPage({ params }: { params: Promise<{ id: string }>
     };
 
     fetchProduct();
-  }, [id, router]);
+  }, [id, router, hasUserReviewed]); // Ahora incluir hasUserReviewed es seguro
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -111,7 +112,10 @@ export default function ReviewPage({ params }: { params: Promise<{ id: string }>
   if (isLoading || !product) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        Cargando producto...
+        <div className="flex items-center space-x-2">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#0CAA2A]"></div>
+          <span>Cargando producto...</span>
+        </div>
       </div>
     );
   }
@@ -162,10 +166,13 @@ export default function ReviewPage({ params }: { params: Promise<{ id: string }>
                         } transition-colors`}
                       aria-label={`Calificar con ${star} ${star === 1 ? 'estrella' : 'estrellas'}`}
                     >
-                      {star}
+                      ★
                     </button>
                   ))}
                 </div>
+                <p className="text-sm text-gray-600 mt-2">
+                  Calificación actual: {rating > 0 ? `${rating} estrella${rating !== 1 ? 's' : ''}` : 'Sin calificar'}
+                </p>
               </div>
 
               <div>
@@ -176,24 +183,37 @@ export default function ReviewPage({ params }: { params: Promise<{ id: string }>
                   id="review-comment"
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
-                  className="w-full h-40 p-4 border rounded-lg text-base md:text-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full h-40 p-4 border rounded-lg text-base md:text-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                   placeholder="¿Qué te pareció el producto? Comparte tu experiencia..."
                   required
                   minLength={10}
                   maxLength={500}
                 />
-                <p className="text-sm text-gray-500 mt-1">Mínimo 10 caracteres</p>
+                <p className="text-sm text-gray-500 mt-1">
+                  {comment.length}/500 caracteres (mínimo 10)
+                </p>
               </div>
 
               <button
                 type="submit"
-                disabled={isSubmitting || rating === 0}
-                className={`py-2 px-6 rounded-xl text-lg md:text-xl font-bold transition ${isSubmitting || rating === 0
+                disabled={isSubmitting || rating === 0 || comment.length < 10}
+                className={`py-3 px-8 rounded-xl text-lg md:text-xl font-bold transition-all duration-200 ${
+                  isSubmitting || rating === 0 || comment.length < 10
                     ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                    : "bg-[#0CAA2A] hover:bg-green-700 text-white"
+                    : "bg-[#0CAA2A] hover:bg-green-700 text-white shadow-lg hover:shadow-xl"
                   }`}
               >
-                {isSubmitting ? "Publicando..." : "Publicar reseña"}
+                {isSubmitting ? (
+                  <span className="flex items-center">
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Publicando...
+                  </span>
+                ) : (
+                  "Publicar reseña"
+                )}
               </button>
             </form>
           </div>

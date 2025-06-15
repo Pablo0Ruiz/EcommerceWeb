@@ -2,18 +2,18 @@
 import Link from "next/link";
 import Image from 'next/image'
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { SearchBar } from "@/modules/search/components/searchBar";
 import { CartCounter } from "./cartCounter";
 import { useCartStore } from "@/modules/cart/hook/cart";
-import { useRouter } from "next/navigation";
 
 import logo from '@/../public/logo.png';
 import { ProductsLanding } from "@/modules/landing/components/heroSection";
 
-export const Header = ({
-  onSearchResults,
-}: {
-  onSearchResults?: (results: ProductsLanding[]) => void;
+export const Header = ({ 
+  onSearchResults 
+}: { 
+  onSearchResults?: (results: ProductsLanding[]) => void 
 }) => {
   const { loadCart } = useCartStore();
   const router = useRouter();
@@ -22,18 +22,24 @@ export const Header = ({
     loadCart();
   }, [loadCart]);
 
+  // Función para manejar búsquedas cuando no estamos en market
+  const handleSearchWithRedirect = (results: ProductsLanding[]) => {
+    // Guardar los resultados en sessionStorage para que market los use
+    sessionStorage.setItem('searchResults', JSON.stringify(results));
+    // Redirigir a market
+    router.push('/market');
+  };
+
   return (
     <header className="bg-[#2E8B57] text-white sticky top-0 z-50 shadow-lg">
-
       <div className="flex items-center justify-between p-3 px-6">
-
-
         <Link href="/" className="relative flex items-center group pl-26">
           <div className="absolute -left-3 w-32 h-32">
             <Image
               src={logo}
               alt="Logo Matezone"
               fill
+              sizes="128px"
               className="object-contain"
               priority
             />
@@ -45,17 +51,10 @@ export const Header = ({
           </div>
         </Link>
 
-
-
-
         <div className="flex-grow mx-6 max-w-3xl">
           <div className="[&_.border]:border-0 [&_input]:rounded-r-none [&_input]:focus:ring-2 [&_input]:focus:ring-[#C1F7D5] [&_button]:rounded-l-none [&_button]:bg-[#3DA56A] [&_button:hover]:bg-[#2E8B57] ">
-            <SearchBar
-              onSearchResults={
-                onSearchResults
-                  ? onSearchResults
-                  : () => router.push("/market")
-              }
+            <SearchBar 
+              onSearchResults={onSearchResults || handleSearchWithRedirect} 
             />
           </div>
         </div>

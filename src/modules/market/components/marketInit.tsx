@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "@/modules/market/components/header";
 import Image from "next/image";
 import { Footer } from "@/modules/market/components/footer";
@@ -15,11 +15,26 @@ export default function Market() {
   const [selectedProduct, setSelectedProduct] = useState<ProductsLanding | null>(null);
   const [products, setProducts] = useState<ProductsLanding[]>([]);
   const [searchResults, setSearchResults] = useState<ProductsLanding[] | null>(null);
-  
 
   const addToCart = useCartStore((state) => state.addToCart);
 
   useLanding(setProducts);
+
+  // Verificar si hay resultados de búsqueda guardados al cargar el componente
+  useEffect(() => {
+    const savedResults = sessionStorage.getItem('searchResults');
+    if (savedResults) {
+      try {
+        const parsedResults = JSON.parse(savedResults);
+        setSearchResults(parsedResults);
+        // Limpiar el sessionStorage después de usar los resultados
+        sessionStorage.removeItem('searchResults');
+      } catch (error) {
+        console.error('Error al parsear resultados de búsqueda:', error);
+        sessionStorage.removeItem('searchResults');
+      }
+    }
+  }, []);
 
   const handleAddToCart = (product: ProductsLanding) => {
     setSelectedProduct(product);
@@ -33,11 +48,17 @@ export default function Market() {
   };
 
   const handleSearchResults = (results: ProductsLanding[]) => {
-    console.log('esto es result',results)
+    console.log('esto es result', results)
     setSearchResults(results.length > 0 ? results : null);
   };
 
   const displayedProducts = searchResults !== null ? searchResults : products;
+
+  // Función para determinar si una imagen debe tener priority
+  const shouldHavePriority = (index: number, product: ProductsLanding) => {
+    // Solo las primeras 4 imágenes (primera fila) y que tengan imagen válida
+    return index < 4 && product.images?.[0] && product.images[0].trim() !== '';
+  };
 
   return (
     <div className="relative bg-gray-100/30 min-h-screen overflow-hidden">
@@ -46,6 +67,7 @@ export default function Market() {
           src={bgMarket}
           alt="Background"
           fill
+          sizes="100vw"
           className="object-cover"
           quality={100}
           priority
@@ -54,70 +76,104 @@ export default function Market() {
 
       <Header onSearchResults={handleSearchResults} />
       <main className="container mx-auto p-4">
-        <section className="mb-8 bg-white/0 p-4 rounded">
+        <section className="mb-8">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900">
-              {searchResults !== null ? "Resultados de búsqueda" : "Productos"}
-            </h2>
             {searchResults !== null && (
               <button
                 onClick={() => setSearchResults(null)}
-                className="text-sm text-[#2E8B57] hover:underline"
+                className="text-sm text-[#2E8B57] hover:underline bg-white px-3 py-1 rounded shadow"
               >
-                Mostrar todos los productos
+                ← Mostrar todos los productos
               </button>
             )}
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {displayedProducts.map((product) => (
-              <Link
-                href={`/product/${product._id}`}
-                key={product._id}
-                className="group border bg-white border-gray-200 hover:border-[#0CAA2A] rounded-xl p-3 transition cursor-pointer"
-              >
-                <div className="relative h-48 w-full mb-3">
-                  <Image
-                    src={product.images[0] || "/logo.png"}
-                    alt={product.name}
-                    fill
-                    className="object-contain"
-                  />
-                </div>
-                <h3 className="font-semibold text-gray-900 group-hover:text-[#131921]">
-                  {product.name}
-                </h3>
-                <p className="text-gray-600 text-sm mb-1">
-                  {product.description}
-                </p>
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-lg text-gray-900">
-                    {product.price.toFixed(2)}€
-                  </span>
-                  <span
-                    className={`text-xs px-2 py-1 rounded ${product.stock > 0
-                      ? "bg-green-100 text-green-800"
-                      : "bg-red-100 text-red-700"
-                      }`}
+
+          {displayedProducts.length === 0 ? (
+            <div className="text-center py-12 bg-white/90 rounded-lg backdrop-blur-sm">
+              <div className="text-6xl mb-4">🔍</div>
+              <h3 className="text-xl font-semibold text-gray-700 mb-2">
+                {searchResults !== null ? 'No se encontraron productos' : 'No hay productos disponibles'}
+              </h3>
+              <p className="text-gray-600">
+                {searchResults !== null 
+                  ? 'Intenta ajustar los filtros de búsqueda' 
+                  : 'Vuelve a intentarlo más tarde'
+                }
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {displayedProducts.map((product, index) => {
+                const hasValidImage = product.images?.[0] && product.images[0].trim() !== '';
+                const imageSrc = hasValidImage ? product.images[0] : "/logo.png";
+                const hasPriority = shouldHavePriority(index, product);
+
+                return (
+                  <Link
+                    href={`/product/${product._id}`}
+                    key={product._id}
+                    className="group border bg-white border-gray-200 hover:border-[#0CAA2A] rounded-xl p-3 transition cursor-pointer hover:shadow-lg"
                   >
-                    {product.stock > 0 ? "En stock" : "Agotado"}
-                  </span>
-                </div>
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleAddToCart({ ...product, _id: product._id });
-                  }}
-                  className={`mt-2 w-full py-1 rounded text-sm font-medium transition ${product.stock > 0
-                    ? "bg-[#0CAA2A] hover:bg-green-700 text-white"
-                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                    }`}
-                  disabled={product.stock <= 0}
-                >
-                  {product.stock > 0 ? "Añadir al carrito" : "Sin stock"}
-                </button>
-              </Link>
-            ))}
-          </div>
+                    <div className="relative h-48 w-full mb-3 bg-gray-100 rounded flex items-center justify-center">
+                      <Image
+                        src={imageSrc}
+                        alt={product.name || 'Producto'}
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                        className={`object-contain ${!hasValidImage ? 'opacity-50' : ''}`}
+                        priority={hasPriority}
+                        onError={(e) => {
+                          if (e.currentTarget.src.includes('/logo.png')) return; // Evitar loop
+                          e.currentTarget.src = "/logo.png";
+                          e.currentTarget.className = e.currentTarget.className + ' opacity-50';
+                        }}
+                      />
+                    </div>
+                    
+                    <h3 className="font-semibold text-gray-900 group-hover:text-[#131921] line-clamp-2 min-h-[3rem]">
+                      {product.name}
+                    </h3>
+                    
+                    <p className="text-gray-600 text-sm mb-2 line-clamp-2">
+                      {product.description}
+                    </p>
+                    
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="font-bold text-lg text-gray-900">
+                        {product.price?.toFixed(2) || '0.00'}€
+                      </span>
+                      <span
+                        className={`text-xs px-2 py-1 rounded ${
+                          (product.stock || 0) > 0
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-700"
+                        }`}
+                      >
+                        {(product.stock || 0) > 0 ? `Stock: ${product.stock}` : "Agotado"}
+                      </span>
+                    </div>
+                    
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if ((product.stock || 0) > 0) {
+                          handleAddToCart({ ...product, _id: product._id });
+                        }
+                      }}
+                      className={`mt-2 w-full py-2 rounded text-sm font-medium transition ${
+                        (product.stock || 0) > 0
+                          ? "bg-[#0CAA2A] hover:bg-green-700 text-white"
+                          : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      }`}
+                      disabled={(product.stock || 0) <= 0}
+                    >
+                      {(product.stock || 0) > 0 ? "Añadir al carrito" : "Sin stock"}
+                    </button>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
         </section>
       </main>
       <Footer />
@@ -126,10 +182,11 @@ export default function Market() {
         isOpen={showPopup}
         onClose={() => setShowPopup(false)}
         title={`${selectedProduct?.name} añadido al carrito`}
-        message={`Precio: ${selectedProduct?.price.toFixed(2)}€${selectedProduct?.discount
-          ? ` (${selectedProduct.discount}% de descuento)`
-          : ""
-          }`}
+        message={`Precio: ${selectedProduct?.price?.toFixed(2) || '0.00'}€${
+          selectedProduct?.discount
+            ? ` (${selectedProduct.discount}% de descuento)`
+            : ""
+        }`}
         primaryButtonText="Seguir comprando"
         secondaryButtonText="Ir al carrito"
         onPrimaryButtonClick={handleContinueShopping}
