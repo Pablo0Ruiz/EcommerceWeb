@@ -12,6 +12,7 @@ import { Product } from "@/modules/product/typesProduct";
 import { getProduct } from "@/modules/product/getProduct";
 import { ProductsLanding } from "@/modules/landing/components/heroSection";
 import { OrderItem } from "@/modules/orders/typesOrder";
+import { useDeleteReview } from "@/modules/reviews/hooks/useDeleteReview";
 import toast from "react-hot-toast";
 
 interface EnhancedOrder extends Omit<Order, 'items'> {
@@ -23,8 +24,10 @@ const MisPedidosPage: React.FC = () => {
   const [enhancedOrders, setEnhancedOrders] = useState<EnhancedOrder[] | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [isLoadingProducts, setIsLoadingProducts] = useState(false);
-  const [deletingReviewId, setDeletingReviewId] = useState<string | null>(null);
   const router = useRouter();
+
+  // Usar el hook personalizado para eliminar reseñas
+  const { deleteReview, deletingReviewId, isDeleting } = useDeleteReview();
 
   useEffect(() => {
     setUser(getUserCookie() || null);
@@ -35,48 +38,17 @@ const MisPedidosPage: React.FC = () => {
     router.push(`/product/${productId}`);
   };
 
-  // Función para eliminar reseña
+  // Función simplificada para eliminar reseña usando el hook
   const handleDeleteReview = async (product: ProductsLanding) => {
-    if (!user || !product?.reviews?.reviewTexts) return;
-    
-    // Encontrar la reseña del usuario
-    const userReview = product.reviews.reviewTexts.find((review) =>
-      typeof review.user === "object" 
-        ? review.user._id === user._id 
-        : review.user === user._id
-    );
-
-    if (!userReview || !userReview._id) {
-      toast.error("No se encontró la reseña a eliminar");
+    if (!user) {
+      toast.error("Debes iniciar sesión para eliminar reseñas");
       return;
     }
 
-    setDeletingReviewId(userReview._id);
-
-    try {
-      const response = await fetch(`/api/auth/product/del-review/${product._id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ idReview: userReview._id }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Error al eliminar la reseña');
-      }
-
-      toast.success("Reseña eliminada correctamente");
-      
-      // Recargar los pedidos para actualizar el estado
+    await deleteReview(product, user, () => {
+      // Callback personalizado para recargar datos
       window.location.reload();
-      
-    } catch (error) {
-      console.error('Error al eliminar reseña:', error);
-      toast.error("Error al eliminar la reseña");
-    } finally {
-      setDeletingReviewId(null);
-    }
+    });
   };
 
   const { loading: loadingOrders, error: ordersError } = useGetOrders(setOriginalOrders);
@@ -277,11 +249,6 @@ const MisPedidosPage: React.FC = () => {
                               <p>
                                 Precio unitario: {item.unit_price.toFixed(2)}€
                               </p>
-                              {product && (
-                                <p className="text-xs text-gray-400">
-                                  ID: {product._id} | Images: {product.images?.length || 0}
-                                </p>
-                              )}
                             </div>
                           </div>
                           <div className="flex flex-col items-end">
@@ -294,7 +261,7 @@ const MisPedidosPage: React.FC = () => {
                             {product && reviewed && (
                               <button
                                 onClick={() => handleDeleteReview(product)}
-                                disabled={deletingReviewId === userReviewId}
+                                disabled={deletingReviewId === userReviewId || isDeleting}
                                 className="mt-2 bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700 transition disabled:bg-red-300 disabled:cursor-not-allowed"
                               >
                                 {deletingReviewId === userReviewId ? "Eliminando..." : "Eliminar reseña"}
@@ -316,7 +283,7 @@ const MisPedidosPage: React.FC = () => {
                             )}
                             
                             {/* Estado de la reseña */}
-                            {canReview(order.state) && reviewed && !deletingReviewId && (
+                            {canReview(order.state) && reviewed && !isDeleting && (
                               <span className="mt-1 text-green-600 text-xs">
                                 ✓ Reseña enviada
                               </span>
