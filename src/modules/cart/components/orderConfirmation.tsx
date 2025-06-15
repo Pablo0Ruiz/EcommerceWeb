@@ -30,10 +30,13 @@ const OrderConfirmationPage = () => {
 
     loadCart();
   }, [loadCart, router]);
-  const handleNavigation = (path: string) => {
-    localStorage.removeItem("cart");
+const handleNavigation = (path: string) => {
+  localStorage.removeItem("cart");
+  setTimeout(() => {
     router.push(path);
-  };
+  }, 100);
+};
+
 
   if (!user) return null;
 

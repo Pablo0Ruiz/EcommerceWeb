@@ -1,35 +1,41 @@
 import { useRouter } from "next/navigation";
-import { RegisterData, ResponseRegister } from "../typesAuth";
+import { RegisterData } from "../typesAuth";
 import { registerClient } from "../services/register";
 import { setUserCookie } from "@/shared/utils/cookies";
 import toast from "react-hot-toast";
+import { useState } from "react";
 
 export const useRegister = (reset: () => void) => {
-    const router = useRouter();
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
-    const onSubmit = async (data: RegisterData) => {
-        try {
-            const response: ResponseRegister = await registerClient(data);
-            if (!response.success) {
-                // throw new Error('Error al registrarte');
-                toast.error("Error al registrarte, verifica tus datos o intenta más tarde");
-            }
-            setUserCookie(response.user);
+  const onSubmit = async (data: RegisterData) => {
+    if (loading) return; // protección extra contra doble clic
 
-            await fetch('/api/auth/set-token', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ token: response.token }),
-            });
+    setLoading(true);
+    try {
+      const response = await registerClient(data);
 
-            router.push('/email-verification');
-            reset();
-        } catch {
-            // console.error(error instanceof Error ? error.message : 'Registro de cliente fallido');
-            // console.log('Error al registrar cliente:', error);
-            toast.error("Error al registrarte, verifica tus datos o intenta más tarde");
-        }
-    };
+      setUserCookie(response.user);
 
-    return { onSubmit };
+      await fetch("/api/auth/set-token", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: response.token }),
+      });
+
+      router.push("/email-verification");
+      reset();
+    } catch (error) {
+      toast.error(
+        `Error al registrarte: ${
+          error instanceof Error ? error.message : "Verifica tus datos"
+        }`
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { onSubmit, loading };
 };

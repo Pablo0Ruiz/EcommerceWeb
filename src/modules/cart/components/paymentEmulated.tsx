@@ -19,7 +19,6 @@ export default function PaymentPage() {
   const { cart, loadCart } = useCartStore();
   const { createNewOrder } = useOrder();
 
-
   const [addr, setAddr] = useState<Address | null>(null);
 
   const [cardData, setCardData] = useState<CardData>({
@@ -56,7 +55,6 @@ export default function PaymentPage() {
     setCardData((prev) => ({ ...prev, [name]: formattedValue }));
   };
 
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -65,31 +63,28 @@ export default function PaymentPage() {
     if (!validation.isValid) return;
 
     if (!addr) {
-      alert("No hay dirección seleccionada para el envío.");
+      toast.error("No hay dirección seleccionada para el envío.");
       return;
     }
 
     try {
-      // Preparamos solo los datos necesarios
       const orderData = prepareOrderData(cart, addr);
-
       console.log("Creating order with data:", orderData);
+
       const order = await createNewOrder(orderData);
 
       if (order) {
-        // Limpiamos la dirección almacenada
         localStorage.removeItem("selectedAddress");
         router.replace("/cart/completed");
       } else {
-        console.error("Order creation failed");
-        alert("No se pudo crear el pedido. Por favor intenta nuevamente.");
+        toast.error(
+          "No se pudo crear el pedido. Por favor intenta nuevamente."
+        );
       }
     } catch (err) {
       console.error("Error inesperado:", err);
-      // alert(
-      //   "Ocurrió un error al procesar tu pedido. Por favor intenta nuevamente."
-      // );
-      toast.error(`Ocurrió un error al procesar tu pedido: ${err instanceof Error ? err.message : 'Error inesperado'}`);
+      // El toast ya se muestra desde createOrder, no necesitas mostrarlo aquí también
+    }
   };
 
   useEffect(() => {

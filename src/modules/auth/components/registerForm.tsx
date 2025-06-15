@@ -1,18 +1,23 @@
-'use client'
+"use client";
 
-import Image from 'next/image'
-import Link from 'next/link';
+import Image from "next/image";
+import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { useRegister } from "../hook/useRegister";
 import { RegisterData } from "../typesAuth";
-import bgImage from "@/../public/bgImage.jpg"
-import logo from '@/../public/logo.png';
-import image34 from '@/../public/imLogin.png';
+import bgImage from "@/../public/bgImage.jpg";
+import logo from "@/../public/logo.png";
+import image34 from "@/../public/imLogin.png";
 import InputField from "@/shared/components/inputField";
 
 const RegisterForm = () => {
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<RegisterData>();
-  const { onSubmit } = useRegister(reset);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<RegisterData>();
+  const { onSubmit,loading } = useRegister(reset);
 
   return (
     <div className="relative w-full min-h-screen overflow-hidden flex flex-col items-center justify-center">
@@ -58,7 +63,10 @@ const RegisterForm = () => {
             Registro
           </h2>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="w-full flex flex-col gap-6">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="w-full flex flex-col gap-6"
+          >
             <InputField
               id="name"
               label="Nombre"
@@ -89,8 +97,8 @@ const RegisterForm = () => {
               validationRules={{
                 pattern: {
                   value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message: "El correo no es válido"
-                }
+                  message: "El correo no es válido",
+                },
               }}
               className="w-full px-4 py-2 bg-white border border-[#D9D9D9] rounded-lg font-inter text-[16px] text-[#1E1E1E]"
             />
@@ -104,9 +112,11 @@ const RegisterForm = () => {
               requiredMsg="La contraseña es obligatoria"
               validationRules={{
                 pattern: {
-                  value: /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*.])[A-Za-z\d!@#$%^&*.]{8,}$/,
-                  message: "Debe tener al menos 1 mayúscula, 1 número, 1 carácter especial y mínimo 8 caracteres"
-                }
+                  value:
+                    /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*.])[A-Za-z\d!@#$%^&*.]{8,}$/,
+                  message:
+                    "Debe tener al menos 1 mayúscula, 1 número, 1 carácter especial y mínimo 8 caracteres",
+                },
               }}
               className="w-full px-4 py-2 bg-white border border-[#D9D9D9] rounded-lg font-inter text-[16px] text-[#1E1E1E]"
             />
@@ -121,8 +131,8 @@ const RegisterForm = () => {
               validationRules={{
                 pattern: {
                   value: /^[0-9\s()+-]+$/,
-                  message: "Teléfono no válido"
-                }
+                  message: "Teléfono no válido",
+                },
               }}
               className="w-full px-4 py-2 bg-white border border-[#D9D9D9] rounded-lg font-inter text-[16px] text-[#1E1E1E]"
             />
@@ -134,8 +144,11 @@ const RegisterForm = () => {
                 required
                 className="accent-[#0CAA2A]"
               />
-              <label htmlFor="terms" className="text-[16px] font-inter text-[#1E1E1E]">
-                Acepto los{' '}
+              <label
+                htmlFor="terms"
+                className="text-[16px] font-inter text-[#1E1E1E]"
+              >
+                Acepto los{" "}
                 <Link
                   href="/legal"
                   className="text-[#0CAA2A] underline hover:text-[#8aff8a]"
@@ -147,14 +160,12 @@ const RegisterForm = () => {
               </label>
             </div>
 
-
             <button
               type="submit"
-              className="w-full py-3 bg-[#0CAA2A] rounded-[15px] flex items-center justify-center transform hover:scale-105 transition-transform"
+              disabled={loading}
+              className="bg-blue-500 text-white px-4 py-2 rounded"
             >
-              <span className="font-tilt-warp text-[32px] text-white">
-                Registrarse
-              </span>
+              {loading ? "Registrando..." : "Registrarse"}
             </button>
           </form>
 
@@ -167,7 +178,7 @@ const RegisterForm = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default RegisterForm
+export default RegisterForm;

@@ -93,7 +93,8 @@ export default function ArchivedUsersList() {
         } catch (error) {
             console.error("Error fetching archived users:", error)
             setError("No se pudieron cargar los usuarios archivados")
-            alert("Error al cargar usuarios archivados")
+            // alert("Error al cargar usuarios archivados")
+            toast.error("Error al cargar los usuarios archivados")
         } finally {
             setIsLoading(false)
         }
@@ -116,12 +117,14 @@ export default function ArchivedUsersList() {
             const result = await api.restoreUser(userToRestore)
 
             if (result) {
-                alert("Usuario restaurado correctamente")
+                // alert("Usuario restaurado correctamente")
+                toast.success("Usuario restaurado correctamente")
                 await fetchArchivedUsers() // Refrescar la lista
             }
         } catch (error) {
             console.error("Error restoring user:", error)
-            alert("Error al restaurar el usuario")
+            // alert("Error al restaurar el usuario")
+            toast.error("Error al restaurar el usuario")
         } finally {
             setIsLoading(false)
             setShowRestoreConfirm(false)

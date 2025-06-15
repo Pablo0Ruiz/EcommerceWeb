@@ -13,49 +13,63 @@ export const useEmailRegister = () => {
         setError(null);
 
         try {
-            console.log('email:',email)
-            const response = await fetch("/api/auth/user/register-mail", {
+            const response = await fetch('/api/auth/user/register-email', {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email }),
             });
 
+            const responseText = await response.text();
+            
+            // Mapeo de errores específicos
+            const errorMapping: Record<string, string> = {
+                'USER_EXISTS': 'El email ya está registrado',
+                'INVALID_EMAIL': 'Email no válido',
+                'ERROR_REGISTER_USER': 'Error al registrar el email'
+            };
+
             if (!response.ok) {
-                // throw new Error(await response.text());
-                toast.error("Error al registrar el email, por favor intente más tarde");
+                const matchedError = Object.keys(errorMapping).find(err => 
+                    responseText.trim() === err
+                );
+                
+                const errorMessage = matchedError 
+                    ? errorMapping[matchedError]
+                    : responseText || 'Error desconocido';
+                
+                throw new Error(errorMessage);
             }
 
-            const result = await response.json();
-
+            // Procesamiento de respuesta exitosa
+            const result = JSON.parse(responseText);
             const resultWithFlag = {
                 ...result,
                 regEmail: true,
             };
 
+            // Configuración de cookies y tokens
             await fetch('/api/auth/set-token', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ token: result.token }),
             });
 
-            document.cookie = `regEmail=true; path=/; max-age=${60 * 60 * 24}`; //Cookie que expirara en 24 horas
+            document.cookie = `regEmail=true; path=/; max-age=${60 * 60 * 24}`;
             setCookie(result.token);
             setUserCookie(result.user);
             setData(resultWithFlag);
-            console.log("Registro exitoso:", resultWithFlag);
+
+            toast.success("Registro de email exitoso");
             return resultWithFlag;
+
         } catch (err) {
-            const errorMsg =
-                err instanceof Error
-                    ? err.message
-                    : typeof err === "string"
-                        ? err
-                        : "Error desconocido";
-            setError(errorMsg);
-            // throw new Error(errorMsg);
-            toast.error(`Error al registrar el email: ${errorMsg}`);
+            const errorMessage = err instanceof Error 
+                ? err.message 
+                : 'Error desconocido al registrar el email';
+            
+            setError(errorMessage);
+            toast.error(errorMessage);
+            return null;
         } finally {
             setIsLoading(false);
         }

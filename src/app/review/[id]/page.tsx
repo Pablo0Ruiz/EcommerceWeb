@@ -1,98 +1,106 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, use, useCallback } from "react"; // Add useCallback
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { toast } from "react-hot-toast";
 import { Header } from "@/modules/market/components/header";
 import { Footer } from "@/modules/market/components/footer";
 import { getUserCookie } from "@/shared/utils/cookies";
 import { ProductsLanding } from "@/modules/landing/components/heroSection";
 import { User } from "@/modules/auth/typesAuth";
+import { getProduct } from "@/modules/product/getProduct";
+import { submitReview } from "@/modules/reviews/services/reviewService";
 
-export default function ReviewPage({ params }: { params: { id: string } }) {
+export default function ReviewPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
-  const { id } = params;
+  const { id } = use(params);
   const [product, setProduct] = useState<ProductsLanding | null>(null);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const user = getUserCookie() as User | null;
 
-  useEffect(() => {
-    const storedProducts = localStorage.getItem("products");
-    const products: ProductsLanding[] = storedProducts ? JSON.parse(storedProducts) : [];
-    const foundProduct = products.find((p) => p._id === id);
+  const hasUserReviewed = useCallback((product: ProductsLanding) => {
+    if (!user || !product?.reviews?.reviewTexts) return false;
+    return product.reviews.reviewTexts.some((review) =>
+      typeof review.user === "object" 
+        ? review.user._id === user._id 
+        : review.user === user._id
+    );
+  }, [user]); 
 
-    if (foundProduct) {
-      setProduct(foundProduct);
-    } else {
-      router.push("/user/orders");
-    }
-  }, [id, router]);
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const productData = await getProduct(id);
+        setProduct(productData);
+        
+        // Verificar si el usuario ya hizo una reseña
+        if (hasUserReviewed(productData)) {
+          toast.error("Ya has realizado una reseña para este producto");
+          router.push("/user/orders");
+          return;
+        }
+      } catch (error) {
+        const errorMessage = error instanceof Error 
+          ? error.message 
+          : "Error al cargar el producto";
+        toast.error(errorMessage);
+        router.push("/user/orders");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProduct();
+  }, [id, router, hasUserReviewed]); // hasUserReviewed is now memoized
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user || !product) return;
+    if (!user) {
+      toast.error("Debes iniciar sesión para enviar una reseña");
+      return;
+    }
+    if (!product) {
+      toast.error("No se pudo cargar el producto");
+      return;
+    }
+    // Verificar nuevamente por si acaso
+    if (hasUserReviewed(product)) {
+      toast.error("Ya has realizado una reseña para este producto");
+      router.push("/user/orders");
+      return;
+    }
+    if (rating === 0) {
+      toast.error("Debes seleccionar una calificación");
+      return;
+    }
+    
     setIsSubmitting(true);
+    
     try {
-      const newReviewText = {
-        user: {
-          _id: user._id,
-          name: user.name || "",
-          avatar: user.urlToAvatar || "", 
-        },
-        _id: user._id,
+      await submitReview(id, {
         rating,
         comment,
-        createdAt: new Date().toISOString(),
-      };
-
-      const currentTotal = product.reviews?.totalRatings || 0;
-      const currentScore = product.reviews?.scoring || 0;
-      const newTotal = currentTotal + 1;
-      const newScore = ((currentScore * currentTotal) + rating) / newTotal;
-
-      const updatedProduct: ProductsLanding = {
-        ...product,
-        _id: product._id || "",
-        reviews: {
-          scoring: parseFloat(newScore.toFixed(1)),
-          totalRatings: newTotal,
-          reviewTexts: [...(product.reviews?.reviewTexts || []), newReviewText],
-        },
-      };
-
-
-      const storedProducts = localStorage.getItem("products");
-      const products: ProductsLanding[] = storedProducts ? JSON.parse(storedProducts) : [];
-      const updatedProducts = products.map((p) =>
-        p._id === id ? updatedProduct : p
-      );
-      localStorage.setItem("products", JSON.stringify(updatedProducts));
-
-      type OrderItem = { product: string; reviewed?: boolean; [key: string]: unknown };
-      type Order = { items: OrderItem[]; [key: string]: unknown };
-
-      const orders: Order[] = JSON.parse(localStorage.getItem("orders") || "[]");
-      const updatedOrders = orders.map((order) => {
-        const updatedItems = order.items.map((item: OrderItem) => {
-          if (item.product === id) {
-            return { ...item, reviewed: true };
-          }
-          return item;
-        });
-        return { ...order, items: updatedItems };
+        userId: user._id,
+        userName: user.name || "",
+        userAvatar: user.urlToAvatar || ""
       });
-      localStorage.setItem("orders", JSON.stringify(updatedOrders));
 
+      toast.success("¡Reseña enviada correctamente!");
       router.push(`/product/${id}`);
     } catch (error) {
-      console.error("Error submitting review:", error);
+      const errorMessage = error instanceof Error 
+        ? error.message 
+        : "Error al enviar la reseña";
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  if (!product) {
+  if (isLoading || !product) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         Cargando producto...

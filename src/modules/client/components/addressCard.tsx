@@ -125,9 +125,13 @@ export const AddressManager: React.FC<AddressManagerProps> = ({
         saveToLocal(updatedList);
       }
       await refetch();
+      toast.success("Dirección actualizada correctamente");
     } catch (error) {
-      console.error("Error al guardar dirección:", error);
-      alert("No se pudo guardar la dirección");
+      toast.error(
+        `Error al guardar dirección: ${
+          error instanceof Error ? error.message : "Inténtalo más tarde"
+        }`
+      );
     }
   };
 
@@ -142,39 +146,47 @@ export const AddressManager: React.FC<AddressManagerProps> = ({
   const handleSetDefault = async (name: string) => {
     if (!enableEdit) return;
 
-    const updatedAddresses = addresses.map((addr) => ({
-      ...addr,
-      isDefault: addr.name === name,
-    }));
-
     try {
+      const updatedAddresses = addresses.map((addr) => ({
+        ...addr,
+        isDefault: addr.name === name,
+      }));
+
       if (isLoggedIn) {
         await updateProfile({ address: updatedAddresses });
       } else {
         saveToLocal(updatedAddresses);
       }
       await refetch();
+      toast.success("Dirección predeterminada actualizada");
     } catch (error) {
-      console.error("Error al actualizar dirección predeterminada:", error);
-      alert("No se pudo establecer como predeterminada");
+      toast.error(
+        `Error al establecer dirección predeterminada: ${
+          error instanceof Error ? error.message : "Inténtalo más tarde"
+        }`
+      );
     }
   };
 
   const handleDelete = async (name: string) => {
     if (!enableEdit) return;
 
-    const updatedAddresses = addresses.filter((addr) => addr.name !== name);
-
     try {
+      const updatedAddresses = addresses.filter((addr) => addr.name !== name);
+
       if (isLoggedIn) {
         await updateProfile({ address: updatedAddresses });
       } else {
         saveToLocal(updatedAddresses);
       }
       await refetch();
+      toast.success("Dirección eliminada correctamente");
     } catch (error) {
-      console.error("Error al eliminar dirección:", error);
-      alert("No se pudo eliminar la dirección");
+      toast.error(
+        `Error al eliminar dirección: ${
+          error instanceof Error ? error.message : "Inténtalo más tarde"
+        }`
+      );
     }
   };
 
@@ -238,10 +250,11 @@ export const AddressManager: React.FC<AddressManagerProps> = ({
         {addresses.map((addr) => (
           <div
             key={`${addr.name ?? addr.street}-${addr.postal ?? addr.city}`}
-            className={`border rounded-lg p-6 w-72 h-[336px] relative shadow-sm hover:shadow-md transition-shadow flex flex-col ${selectable && selectedAddress?.name === addr.name
+            className={`border rounded-lg p-6 w-72 h-[336px] relative shadow-sm hover:shadow-md transition-shadow flex flex-col ${
+              selectable && selectedAddress?.name === addr.name
                 ? "border-2 border-green-500"
                 : "border-gray-200"
-              }`}
+            }`}
             onClick={() => selectable && handleSelect(addr)}
           >
             {addr.isDefault && (
@@ -306,20 +319,20 @@ export const AddressManager: React.FC<AddressManagerProps> = ({
     <>
       {children
         ? children({
-          addresses,
-          loading,
-          error,
-          handleDelete,
-          handleSetDefault,
-          handleEdit,
-          handleAddNew,
-          handleSelect,
-          selectedAddress,
-          refetch,
-        })
+            addresses,
+            loading,
+            error,
+            handleDelete,
+            handleSetDefault,
+            handleEdit,
+            handleAddNew,
+            handleSelect,
+            selectedAddress,
+            refetch,
+          })
         : defaultView
-          ? renderDefaultView()
-          : null}
+        ? renderDefaultView()
+        : null}
 
       <EditAddressModal
         isOpen={isModalOpen}

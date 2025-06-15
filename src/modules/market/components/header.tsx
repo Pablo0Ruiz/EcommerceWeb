@@ -5,13 +5,18 @@ import { useEffect } from "react";
 import { SearchBar } from "@/modules/search/components/searchBar";
 import { CartCounter } from "./cartCounter";
 import { useCartStore } from "@/modules/cart/hook/cart";
+import { useRouter } from "next/navigation";
 
 import logo from '@/../public/logo.png';
 import { ProductsLanding } from "@/modules/landing/components/heroSection";
 
-export const Header = ({ onSearchResults }: { onSearchResults: (results: ProductsLanding[]) => void }) => {
+export const Header = ({
+  onSearchResults,
+}: {
+  onSearchResults?: (results: ProductsLanding[]) => void;
+}) => {
   const { loadCart } = useCartStore();
-
+  const router = useRouter();
 
   useEffect(() => {
     loadCart();
@@ -45,7 +50,13 @@ export const Header = ({ onSearchResults }: { onSearchResults: (results: Product
 
         <div className="flex-grow mx-6 max-w-3xl">
           <div className="[&_.border]:border-0 [&_input]:rounded-r-none [&_input]:focus:ring-2 [&_input]:focus:ring-[#C1F7D5] [&_button]:rounded-l-none [&_button]:bg-[#3DA56A] [&_button:hover]:bg-[#2E8B57] ">
-            <SearchBar onSearchResults={onSearchResults} />
+            <SearchBar
+              onSearchResults={
+                onSearchResults
+                  ? onSearchResults
+                  : () => router.push("/market")
+              }
+            />
           </div>
         </div>
 

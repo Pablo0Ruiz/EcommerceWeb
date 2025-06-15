@@ -5,29 +5,35 @@ import { LoginData } from "../typesAuth";
 import toast from "react-hot-toast";
 
 export const useLogin = (reset: () => void) => {
-    const router = useRouter();
+  const router = useRouter();
 
-    const onSubmit = async (data: LoginData) => {
-        try {
-            const response = await loginClient(data);
+  const onSubmit = async (data: LoginData) => {
+    try {
+      const response = await loginClient(data);
 
-            setUserCookie(response.user);
+      setUserCookie(response.user);
 
-            await fetch('/api/auth/set-token', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ token: response.token }),
-            });
-            if(response.user.role === 'admin') {
-                return router.push('/admin');
-            }
-            router.push('/market');
-            reset();
-        } catch  {
-            // console.error('Error inesperado:', error);
-            toast.error("Error al iniciar sesión, verifica tus credenciales");
-        }
-    };
+      await fetch("/api/auth/set-token", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: response.token }),
+      });
 
-    return { onSubmit };
+      if (response.user.role === "admin") {
+        router.push("/admin");
+      } else {
+        router.push("/market");
+      }
+      reset();
+    } catch (error) {
+      // Todos los errores se manejan aquí
+      toast.error(
+        `Error al iniciar sesión: ${
+          error instanceof Error ? error.message : "Inténtalo más tarde"
+        }`
+      );
+    }
+  };
+
+  return { onSubmit };
 };

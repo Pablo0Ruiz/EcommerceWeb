@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { ProductsLanding } from "./productsLanding";
+import { ProductsLanding } from "../landing/components/heroSection";
 export interface ProductAttribute {
   nombre: string;
   valor: string;
