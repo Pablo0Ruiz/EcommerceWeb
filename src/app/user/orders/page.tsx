@@ -29,7 +29,8 @@ const MisPedidosPage: React.FC = () => {
     setUser(getUserCookie() || null);
   }, []);
 
-  useGetOrders(setOriginalOrders);
+  // Usar el hook con destructuring para obtener loading y error
+  const { loading: loadingOrders, error: ordersError } = useGetOrders(setOriginalOrders);
 
   useEffect(() => {
     if (!user || !originalOrders) return; 
@@ -84,7 +85,11 @@ const MisPedidosPage: React.FC = () => {
           <div className="text-center text-lg text-gray-600">
             Debés iniciar sesión para ver tus pedidos.
           </div>
-        ) : !enhancedOrders || isLoadingProducts ? (
+        ) : ordersError ? (
+          <div className="text-center text-lg text-red-600">
+            Error al cargar los pedidos. Por favor, intenta nuevamente.
+          </div>
+        ) : loadingOrders || !enhancedOrders || isLoadingProducts ? (
           <div className="text-center text-lg text-gray-600">
             Cargando pedidos...
           </div>
