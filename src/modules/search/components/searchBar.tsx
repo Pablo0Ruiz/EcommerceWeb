@@ -280,9 +280,12 @@ export const SearchBar = ({ onSearchResults }: SearchBarProps) => {
                                 Cerrar
                             </button>
                             <button
-                                type="submit"
+                                type="button"
+                                onClick={() => {
+                                    setIsFiltersOpen(false)
+                                    handleSubmit(onSubmit)() // ✅ Ejecutar búsqueda automáticamente
+                                }}
                                 className="px-4 py-2 bg-[#3DA56A] hover:bg-[#2E8B57] text-white rounded-md transition-colors"
-                                onClick={() => setIsFiltersOpen(false)}
                             >
                                 Aplicar Filtros
                             </button>
@@ -314,6 +317,7 @@ export const SearchBar = ({ onSearchResults }: SearchBarProps) => {
                                     onClick={() => {
                                         setValue('category', '')
                                         setIsCategoriesOpen(false)
+                                        handleSubmit(onSubmit)() // ✅ Agregar esta línea
                                     }}
                                     className="w-full flex items-center px-4 py-3 hover:bg-[#E8F5EE] transition-colors duration-150"
                                 >
