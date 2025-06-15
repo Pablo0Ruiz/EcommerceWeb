@@ -5,7 +5,6 @@ export async function POST(request: NextRequest) {
         const token = request.cookies.get('token')?.value;
         const body = await request.json();
         
-        // console.log('esto es body en order:', body);
 
         const backendRes = await fetch('https://intelligent-karmen-areotar-52151d0d.koyeb.app/api/order', {
             method: 'POST',
@@ -16,11 +15,10 @@ export async function POST(request: NextRequest) {
             body: JSON.stringify(body),
         });
 
-        console.log('Backend response status:', backendRes.status);
         
         // Obtener el texto de la respuesta primero
         const responseText = await backendRes.text();
-        console.log('Backend response text:', responseText);
+
 
         if (!backendRes.ok) {
             return NextResponse.json(
@@ -42,7 +40,7 @@ export async function POST(request: NextRequest) {
         // Intentar parsear como JSON
         try {
             const data = JSON.parse(responseText);
-            console.log('Parsed response from backend:', data);
+
             return NextResponse.json(data);
         } catch (parseError) {
             console.error('Error parsing backend JSON:', parseError);

@@ -54,7 +54,7 @@ export default function CreateProductPage() {
                 },
                 body: JSON.stringify(data),
             });
-            console.log('Response:', res);
+
             if (!res.ok)
                 toast.error('Error al crear producto, por favor intente más tarde');
             router.push('/admin');

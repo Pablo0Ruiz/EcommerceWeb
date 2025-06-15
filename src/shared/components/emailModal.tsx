@@ -46,7 +46,7 @@ export const EmailModal: React.FC<EmailModalProps> = ({
 
     const onSubmit = async (formData: { email: string }) => {
         try {
-            console.log('email onsubmit:',formData)
+
             const result = await registerEmail(formData.email);
             if (result) {
                 onSuccess?.(result);

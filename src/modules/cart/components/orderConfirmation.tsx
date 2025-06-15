@@ -25,7 +25,7 @@ const OrderConfirmationPage = () => {
     }
 
     const cookieExists = doesCookieExist("regEmail");
-    console.log("Cookie 'regEmail' exists:", cookieExists);
+
     setHasRegEmailCookie(!!cookieExists);
 
     loadCart();

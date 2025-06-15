@@ -48,7 +48,7 @@ const CartPage = () => {
 
   return (
     <main className="min-h-screen w-full relative overflow-hidden">
-      {/* Imagen de fondo */}
+
       <div className="fixed inset-0 -z-10">
         <Image
           src={carrito}

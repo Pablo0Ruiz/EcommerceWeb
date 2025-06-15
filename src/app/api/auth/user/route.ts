@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
     const token = request.cookies.get('token')?.value;
-    console.log(token)
+
     const backendRes = await fetch('https://intelligent-karmen-areotar-52151d0d.koyeb.app/api/user/profile', {
         method: 'GET',
         headers: {
@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
     });
 
     const data = await backendRes.json();
-    console.log(data)
+
     return NextResponse.json(data);
 }
 

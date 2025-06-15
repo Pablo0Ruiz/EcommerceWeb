@@ -48,7 +48,7 @@ export default function Market() {
   };
 
   const handleSearchResults = (results: ProductsLanding[]) => {
-    // console.log('esto es result', results)
+
     setSearchResults(results.length > 0 ? results : null);
   };
 

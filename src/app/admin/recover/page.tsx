@@ -51,14 +51,14 @@ const ConfirmationPopup = ({
 
 const api = {
     restoreUser: async (userId: string) => {
-        console.log(userId)
+
         const response = await fetch(`/api/auth/user/restore/${userId}`, {
             method: 'PATCH',
             credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
         });
         if (!response.ok) {
-            // throw new Error('Error restaurando usuario');
+
             toast.error("Error al restaurar el usuario");
         }
         return await response.json();

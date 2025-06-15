@@ -4,7 +4,7 @@ export const registerClient = async (
   data: RegisterData
 ): Promise<ResponseRegister> => {
   try {
-    console.log("Datos a enviar:", data);
+
     const response = await fetch(
       "https://intelligent-karmen-areotar-52151d0d.koyeb.app/api/user/register",
       {
@@ -15,7 +15,7 @@ export const registerClient = async (
     );
 
     const responseText = await response.text();
-    console.log("Respuesta cruda del backend:", responseText);
+
 
 
     // Mapeo directo de strings de error

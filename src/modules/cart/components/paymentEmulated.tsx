@@ -69,7 +69,7 @@ export default function PaymentPage() {
 
     try {
       const orderData = prepareOrderData(cart, addr);
-      console.log("Creo con esto :", orderData);
+
 
       const order = await createNewOrder(orderData);
 

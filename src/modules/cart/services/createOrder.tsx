@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 
 export const createOrder = async (orderData: OrderInput): Promise<Order> => {
   try {
-    console.log("Datos de la orden a enviar:", orderData);
+
     
     const response = await fetch('/api/auth/order', {
       method: 'POST',
@@ -16,8 +16,7 @@ export const createOrder = async (orderData: OrderInput): Promise<Order> => {
 
     // Obtener el texto de la respuesta primero
     const responseText = await response.text();
-    console.log('Response status:', response.status);
-    console.log('Response text:', responseText);
+
 
     if (!response.ok) {
       let errorMessage = "Error al crear la orden";

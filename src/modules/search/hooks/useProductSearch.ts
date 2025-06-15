@@ -15,7 +15,7 @@ export const useProductSearch = () => {
     const [loading, setLoading] = useState(false);
     const [allProducts, setAllProducts] = useState<ProductsLanding[]>([]);
 
-    // Cargar todos los productos una vez
+
     const loadAllProducts = async () => {
         try {
             const response = await fetch('/api/auth/product/search', {
@@ -34,12 +34,12 @@ export const useProductSearch = () => {
         return [];
     };
 
-    // Búsqueda híbrida: local para texto, backend para filtros complejos
+
     const search = async (filters: SearchFilters): Promise<ProductsLanding[]> => {
         setLoading(true);
         
         try {
-            // Si solo hay búsqueda por nombre, usar filtro local
+
             const hasOnlyNameFilter = filters.name && 
                                     !filters.category && 
                                     !filters.minPrice && 
@@ -48,7 +48,7 @@ export const useProductSearch = () => {
                                     !filters.sortBy;
 
             if (hasOnlyNameFilter) {
-                console.log('Usando búsqueda local para:', filters.name);
+
                 
                 let products = allProducts;
                 if (products.length === 0) {
@@ -62,12 +62,12 @@ export const useProductSearch = () => {
                     product.category?.toLowerCase().includes(searchTerm)
                 );
 
-                console.log(`Búsqueda local: ${filteredProducts.length} resultados`);
+
                 return filteredProducts;
             }
 
-            // Para filtros complejos, usar el backend
-            console.log('Usando búsqueda backend para filtros complejos');
+
+
             
             const cleanParams = Object.fromEntries(
                 Object.entries(filters).filter(

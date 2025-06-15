@@ -1,8 +1,8 @@
 export const getSearch = async (searchParams: URLSearchParams) => {
     try {
-        console.log('=== FRONTEND SEARCH ===')
-        console.log('Parámetros de búsqueda:', searchParams.toString())
-        console.log('Parámetros individuales:', Object.fromEntries(searchParams.entries()))
+
+
+
         
         const response = await fetch(`/api/auth/product/search?${searchParams.toString()}`, {
             method: 'GET',
@@ -11,7 +11,7 @@ export const getSearch = async (searchParams: URLSearchParams) => {
             },
         })
 
-        console.log('Response status:', response.status)
+
 
         if (!response.ok) {
             const errorText = await response.text()
@@ -20,7 +20,7 @@ export const getSearch = async (searchParams: URLSearchParams) => {
         }
 
         const data = await response.json()
-        console.log('Resultados recibidos:', data.length, 'productos')
+
         return data
     } catch (error) {
         console.error('Error al realizar la búsqueda:', error)

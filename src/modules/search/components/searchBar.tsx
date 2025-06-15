@@ -27,14 +27,13 @@ export const SearchBar = ({ onSearchResults }: SearchBarProps) => {
     const { search, loading, loadAllProducts } = useProductSearch();
     const watchedValues = watch()
 
-    // Cargar productos al montar el componente
+
     useEffect(() => {
         loadAllProducts();
     }, []);
 
     const onSubmit = async (data: FormSearch) => {
-        console.log('=== INICIO BÚSQUEDA MEJORADA ===')
-        console.log('Datos del form:', data)
+
         
         const filters = {
             name: data.name?.trim(),
