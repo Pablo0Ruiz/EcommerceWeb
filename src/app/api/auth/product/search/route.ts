@@ -5,9 +5,9 @@ export async function GET(request: NextRequest) {
         const token = request.cookies.get('token')?.value;
         const searchParams = request.nextUrl.searchParams;
 
-        console.log('=== API SEARCH ROUTE ===');
-        console.log('Token presente:', !!token);
-        console.log('Parámetros recibidos:', Object.fromEntries(searchParams.entries()));
+        // console.log('=== API SEARCH ROUTE ===');
+        // console.log('Token presente:', !!token);
+        // console.log('Parámetros recibidos:', Object.fromEntries(searchParams.entries()));
 
         if (!token) {
             console.log('ERROR: No token found');
