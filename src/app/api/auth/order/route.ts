@@ -5,7 +5,7 @@ export async function POST(request: NextRequest) {
         const token = request.cookies.get('token')?.value;
         const body = await request.json();
         
-        console.log('esto es body en order:', body);
+        // console.log('esto es body en order:', body);
 
         const backendRes = await fetch('https://intelligent-karmen-areotar-52151d0d.koyeb.app/api/order', {
             method: 'POST',

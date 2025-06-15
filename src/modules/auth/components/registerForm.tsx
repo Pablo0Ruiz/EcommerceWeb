@@ -17,7 +17,7 @@ const RegisterForm = () => {
     reset,
     formState: { errors },
   } = useForm<RegisterData>();
-  const { onSubmit,loading } = useRegister(reset);
+  const { onSubmit, loading } = useRegister(reset);
 
   return (
     <div className="relative w-full min-h-screen overflow-hidden flex flex-col items-center justify-center">
@@ -163,9 +163,11 @@ const RegisterForm = () => {
             <button
               type="submit"
               disabled={loading}
-              className="bg-blue-500 text-white px-4 py-2 rounded"
+              className="w-full py-3 bg-[#0CAA2A] rounded-[15px] flex items-center justify-center transform hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
-              {loading ? "Registrando..." : "Registrarse"}
+              <span className="font-tilt-warp text-[32px] text-white">
+                {loading ? "Registrando..." : "Registrarse"}
+              </span>
             </button>
           </form>
 

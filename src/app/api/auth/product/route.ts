@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     console.log()
     const token = request.cookies.get('token')?.value;
     const { searchParams } = new URL(request.url);
-    console.log('esto es searchparams:',searchParams.toString())
+    // console.log('esto es searchparams:',searchParams.toString())
     const backendRes = await fetch(`https://intelligent-karmen-areotar-52151d0d.koyeb.app/api/product?${searchParams.toString()}`, {
         method: 'GET',
         headers: {
