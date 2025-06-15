@@ -10,7 +10,7 @@ import { doesCookieExist } from "@/shared/utils/cookies";
 import type { User } from "@/modules/auth/typesAuth";
 
 const OrderConfirmationPage = () => {
-  const { cart, loadCart, calculateTotal } = useCartStore();
+  const { cart, loadCart, calculateTotal, clearCart } = useCartStore(); // Agregar clearCart
   const [showPopup, setShowPopup] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [hasRegEmailCookie, setHasRegEmailCookie] = useState(false);
@@ -30,13 +30,16 @@ const OrderConfirmationPage = () => {
 
     loadCart();
   }, [loadCart, router]);
-const handleNavigation = (path: string) => {
-  localStorage.removeItem("cart");
-  setTimeout(() => {
-    router.push(path);
-  }, 100);
-};
 
+  const handleNavigation = (path: string) => {
+
+    clearCart();
+    localStorage.removeItem("cart");
+
+    setTimeout(() => {
+      router.push(path);
+    }, 100);
+  };
 
   if (!user) return null;
 

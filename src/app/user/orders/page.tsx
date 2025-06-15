@@ -23,13 +23,62 @@ const MisPedidosPage: React.FC = () => {
   const [enhancedOrders, setEnhancedOrders] = useState<EnhancedOrder[] | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [isLoadingProducts, setIsLoadingProducts] = useState(false);
+  const [deletingReviewId, setDeletingReviewId] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
     setUser(getUserCookie() || null);
   }, []);
 
-  // Usar el hook con destructuring para obtener loading y error
+  // Función para navegar al producto
+  const handleProductClick = (productId: string) => {
+    router.push(`/product/${productId}`);
+  };
+
+  // Función para eliminar reseña
+  const handleDeleteReview = async (product: ProductsLanding) => {
+    if (!user || !product?.reviews?.reviewTexts) return;
+    
+    // Encontrar la reseña del usuario
+    const userReview = product.reviews.reviewTexts.find((review) =>
+      typeof review.user === "object" 
+        ? review.user._id === user._id 
+        : review.user === user._id
+    );
+
+    if (!userReview || !userReview._id) {
+      toast.error("No se encontró la reseña a eliminar");
+      return;
+    }
+
+    setDeletingReviewId(userReview._id);
+
+    try {
+      const response = await fetch(`/api/auth/product/del-review/${product._id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ idReview: userReview._id }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al eliminar la reseña');
+      }
+
+      toast.success("Reseña eliminada correctamente");
+      
+      // Recargar los pedidos para actualizar el estado
+      window.location.reload();
+      
+    } catch (error) {
+      console.error('Error al eliminar reseña:', error);
+      toast.error("Error al eliminar la reseña");
+    } finally {
+      setDeletingReviewId(null);
+    }
+  };
+
   const { loading: loadingOrders, error: ordersError } = useGetOrders(setOriginalOrders);
 
   useEffect(() => {
@@ -71,6 +120,16 @@ const MisPedidosPage: React.FC = () => {
     return product.reviews.reviewTexts.some((r) =>
       typeof r.user === "object" ? r.user._id === user._id : r.user === user._id
     );
+  };
+
+  const getUserReviewId = (product: ProductsLanding) => {
+    if (!user || !product?.reviews?.reviewTexts) return null;
+    const userReview = product.reviews.reviewTexts.find((review) =>
+      typeof review.user === "object" 
+        ? review.user._id === user._id 
+        : review.user === user._id
+    );
+    return userReview?._id || null;
   };
 
   return (
@@ -170,6 +229,7 @@ const MisPedidosPage: React.FC = () => {
                       const reviewed = product && hasReviewed(product);
                       const showReviewButton =
                         canReview(order.state) && product && !reviewed;
+                      const userReviewId = product ? getUserReviewId(product) : null;
 
                       return (
                         <li
@@ -177,8 +237,12 @@ const MisPedidosPage: React.FC = () => {
                           className="flex flex-col sm:flex-row justify-between gap-4 text-sm text-gray-600 pb-4 border-b border-gray-100 last:border-0"
                         >
                           <div className="flex items-start gap-4">
+                            {/* Imagen del producto - CLICKEABLE */}
                             {product ? (
-                              <div className="w-16 h-16 relative flex-shrink-0">
+                              <div 
+                                className="w-16 h-16 relative flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
+                                onClick={() => handleProductClick(product._id)}
+                              >
                                 {product.images && product.images.length > 0 ? (
                                   <Image
                                     src={product.images[0]}
@@ -200,8 +264,13 @@ const MisPedidosPage: React.FC = () => {
                                 <span className="text-gray-400 text-xs">Cargando...</span>
                               </div>
                             )}
+                            
                             <div>
-                              <h4 className="font-medium text-gray-900">
+                              {/* Nombre del producto - CLICKEABLE */}
+                              <h4 
+                                className="font-medium text-gray-900 cursor-pointer hover:text-blue-600 transition-colors"
+                                onClick={() => product && handleProductClick(product._id)}
+                              >
                                 {product?.name || `Producto ID: ${item.product}`}
                               </h4>
                               <p>Cantidad: {item.quantity}</p>
@@ -220,6 +289,19 @@ const MisPedidosPage: React.FC = () => {
                               Subtotal:{" "}
                               {(item.quantity * item.unit_price).toFixed(2)}€
                             </p>
+                            
+                            {/* Botón para eliminar reseña (solo si ya tiene reseña) */}
+                            {product && reviewed && (
+                              <button
+                                onClick={() => handleDeleteReview(product)}
+                                disabled={deletingReviewId === userReviewId}
+                                className="mt-2 bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700 transition disabled:bg-red-300 disabled:cursor-not-allowed"
+                              >
+                                {deletingReviewId === userReviewId ? "Eliminando..." : "Eliminar reseña"}
+                              </button>
+                            )}
+                            
+                            {/* Botón para escribir reseña (solo si no tiene reseña) */}
                             {showReviewButton && (
                               <button
                                 onClick={() => {
@@ -232,9 +314,11 @@ const MisPedidosPage: React.FC = () => {
                                 Escribir reseña
                               </button>
                             )}
-                            {canReview(order.state) && reviewed && (
-                              <span className="mt-2 text-green-600 text-sm">
-                                Reseña enviada
+                            
+                            {/* Estado de la reseña */}
+                            {canReview(order.state) && reviewed && !deletingReviewId && (
+                              <span className="mt-1 text-green-600 text-xs">
+                                ✓ Reseña enviada
                               </span>
                             )}
                           </div>

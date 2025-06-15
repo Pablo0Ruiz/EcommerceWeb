@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, use, useCallback } from "react"; // Add useCallback
+import { useState, useEffect, use, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { toast } from "react-hot-toast";
@@ -19,18 +19,22 @@ export default function ReviewPage({ params }: { params: Promise<{ id: string }>
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const hasCheckedRef = useRef(false); // Usar useRef en lugar de useState
   const user = getUserCookie() as User | null;
 
-  const hasUserReviewed = useCallback((product: ProductsLanding) => {
+  const hasUserReviewed = (product: ProductsLanding) => {
     if (!user || !product?.reviews?.reviewTexts) return false;
     return product.reviews.reviewTexts.some((review) =>
       typeof review.user === "object" 
         ? review.user._id === user._id 
         : review.user === user._id
     );
-  }, [user]); 
+  };
 
   useEffect(() => {
+    // Evitar múltiples ejecuciones con useRef
+    if (hasCheckedRef.current) return;
+
     const fetchProduct = async () => {
       try {
         const productData = await getProduct(id);
@@ -38,11 +42,15 @@ export default function ReviewPage({ params }: { params: Promise<{ id: string }>
         
         // Verificar si el usuario ya hizo una reseña
         if (hasUserReviewed(productData)) {
+          hasCheckedRef.current = true;
           toast.error("Ya has realizado una reseña para este producto");
           router.push("/user/orders");
           return;
         }
+        
+        hasCheckedRef.current = true;
       } catch (error) {
+        hasCheckedRef.current = true;
         const errorMessage = error instanceof Error 
           ? error.message 
           : "Error al cargar el producto";
@@ -54,7 +62,7 @@ export default function ReviewPage({ params }: { params: Promise<{ id: string }>
     };
 
     fetchProduct();
-  }, [id, router, hasUserReviewed]); // hasUserReviewed is now memoized
+  }, [id, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

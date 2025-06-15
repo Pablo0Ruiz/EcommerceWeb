@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
     const token = request.cookies.get('token')?.value;
-    const { id } = params;
+    const { id } = await params;
 
     const backendRes = await fetch(`https://intelligent-karmen-areotar-52151d0d.koyeb.app/api/product/${id}`, {
         method: 'GET',
