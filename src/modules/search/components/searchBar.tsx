@@ -30,7 +30,7 @@ export const SearchBar = ({ onSearchResults }: SearchBarProps) => {
 
     useEffect(() => {
         loadAllProducts();
-    }, []);
+    }, [loadAllProducts]);
 
     const onSubmit = async (data: FormSearch) => {
 
