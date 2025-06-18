@@ -24,7 +24,7 @@ export async function DELETE(
 ) {
     const token = request.cookies.get('token')?.value;
 
-    // Awaitar los parámetros
+
     const { id } = await context.params;
 
     const backendRes = await fetch(`https://intelligent-karmen-areotar-52151d0d.koyeb.app/api/user/${id}?logic=true`, {
