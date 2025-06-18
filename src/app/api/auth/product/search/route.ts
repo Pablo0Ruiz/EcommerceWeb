@@ -6,16 +6,6 @@ export async function GET(request: NextRequest) {
         const searchParams = request.nextUrl.searchParams;
 
 
-
-        if (!token) {
-
-            return NextResponse.json(
-                { error: 'Token no encontrado' }, 
-                { status: 401 }
-            );
-        }
-
-
         const backendUrl = new URL('https://intelligent-karmen-areotar-52151d0d.koyeb.app/api/product');
         
 
@@ -33,7 +23,7 @@ export async function GET(request: NextRequest) {
                 'Content-Type': 'application/json',
             },
         });
-
+        
 
 
         if (!backendRes.ok) {
