@@ -21,13 +21,15 @@ export interface ShippingAddress {
 
 export interface OrderInput {
   items: Array<{
-    product: string; // ID del producto
+    product: string;
     quantity: number;
+    unit_price?: number; // Si también necesitas esto
   }>;
   deliveryMethod: DeliveryMethod;
   shippingAddress: ShippingAddress;
-  // client se obtiene del req.user._id
-  // date, total y state se generan automáticamente
+  date?: string; // Opcional
+  total?: number; // Opcional
+  state?: string; // Opcional
 }
 
 export interface Order extends Document {
