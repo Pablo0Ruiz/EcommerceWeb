@@ -1,6 +1,6 @@
 
 import React from "react";
-import Header from "@/modules/admin/components/headers";
+
 import Main from "@/modules/admin/components/main";
 import Footer from "@/modules/admin/components/footer";
 import bgAdmin from "@/../public/bgAdmin.jpg";
@@ -25,7 +25,7 @@ export default function Seller() {
                 <div className="absolute inset-0 bg-[#D9D9D9] opacity-60" />
             </div>
 
-            <Header />
+
 
             <Main className="flex-1">
                 <div className="relative z-10 p-6 max-w-10xl mx-auto">

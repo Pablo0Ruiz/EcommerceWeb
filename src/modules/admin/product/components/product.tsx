@@ -3,7 +3,7 @@
 import { useForm, useFieldArray } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import InputField from '@/shared/components/inputField';
-import Header from '../../components/headers';
+
 import Main from '../../components/main';
 import Footer from '../../components/footer';
 import Image from 'next/image';
@@ -57,7 +57,7 @@ export default function CreateProductPage() {
 
             if (!res.ok)
                 toast.error('Error al crear producto, por favor intente más tarde');
-            router.push('/admin');
+                router.back()
         } catch (err) {
             console.error(err);
             // alert('Error al crear producto');
@@ -82,7 +82,7 @@ export default function CreateProductPage() {
 
             </div>
 
-            <Header />
+
             <Main>
                 <h2 className="text-xl font-bold mb-4">Crear Nuevo Producto</h2>
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 max-w-xl p-6 rounded-xl bg-white/30 backdrop-blur-md shadow-lg">

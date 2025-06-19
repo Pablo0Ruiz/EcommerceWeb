@@ -87,9 +87,17 @@ const LoginForm = () => {
               error={errors.password}
               requiredMsg="La contraseña es obligatoria"
               validationRules={{
+                minLength: {
+                  value: 8,
+                  message: "Debe tener al menos 8 caracteres"
+                },
+                maxLength: {
+                  value: 64,
+                  message: "Debe tener como máximo 64 caracteres"
+                },
                 pattern: {
-                  value: /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*.])[A-Za-z\d!@#$%^&*.]{8,}$/,
-                  message: "Debe tener al menos 1 mayúscula, 1 número, 1 carácter especial y mínimo 8 caracteres"
+                  value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,64}$/,
+                  message: "Debe tener al menos 1 mayúscula, 1 minúscula, 1 número y 1 carácter especial"
                 }
               }}
               className="w-full px-4 py-2 bg-white border border-[#D9D9D9] rounded-lg font-inter text-[16px] text-[#1E1E1E]"
