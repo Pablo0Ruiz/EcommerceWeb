@@ -28,7 +28,7 @@ export async function middleware(request: NextRequest) {
         const { payload } = await jwtVerify(token, SECRET)
         const role = payload.role as string
 
-        if (pathname.startsWith('/admin') && !['admin', 'seller'].includes(role)) {
+        if (pathname.startsWith('/admin') && !['admin'].includes(role)) {
             const url = new URL('/auth/login', request.url)
             url.searchParams.set('message', 'admin_access_denied')
             return NextResponse.redirect(url)
