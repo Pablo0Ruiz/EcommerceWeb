@@ -40,6 +40,8 @@ export const useLogin = (reset: () => void) => {
 
       if (response.user.role === "admin") {
         router.push("/admin");
+      }else if(response.user.role === "seller"){
+        router.push("/seller-admin");
       } else {
         router.push("/market");
       }
