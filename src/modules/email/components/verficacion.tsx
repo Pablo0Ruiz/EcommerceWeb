@@ -104,13 +104,7 @@ const EmailValidation = () => {
                                 />
                             ))}
                         </div>
-{/* 
-                        <button
-                            type="button"
-                            className="text-blue-500 hover:text-blue-700 font-medium"
-                        >
-                            Reenviar Email
-                        </button> */}
+
                     </div>
 
                     <div className="border-t border-gray-200 my-4"></div>
