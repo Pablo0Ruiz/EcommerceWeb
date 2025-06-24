@@ -42,7 +42,7 @@ export default function Seller() {
                         <TrapezoidButton
                             text="Crear producto"
                             color="#A4835F"
-                            href="/admin/product"
+                            href="/seller-admin/product"
                         />
                     </div>
                 </div>
